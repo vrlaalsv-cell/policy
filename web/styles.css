@@ -1,11 +1,12 @@
 :root{
-  --ink:#18202f; --muted:#5c6b82; --line:#e4e9f1; --bg:#f5f7fb; --card:#fff;
-  --brand:#0b3d91; --brand2:#1666c1; --chip:#eef3fb;
+  --ink:#18202f; --muted:#5c6b82; --line:#e4e9f1; --bg:#ffffff; --card:#fff;
+  --brand:#1a2f4b; --brand2:#1f9d8a; --chip:#eef3fb;
   --shadow:0 4px 20px rgba(20,40,80,.07);
 }
 *{box-sizing:border-box}
 html,body{margin:0}
 body{
+  position:relative; overflow-x:hidden;
   background:var(--bg); color:var(--ink); line-height:1.55;
   font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",system-ui,-apple-system,sans-serif;
   font-size:15px;
@@ -13,8 +14,21 @@ body{
 a{color:var(--brand2)}
 .wrap{max-width:1140px;margin:0 auto;padding:0 16px}
 
+/* 배경 장식: 랜딩 페이지와 동일한 블러 블롭 + 도트그리드 */
+.bg-decor{position:fixed;inset:0;overflow:hidden;pointer-events:none;z-index:0}
+.bg-decor .blob{position:absolute;border-radius:9999px;filter:blur(90px)}
+.bg-decor .blob-a{top:-220px;right:-220px;width:560px;height:560px;background:rgba(147,197,253,.35)}
+.bg-decor .blob-b{bottom:-260px;left:-220px;width:560px;height:560px;background:rgba(153,246,228,.35)}
+.bg-decor .dotgrid{
+  position:absolute;inset:0;
+  background-image:radial-gradient(rgba(15,23,42,.08) 1px, transparent 1px);
+  background-size:28px 28px;
+  -webkit-mask-image:radial-gradient(ellipse 70% 55% at 50% 45%, black 30%, transparent 85%);
+  mask-image:radial-gradient(ellipse 70% 55% at 50% 45%, black 30%, transparent 85%);
+}
+
 /* Header */
-header.top{background:linear-gradient(135deg,#0b3d91,#1666c1);color:#fff}
+header.top{background:linear-gradient(135deg,#152538,#1a2f4b);color:#fff}
 .top .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px}
 .top h1{font-size:18px;margin:0;font-weight:800;letter-spacing:-.2px}
 .top .sub{font-size:12px;opacity:.9;margin-top:2px}
@@ -29,7 +43,7 @@ header.top{background:linear-gradient(135deg,#0b3d91,#1666c1);color:#fff}
 .filterbar .wrap{display:flex;gap:8px;flex-wrap:wrap;align-items:center;padding:11px 16px}
 .filterbar .flabel{font-size:12px;color:var(--muted);font-weight:700;margin-right:2px}
 .chip{border:1px solid #d7e2f4;background:var(--chip);color:#264a7d;border-radius:999px;padding:7px 14px;font-size:13.5px;font-weight:700;cursor:pointer;transition:.12s}
-.chip:hover{border-color:#9dbdea}
+.chip:hover{border-color:#8fcec3}
 .chip.on{background:var(--brand);border-color:var(--brand);color:#fff}
 
 /* Layout */
@@ -63,7 +77,7 @@ header.top{background:linear-gradient(135deg,#0b3d91,#1666c1);color:#fff}
 .listhd .count{font-size:12px;color:var(--muted)}
 .cards{display:grid;grid-template-columns:repeat(auto-fill,minmax(240px,1fr));gap:12px;margin-top:12px}
 .mcard{border:1px solid var(--line);border-radius:12px;padding:12px;cursor:pointer;background:#fff;transition:.12s}
-.mcard:hover{border-color:#9dbdea;box-shadow:var(--shadow);transform:translateY(-1px)}
+.mcard:hover{border-color:#8fcec3;box-shadow:var(--shadow);transform:translateY(-1px)}
 .mcard .row1{display:flex;align-items:center;gap:8px}
 .pchip{font-size:11px;font-weight:800;color:#fff;padding:2px 8px;border-radius:999px;white-space:nowrap}
 .mcard .nm{font-weight:800;font-size:15px}
@@ -122,9 +136,9 @@ header.top{background:linear-gradient(135deg,#0b3d91,#1666c1);color:#fff}
 .org-box{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 16px;text-align:center;min-width:150px;box-shadow:var(--shadow)}
 .org-box .pos{display:block;font-size:11.5px;color:var(--muted);margin-bottom:3px}
 .org-box .who{display:block;font-size:16px;font-weight:800}
-.org-box.president{background:linear-gradient(135deg,#0b3d91,#1666c1);border:0;color:#fff;min-width:180px}
+.org-box.president{background:linear-gradient(135deg,#152538,#1a2f4b);border:0;color:#fff;min-width:180px}
 .org-box.president .pos{color:rgba(255,255,255,.85)}
-.org-box.pm{background:#12356e;border:0;color:#fff;min-width:170px}
+.org-box.pm{background:#234064;border:0;color:#fff;min-width:170px}
 .org-box.pm .pos{color:rgba(255,255,255,.85)}
 .org-box.dpm{background:#eef3fb;border-color:#cddcf3}
 .org-grid{display:grid;grid-template-columns:repeat(4,1fr);gap:10px;margin-top:6px}
