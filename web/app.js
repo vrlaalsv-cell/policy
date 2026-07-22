@@ -268,12 +268,10 @@
     }).join("");
   })();
 
-  // 진입(로그인) 화면
-  function enter(view) { state.view = view; document.getElementById("login").classList.add("hidden"); applyView(); }
-  Array.prototype.forEach.call(document.querySelectorAll(".loginpanel"), function (p) {
-    p.onclick = function () { enter(p.getAttribute("data-view")); };
-  });
-  document.getElementById("homeBtn").onclick = function () { document.getElementById("login").classList.remove("hidden"); };
+  // 진입 뷰: URL ?view=assembly|cabinet (기본 assembly). 랜딩페이지의 국회/청와대 카드에서 연결됨.
+  var initialView = new URLSearchParams(location.search).get("view");
+  if (initialView === "cabinet" || initialView === "assembly") state.view = initialView;
+  document.getElementById("homeBtn").onclick = function () { window.location.href = document.referrer || "/"; };
 
   renderViewToggle(); applyView(); renderAll();
 })();
