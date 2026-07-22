@@ -1,13 +1,23 @@
 {
-  "name": "policy-app",
+  "name": "policy",
   "version": "0.1.0",
   "private": true,
+  "description": "국회·청와대 에너지 정책 성향 분석 - 정책돋보기",
   "scripts": {
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "eslint"
+    "lint": "eslint",
+    "serve": "node pipeline/serve.mjs",
+    "collect:members": "node pipeline/1_collect_members.mjs",
+    "collect:utterances": "node pipeline/2_collect_utterances.mjs",
+    "analyze": "node pipeline/3_analyze_gemini.mjs",
+    "analyze:cabinet": "node pipeline/4_analyze_cabinet.mjs",
+    "collect:news": "node pipeline/5_collect_news.mjs",
+    "build:data": "node pipeline/build_web_data.mjs",
+    "pipeline": "npm run collect:members && npm run collect:utterances && npm run analyze && npm run build:data"
   },
+  "engines": { "node": ">=18" },
   "dependencies": {
     "next": "16.2.11",
     "react": "19.2.4",

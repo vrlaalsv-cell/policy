@@ -1,0 +1,153 @@
+<!DOCTYPE html>
+<html lang="ko">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<title>국회·행정부 에너지 정책 성향 대시보드</title>
+<link rel="stylesheet" href="styles.css">
+</head>
+<body>
+
+<!-- 진입(로그인) 화면 -->
+<div id="login" class="login">
+  <div class="login-title">
+    <h1>국회 · 행정부 에너지 정책 성향 대시보드</h1>
+    <p>분석할 영역을 선택하세요</p>
+  </div>
+  <div class="login-panels">
+    <button class="loginpanel assembly" data-view="assembly">
+      <svg class="emblem" viewBox="0 0 140 120" aria-hidden="true">
+        <path d="M40 52 A30 30 0 0 1 100 52 Z" fill="#3d7ec2"/>
+        <path d="M70 22 A30 30 0 0 1 100 52 L70 52 Z" fill="#3aa99a"/>
+        <rect x="30" y="53" width="80" height="9" rx="1.5" fill="#1c4e86"/>
+        <g fill="#295f97">
+          <rect x="36" y="64" width="8" height="34"/><rect x="52" y="64" width="8" height="34"/>
+          <rect x="68" y="64" width="8" height="34"/><rect x="84" y="64" width="8" height="34"/>
+          <rect x="100" y="64" width="8" height="34"/>
+        </g>
+        <rect x="26" y="99" width="88" height="10" rx="1.5" fill="#1c4e86"/>
+      </svg>
+      <span class="ltitle">대한민국 국회</span>
+      <span class="lsub">국회의원 300명 · 지역구 · 에너지 성향</span>
+      <span class="lgo">국회로 들어가기 →</span>
+    </button>
+    <button class="loginpanel cabinet" data-view="cabinet">
+      <svg class="emblem" viewBox="0 0 180 120" aria-hidden="true">
+        <!-- 한옥 지붕: 오목한 처마 -->
+        <path d="M90 18 C118 22 142 35 160 52 C162 54 159 59 155 57 L150 55 C128 47 110 44 90 44 C70 44 52 47 30 55 L25 57 C21 59 18 54 20 52 C38 35 62 22 90 18 Z" fill="#16305c"/>
+        <path d="M34 57 L146 57 L138 65 L42 65 Z" fill="#25497c"/>
+        <rect x="46" y="65" width="88" height="33" fill="#20406f"/>
+        <g fill="#dbe6f5">
+          <rect x="56" y="72" width="10" height="21"/><rect x="74" y="72" width="10" height="21"/>
+          <rect x="96" y="72" width="10" height="21"/><rect x="114" y="72" width="10" height="21"/>
+        </g>
+        <rect x="36" y="98" width="108" height="10" rx="1.5" fill="#16305c"/>
+      </svg>
+      <span class="ltitle">청와대</span>
+      <span class="lsub">총리 · 국무위원 · 국무회의 성향</span>
+      <span class="lgo">청와대로 들어가기 →</span>
+    </button>
+  </div>
+  <div class="login-foot">SK E&amp;S 정책 인텔리전스 · 내부 참고용</div>
+</div>
+
+<header class="top">
+  <div class="wrap">
+    <div>
+      <h1>국회 · 행정부 에너지 정책 성향 대시보드</h1>
+      <div class="sub">SK E&amp;S 정책 인텔리전스 · LNG · 수소 · 재생E · 도시가스 · 전력</div>
+    </div>
+    <span class="sample-badge" id="sampleBadge">샘플 데이터</span>
+    <div class="spacer"></div>
+    <button id="homeBtn" class="homebtn" title="처음 화면">⌂ 처음</button>
+    <div class="viewtoggle" id="viewToggle">
+      <button data-view="assembly" class="on">국회</button>
+      <button data-view="cabinet">청와대</button>
+    </div>
+  </div>
+</header>
+
+<div class="filterbar" id="filterbarWrap">
+  <div class="wrap">
+    <span class="flabel">사업별</span>
+    <div id="filterChips" style="display:flex;gap:8px;flex-wrap:wrap"></div>
+  </div>
+</div>
+
+<main class="wrap">
+  <!-- 국회 뷰 -->
+  <div class="grid" id="assemblyView">
+    <section>
+      <div class="panel">
+        <div class="hd"><h2 id="mapTitle">전국 지도</h2></div>
+        <div class="bd">
+          <div id="map"></div>
+          <div class="legend" id="legend"></div>
+          <div class="maphint">육각형 1개 = 국회의원 1명 · 지역별로 묶어 배치 · <b>클릭하면 프로필·성향</b>이 열립니다.</div>
+        </div>
+      </div>
+      <div class="stats" id="stats" style="margin-top:14px"></div>
+    </section>
+
+    <section>
+      <div class="panel">
+        <div class="hd" style="justify-content:space-between">
+          <div class="listhd" style="flex:1">
+            <h2 id="listTitle" style="margin:0;color:var(--brand);font-size:14.5px">의원 목록</h2>
+          </div>
+          <span class="count" id="listCount"></span>
+        </div>
+        <div class="bd">
+          <div class="controls">
+            <input id="search" type="search" placeholder="이름·정당·지역구 검색" autocomplete="off">
+            <select id="regionSel"></select>
+          </div>
+          <div class="cards" id="cards"></div>
+        </div>
+      </div>
+    </section>
+  </div>
+
+  <!-- 청와대 뷰: 대통령 산하 국무총리·국무위원 조직도 -->
+  <div id="cabinetView" class="hidden">
+    <div class="panel" style="margin:20px 0 60px">
+      <div class="hd"><h2>대한민국 정부 · 국무총리 및 국무위원 조직도</h2></div>
+      <div class="bd">
+        <div class="org">
+          <div class="org-tier">
+            <div class="org-box president"><span class="pos">대통령</span><span class="who">이재명</span></div>
+          </div>
+          <div class="org-conn"></div>
+          <div class="org-tier">
+            <div class="org-box pm"><span class="pos">국무총리</span><span class="who">한성숙</span></div>
+          </div>
+          <div class="org-conn"></div>
+          <div class="org-tier">
+            <div class="org-box dpm"><span class="pos">부총리 겸 재정경제부장관</span><span class="who">구윤철</span></div>
+            <div class="org-box dpm"><span class="pos">부총리 겸 과학기술정보통신부장관</span><span class="who">배경훈</span></div>
+          </div>
+          <div class="org-conn"></div>
+          <div class="org-grid" id="ministers"></div>
+          <div class="org-legend">
+            <span class="lg"><span class="dot concurrent"></span>국회의원 겸직</span>
+            <span class="lg"><span class="dot energy"></span>에너지·산업 관련 부처</span>
+            <span class="lg"><span class="dot vacant"></span>공석</span>
+          </div>
+          <p class="org-note">※ 2026년 7월 기준 공개 조직도(참고용). 국무회의 회의록을 <code>data/cabinet_minutes/</code> 에 넣고 <code>pipeline/4_analyze_cabinet.mjs</code> 실행 시 국무위원별 에너지 성향이 이 카드에 추가됩니다.</p>
+        </div>
+      </div>
+    </div>
+  </div>
+</main>
+
+<div class="foot" id="foot"></div>
+
+<!-- Detail modal -->
+<div class="overlay" id="overlay">
+  <div class="modal" id="modal"></div>
+</div>
+
+<script src="data.js"></script>
+<script src="app.js"></script>
+</body>
+</html>
