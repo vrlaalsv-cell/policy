@@ -4,6 +4,7 @@
 <meta charset="UTF-8">
 <meta name="viewport" content="width=device-width, initial-scale=1.0">
 <title>국회·행정부 에너지 정책 성향 대시보드</title>
+<link rel="stylesheet" type="text/css" href="https://cdn.jsdelivr.net/gh/moonspam/NanumSquare@2.0/nanumsquare.css">
 <link rel="stylesheet" href="styles.css">
 </head>
 <body>
@@ -16,16 +17,15 @@
 
 <header class="top">
   <div class="wrap">
-    <div>
-      <h1>국회 · 행정부 에너지 정책 성향 대시보드</h1>
-      <div class="sub">SK E&amp;S 정책 인텔리전스 · LNG · 수소 · 재생E · 도시가스 · 전력</div>
+    <div class="brandwrap">
+      <img src="images/logo.png" alt="정책돋보기" class="brand-logo">
     </div>
     <span class="sample-badge" id="sampleBadge">샘플 데이터</span>
     <div class="spacer"></div>
     <button id="homeBtn" class="homebtn" title="처음 화면">⌂ 처음</button>
     <div class="viewtoggle" id="viewToggle">
-      <button data-view="assembly" class="on">국회</button>
       <button data-view="cabinet">청와대</button>
+      <button data-view="assembly" class="on">국회</button>
     </div>
   </div>
 </header>

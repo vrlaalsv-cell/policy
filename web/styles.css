@@ -8,7 +8,7 @@ html,body{margin:0}
 body{
   position:relative; overflow-x:hidden;
   background:var(--bg); color:var(--ink); line-height:1.55;
-  font-family:"Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",system-ui,-apple-system,sans-serif;
+  font-family:"NanumSquare","Malgun Gothic","맑은 고딕","Apple SD Gothic Neo","Noto Sans KR",system-ui,-apple-system,sans-serif;
   font-size:15px;
 }
 a{color:var(--brand2)}
@@ -28,15 +28,17 @@ a{color:var(--brand2)}
 }
 
 /* Header */
-header.top{background:linear-gradient(135deg,#152538,#1a2f4b);color:#fff}
+header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px}
 .top h1{font-size:18px;margin:0;font-weight:800;letter-spacing:-.2px}
+.brandwrap{display:flex;align-items:center}
+.brand-logo{height:84px;width:auto;display:block}
 .top .sub{font-size:12px;opacity:.9;margin-top:2px}
 .sample-badge{background:#ffcf33;color:#4a3a00;font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px}
 .spacer{flex:1}
-.viewtoggle{display:flex;background:rgba(255,255,255,.16);border-radius:999px;padding:3px}
-.viewtoggle button{border:0;background:transparent;color:#fff;font-weight:700;font-size:13px;padding:6px 14px;border-radius:999px;cursor:pointer}
-.viewtoggle button.on{background:#fff;color:var(--brand)}
+.viewtoggle{display:flex;background:var(--chip);border-radius:999px;padding:3px}
+.viewtoggle button{border:0;background:transparent;color:var(--brand);font-weight:700;font-size:13px;padding:6px 14px;border-radius:999px;cursor:pointer}
+.viewtoggle button.on{background:var(--brand);color:#fff}
 
 /* Filter bar */
 .filterbar{position:sticky;top:0;z-index:20;background:rgba(255,255,255,.94);backdrop-filter:blur(6px);border-bottom:1px solid var(--line)}
@@ -126,8 +128,8 @@ header.top{background:linear-gradient(135deg,#152538,#1a2f4b);color:#fff}
 .cards{max-height:70vh;overflow:auto;padding-right:4px}
 @media (max-width:860px){ .cards{max-height:560px} }
 
-.homebtn{border:0;background:rgba(255,255,255,.16);color:#fff;font-weight:700;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;margin-right:8px}
-.homebtn:hover{background:rgba(255,255,255,.26)}
+.homebtn{border:0;background:var(--chip);color:var(--brand);font-weight:700;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;margin-right:8px}
+.homebtn:hover{background:#e4e9f1}
 
 /* 청와대 조직도 */
 .org{padding:6px 4px 4px}
@@ -136,7 +138,7 @@ header.top{background:linear-gradient(135deg,#152538,#1a2f4b);color:#fff}
 .org-box{background:#fff;border:1px solid var(--line);border-radius:11px;padding:11px 16px;text-align:center;min-width:150px;box-shadow:var(--shadow)}
 .org-box .pos{display:block;font-size:11.5px;color:var(--muted);margin-bottom:3px}
 .org-box .who{display:block;font-size:16px;font-weight:800}
-.org-box.president{background:linear-gradient(135deg,#152538,#1a2f4b);border:0;color:#fff;min-width:180px}
+.org-box.president{background:#1a2f4b;border:0;color:#fff;min-width:180px}
 .org-box.president .pos{color:rgba(255,255,255,.85)}
 .org-box.pm{background:#234064;border:0;color:#fff;min-width:170px}
 .org-box.pm .pos{color:rgba(255,255,255,.85)}
