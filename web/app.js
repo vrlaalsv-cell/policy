@@ -47,7 +47,7 @@
   var regionCells = {};   // region -> [[q,r],...]
   (function layout() {
     var byRegion = {};
-    MEMBERS.forEach(function (m) { var rg = regionOf(m); if (rg === "PROP") return; (byRegion[rg] = byRegion[rg] || []).push(m); });
+    MEMBERS.forEach(function (m) { var rg = regionOf(m); (byRegion[rg] = byRegion[rg] || []).push(m); });
     var codes = Object.keys(byRegion), occupied = {}, remaining = {};
     codes.forEach(function (c) { regionCells[c] = []; remaining[c] = byRegion[c].length; });
     for (var d = 0; d < 140; d++) {
@@ -116,7 +116,7 @@
       var t = e.target.closest ? e.target.closest(".hexm") : null;
       if (t) openModal(byId[t.getAttribute("data-id")]);
     });
-    document.getElementById("mapTitle").textContent = "전국 지도 · 지역구 " + Object.keys(cellOf).length + "명" + (state.business === "all" ? " (정당)" : " (" + bizLabel(state.business) + " 우호도)");
+    document.getElementById("mapTitle").textContent = "전국 지도 · " + Object.keys(cellOf).length + "명" + (state.business === "all" ? " (정당)" : " (" + bizLabel(state.business) + " 우호도)");
     renderLegend();
   }
 
@@ -268,10 +268,75 @@
     }).join("");
   })();
 
+  // ── 청와대 회의록 분석 (window.CABINET_DATA) ──
+  var CAB = window.CABINET_DATA || null;
+  function bizLabelC(id) { var m = { LNG: "LNG", H2: "수소", RE: "재생E", CITYGAS: "도시가스", POWER: "전력" }; return m[id] || id; }
+  function stmtHTML(q) {
+    var s = stanceInfo(q.stance);
+    var biz = (q.businesses || []).map(bizLabelC).join(", ");
+    return '<div class="stmt"><div class="sh">' +
+      (q.speaker ? '<span class="sp">' + q.speaker + '</span><span class="rl">' + (q.role || "") + "</span>" : "") +
+      '<span class="slv" style="background:' + s.color + '">' + s.label + "</span>" +
+      (biz ? '<span class="rl">[' + biz + "]</span>" : "") +
+      '<span class="mt">' + (q.meeting || "") + "</span></div>" +
+      '<div class="qt">“' + q.quote + '”</div>' + (q.note ? '<div class="nt">→ ' + q.note + "</div>" : "") + "</div>";
+  }
+  function enrichCabinet() {
+    if (!CAB) return;
+    var byName = {}; CAB.speakers.forEach(function (s) { byName[s.name] = s; });
+    Array.prototype.forEach.call(document.querySelectorAll("#cabinetView .org-box"), function (box) {
+      var whoEl = box.querySelector(".who"); if (!whoEl) return;
+      var sp = byName[whoEl.textContent.trim()]; if (!sp) return;
+      var chips = BIZ.filter(function (b) { return sp.stance[b.id] && sp.stance[b.id] !== "unknown"; })
+        .map(function (b) { var s = stanceInfo(sp.stance[b.id]); return '<span class="ob" style="background:' + s.color + '" title="' + b.label + " " + s.label + '">' + b.label + "</span>"; }).join("");
+      if (chips) { var row = document.createElement("div"); row.className = "obadges"; row.innerHTML = chips; box.appendChild(row); }
+      box.classList.add("clickable");
+      box.addEventListener("click", function () { openCabinetModal(sp); });
+    });
+  }
+  function openCabinetModal(sp) {
+    var h = '<div class="mhd"><div><div style="font-size:19px;font-weight:800">' + sp.name + '</div><div style="font-size:12.5px;color:var(--muted);margin-top:5px">' + (sp.role || "") + " · 회의록 발언 " + sp.count + '건</div></div><button class="x" aria-label="닫기">×</button></div><div class="mbd">';
+    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin-bottom:2px">사업별 성향</div><div class="stancegrid">' +
+      BIZ.map(function (b) { var s = stanceInfo(sp.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
+    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 4px">근거 발언 (' + sp.quotes.length + ")</div>";
+    h += sp.quotes.map(stmtHTML).join("");
+    h += '<div class="disc">회의록 원문 발췌 기반. 성향은 SK E&amp;S 사업 관점(우호/중립/비우호) 해석입니다.</div></div>';
+    var modal = document.getElementById("modal"); modal.innerHTML = h;
+    modal.querySelector(".x").onclick = closeModal;
+    document.getElementById("overlay").classList.add("on");
+  }
+  function renderCabinetSummary() {
+    if (!CAB) return; var host = document.getElementById("cabSummary"); if (!host) return;
+    function cs(n, l, c) { return '<div class="cs"><div class="n"' + (c ? ' style="color:' + c + '"' : "") + ">" + n + '</div><div class="l">' + l + "</div></div>"; }
+    host.innerHTML = cs(CAB.totalStatements, "발췌 발언") + cs(CAB.speakers.length, "발언자") +
+      cs(CAB.stanceCount.favor || 0, "우호", META.stance.favor.color) + cs(CAB.stanceCount.neutral || 0, "중립", META.stance.neutral.color) + cs(CAB.stanceCount.oppose || 0, "비우호", META.stance.oppose.color);
+  }
+  var cabBiz = "all";
+  function renderCabChips() {
+    if (!CAB) return; var host = document.getElementById("cabBizChips"); if (!host) return; host.innerHTML = "";
+    META.businesses.forEach(function (b) {
+      var cnt = b.id === "all" ? CAB.totalStatements : (CAB.bizCount[b.id] || 0);
+      var el = document.createElement("button"); el.className = "chip" + (cabBiz === b.id ? " on" : "");
+      el.textContent = b.label + " " + cnt; el.onclick = function () { cabBiz = b.id; renderCabChips(); renderCabStatements(); };
+      host.appendChild(el);
+    });
+  }
+  function renderCabStatements() {
+    if (!CAB) return; var host = document.getElementById("cabStatements"); if (!host) return;
+    var list;
+    if (cabBiz === "all") { var seen = {}; list = []; BIZ.forEach(function (b) { (CAB.byBusiness[b.id] || []).forEach(function (q) { var k = q.speaker + "|" + (q.quote || "").slice(0, 30); if (!seen[k]) { seen[k] = 1; list.push(q); } }); }); }
+    else list = (CAB.byBusiness[cabBiz] || []).slice();
+    var ord = { oppose: 0, favor: 1, neutral: 2 };
+    list.sort(function (a, b) { return (ord[a.stance] - ord[b.stance]) || (a.meeting < b.meeting ? 1 : -1); });
+    var cntEl = document.getElementById("cabStmtCount"); if (cntEl) cntEl.textContent = list.length + "건";
+    host.innerHTML = list.map(stmtHTML).join("") || '<div style="color:var(--muted);font-size:13px">해당 사업 발언이 없습니다.</div>';
+  }
+
   // 진입 뷰: URL ?view=assembly|cabinet (기본 assembly). 랜딩페이지의 국회/청와대 카드에서 연결됨.
   var initialView = new URLSearchParams(location.search).get("view");
   if (initialView === "cabinet" || initialView === "assembly") state.view = initialView;
   document.getElementById("homeBtn").onclick = function () { window.location.href = document.referrer || "/"; };
 
   renderViewToggle(); applyView(); renderAll();
+  if (CAB) { enrichCabinet(); renderCabinetSummary(); renderCabChips(); renderCabStatements(); }
 })();
