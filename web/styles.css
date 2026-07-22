@@ -168,3 +168,23 @@ header.top{background:linear-gradient(135deg,#0b3d91,#1666c1);color:#fff}
 .org-note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.6}
 .org-note code{background:#eef1f6;border:1px solid #e0e6ef;border-radius:5px;padding:1px 5px;font-family:Consolas,monospace}
 @media (max-width:760px){ .org-grid{grid-template-columns:repeat(2,1fr)} }
+/* 조직도 카드 성향 색칩 + 클릭 */
+.obadges{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:8px}
+.obadges .ob{font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:5px;color:#fff}
+.org-box.clickable{cursor:pointer}
+.org-box.clickable:hover{box-shadow:0 0 0 2px rgba(22,102,193,.35), var(--shadow)}
+/* 회의록 분석 요약 */
+.cab-summary{display:flex;gap:10px;flex-wrap:wrap}
+.cab-summary .cs{flex:1;min-width:110px;background:#f8fafd;border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center}
+.cab-summary .cs .n{font-size:20px;font-weight:800}
+.cab-summary .cs .l{font-size:11px;color:var(--muted);margin-top:2px}
+/* 발언 카드 */
+.stmt{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.stmt .sh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.stmt .sp{font-weight:800;font-size:13.5px}
+.stmt .rl{font-size:11.5px;color:var(--muted)}
+.stmt .mt{font-size:11px;color:var(--muted);margin-left:auto}
+.stmt .qt{font-size:13px;line-height:1.6}
+.stmt .nt{font-size:11.5px;color:#2b3b57;margin-top:6px;background:#f7f9fc;border-radius:6px;padding:5px 8px}
+.slv{font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:6px;color:#fff}
+#cabStatements{max-height:620px;overflow:auto;padding-right:4px}

@@ -41,7 +41,7 @@ const SIDO = [
   { code: "JEONBUK", name: "전북", seats: 10, q: -3, r: 13 }, { code: "GWANGJU", name: "광주", seats: 8, q: -6, r: 16 },
   { code: "JEONNAM", name: "전남", seats: 10, q: -8, r: 18 }, { code: "GYEONGNAM", name: "경남", seats: 16, q: 1, r: 15 },
   { code: "ULSAN", name: "울산", seats: 6, q: 6, r: 13 }, { code: "BUSAN", name: "부산", seats: 18, q: 4, r: 15 },
-  { code: "JEJU", name: "제주", seats: 3, q: -9, r: 22 }, { code: "PROP", name: "비례대표", seats: 46, q: 8, r: 20 }
+  { code: "JEJU", name: "제주", seats: 3, q: -9, r: 22 }, { code: "PROP", name: "비례대표", seats: 46, q: 15, r: 12 }
 ];
 const KNOWN = Object.keys(META.parties);
 function canonParty(p) {
