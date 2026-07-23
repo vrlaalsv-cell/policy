@@ -215,6 +215,14 @@
     var l = NEWSLAB[id] || { label: id, color: "#5c6b82", bg: "#eef3fb" };
     return '<span class="nlab" style="background:' + l.bg + ";color:" + l.color + '">' + esc(l.label) + "</span>";
   }
+  // 발췌문에서 걸린 키워드만 굵게. (기사 텍스트는 외부 문자열이라 반드시 esc 먼저)
+  function markKeyword(text, kw) {
+    var out = esc(text);
+    if (!kw) return out;
+    var k = esc(kw), i = out.indexOf(k);
+    if (i < 0) return out;
+    return out.slice(0, i) + "<b>" + k + "</b>" + out.slice(i + k.length);
+  }
   // 사업 필터가 켜져 있으면 그 에너지원 기사를 위로. (원전은 사업 목록에 없어 필터 대상 아님)
   function newsSorted(m) {
     var list = newsOf(m).slice();
@@ -238,12 +246,13 @@
     }
     h += list.map(function (a) {
       var hl = state.business !== "all" && (a.labels || []).indexOf(state.business) >= 0;
-      var url = safeUrl(a.link);
+      var url = safeUrl(a.url || a.link);      // url = 복원된 언론사 원문, link = Google 뉴스 경유
       var t = esc(a.title);
       return '<div class="nw' + (hl ? " hl" : "") + '">' +
         '<div class="nlabs">' + (a.labels || []).map(newsChip).join("") + "</div>" +
         (url ? '<a class="nwt" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + t + "</a>"
              : '<span class="nwt">' + t + "</span>") +
+        (a.excerpt ? '<div class="nwx">' + markKeyword(a.excerpt, a.hl) + "</div>" : "") +
         '<div class="nwm">' + esc(a.press || "") + (a.press && a.date ? " · " : "") + esc(a.date || "") + "</div></div>";
     }).join("");
     h += '<div class="nwsrc">출처: ' + esc(NEWSMETA.source === "naver" ? "네이버 뉴스 검색" : "Google 뉴스") +

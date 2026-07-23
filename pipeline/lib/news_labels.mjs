@@ -14,7 +14,7 @@ export const NEWS_LABELS = [
   },
   {
     id: "RE", label: "재생E", color: "#0f7a4d", bg: "#eafaf1",
-    kw: ["재생에너지", "재생 에너지", "신재생", "태양광", "풍력", "RE100", "햇빛연금", "에너지전환", "에너지 전환"],
+    kw: ["재생에너지", "재생 에너지", "신재생", "태양광", "태양전지", "풍력", "RE100", "햇빛연금", "에너지전환", "에너지 전환"],
   },
   {
     id: "LNG", label: "LNG", color: "#b45309", bg: "#fdf3e3",
@@ -28,22 +28,41 @@ export const NEWS_LABELS = [
   {
     id: "POWER", label: "전력", color: "#1d4ed8", bg: "#e8eefc",
     kw: ["전력", "전기요금", "전기 요금", "한전", "한국전력", "송전", "변전", "계통", "발전소", "전력망", "에너지고속도로", "블랙아웃", "전력수급", "전기본", "전력거래소", "SMP"],
+    // 電力 아니라 全力 — "전력질주·전력투구·전력을 다해" 는 에너지 기사가 아니다
+    neg: /전심\s*전력|전력\s*질주|전력\s*투구|전력을?\s*다\s*해?|전력해|전력 다\b|총력전|사력을/g,
   },
 ];
 
+/** 라벨 판정용으로 오해 소지가 있는 표현을 지운 텍스트 */
+function scrub(text, L) {
+  const t = String(text || "");
+  return (L.neg ? t.replace(L.neg, " ") : t).toUpperCase();
+}
+
 /** 기사 제목+요약에서 검출된 에너지원 라벨 id 배열 (최대 max개, 구체적인 것 우선) */
 export function labelsOf(text, max = 3) {
-  const t = String(text || "").toUpperCase();
   const hit = [];
   for (const L of NEWS_LABELS) {
+    const t = scrub(text, L);
     if (L.kw.some((k) => t.includes(k.toUpperCase()))) hit.push(L.id);
   }
   return hit.slice(0, max);
 }
 
+/** 이 텍스트에서 실제로 걸린 키워드 하나 (화면에서 강조 표시용) */
+export function matchedKeyword(text, labelIds) {
+  const list = NEWS_LABELS.filter((L) => !labelIds || labelIds.includes(L.id));
+  for (const L of list) {
+    const t = scrub(text, L);
+    const k = L.kw.find((x) => t.includes(x.toUpperCase()));
+    if (k) return k;
+  }
+  return "";
+}
+
 // 스포츠·연예 기사 걸러내기 (동명이인 선수/코치가 "전력분석·전력 재정비" 같은 표현으로 걸린다).
 // ⚠ '감독'은 넣지 말 것 — "한국전력감독원" 같은 진짜 에너지 기사가 함께 날아간다.
-export const NOISE_RE = /프로야구|프로농구|프로축구|KBL|KBO|코칭스태프|육성선수|플레이오프|타율|투수|포수|골키퍼|미드필더|드래프트|트레이드|아이돌|예능/;
+export const NOISE_RE = /프로야구|프로농구|프로축구|KBL|KBO|코칭스태프|육성선수|플레이오프|타율|투수|포수|골키퍼|미드필더|드래프트|트레이드|아이돌|예능|안타|홈런|타점|이닝|고척|잠실구장|시즌 [0-9]/;
 
 /** 대시보드로 넘길 라벨 메타(키워드는 제외 — 화면에서 쓰지 않음) */
 export function labelMeta() {
