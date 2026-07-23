@@ -32,7 +32,7 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .top .wrap{display:flex;align-items:center;gap:14px;flex-wrap:wrap;padding:16px}
 .top h1{font-size:18px;margin:0;font-weight:800;letter-spacing:-.2px}
 .brandwrap{display:flex;align-items:center}
-.brand-logo{height:84px;width:auto;display:block}
+.brand-logo{height:64px;width:auto;display:block}
 .top .sub{font-size:12px;opacity:.9;margin-top:2px}
 .sample-badge{background:#ffcf33;color:#4a3a00;font-weight:800;font-size:11px;padding:3px 9px;border-radius:999px}
 .spacer{flex:1}
