@@ -33,7 +33,7 @@ npm run serve      # → http://localhost:8137
 ### 폴더 구조
 
 ```
-web/       # 대시보드(정적) — index.html · styles.css · app.js · data.js
+web/       # 대시보드(정적) — index.html · styles.css · app.js · data.js · news.js
 data/      # DB(정형 데이터) — 파이프라인 산출물
   cabinet_minutes/  # 국무회의 회의록을 여기에 넣으세요 (지정 폴더)
   raw/              # 발언 빅데이터 EXCEL/CSV 원본 (수동 다운로드)
@@ -44,6 +44,18 @@ pipeline/  # 수집·분석 스크립트 (Node, 외부 패키지 없음)
   lib/ (env·assembly·gemini·config)
 .env.example
 ```
+
+### 의원 상세 모달 — 최근 기사 (에너지원 라벨)
+
+의원 카드/육각형을 클릭하면 열리는 모달 **최하단**에, 그 의원의 **최근 90일 에너지 기사**가
+`원전 · 수소 · 재생E · LNG · 도시가스 · 전력` 라벨과 함께 붙습니다.
+
+```bash
+npm run collect:news    # 수집 → data/news.json + web/news.js (약 3분, 300명)
+```
+
+`.env` 에 네이버 키가 있으면 네이버 검색 API, 없으면 **Google 뉴스 RSS**(키 불필요)로 자동 대체됩니다.
+사업별 필터가 켜져 있으면 해당 에너지원 기사가 위로 올라옵니다. 자세한 옵션·한계는 `pipeline/README.md`.
 
 ### 설계 원칙
 
@@ -64,7 +76,7 @@ pipeline/  # 수집·분석 스크립트 (Node, 외부 패키지 없음)
    npm run build:data          # 병합 → web/data.js (대시보드 갱신)
    # 선택:
    npm run analyze:cabinet     # 국무회의 지정폴더 분석 → data/cabinet.json
-   npm run collect:news        # 네이버 뉴스 → data/news.json
+   npm run collect:news        # 의원별 최근 90일 에너지 기사 → data/news.json + web/news.js
    ```
    또는 한 번에: `npm run pipeline`
 
@@ -85,6 +97,14 @@ pipeline/  # 수집·분석 스크립트 (Node, 외부 패키지 없음)
 - 성향 라벨은 **AI 요약·참고용**입니다. 항상 **근거 발언 원문·출처**와 함께 확인하세요. (화면에 면책 표기)
 - 실명 정치인 공개 데이터를 다루므로 개인정보·명예에 유의하고, 출처를 표기합니다.
 - 엔드포인트 서비스 코드/필드는 착수 시 공식 명세서로 1회 재검증하세요.
+
+## NAS 배포 (7.yes-i-can.kr)
+
+Synology NAS 에 nginx + Cloudflare 터널 2컨테이너로 올린다. 절차·트러블슈팅은 **[DEPLOY.md](DEPLOY.md)**.
+
+```bash
+sudo docker compose up -d --build
+```
 
 ## Vercel 배포
 

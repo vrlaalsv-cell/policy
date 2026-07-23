@@ -16,7 +16,8 @@ if (!members) {
   process.exit(1);
 }
 const analysis = readJSON("analysis.json", []);
-const news = readJSON("news.json", {});
+const newsRaw = readJSON("news.json", {});
+const news = newsRaw.byMember || newsRaw;   // {meta,byMember} / 구버전 flat map 둘 다 지원
 const byId = Object.fromEntries(analysis.map((a) => [a.memberId, a]));
 
 const merged = members.map((m) => {
