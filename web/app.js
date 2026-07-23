@@ -526,7 +526,8 @@
       updateBtn.textContent = "🔄 업데이트 중…";
       updateBtn.disabled = true;
 
-      fetch("/api/update", { method: "POST" })
+      var endpoint = state.view === "cabinet" ? "/api/update-cabinet" : "/api/update";
+      fetch(endpoint, { method: "POST" })
         .then(function (res) { return res.json(); })
         .then(function (data) {
           localStorage.setItem("lastUpdateTime", new Date().toISOString());
