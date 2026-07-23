@@ -303,11 +303,17 @@
     var commTxt = (m.committee && m.committee.length) ? m.committee.join(", ") : "-";
     var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
-    h += '<div class="mprofile">' +
+    h += '<div class="mprofile-wrap">' +
+      // jpg → png 순으로 시도하고, 둘 다 없으면 사진 칸을 숨긴다(깨진 이미지 아이콘 방지).
+      '<div class="mprofile-photo"><img src="images/parliament_photos/' + esc(m.name) + '.jpg"' +
+      ' onerror="if(!this.dataset.alt){this.dataset.alt=1;this.src=\'images/parliament_photos/' + esc(m.name) + '.png\'}else{this.parentNode.style.display=\'none\'}"' +
+      ' alt="' + esc(m.name) + '"></div>' +
+      '<div class="mprofile">' +
       '<div><span class="pl">정당</span><span class="pv">' + m.party + '</span></div>' +
       '<div><span class="pl">선거구</span><span class="pv">' + m.district + '</span></div>' +
       '<div><span class="pl">선수</span><span class="pv">' + termsTxt + '</span></div>' +
-      '<div><span class="pl">소속위원회</span><span class="pv">' + commTxt + '</span></div></div>';
+      '<div><span class="pl">소속위원회</span><span class="pv">' + commTxt + '</span></div>' +
+      '</div></div>';
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:4px 0 2px">사업별 우호도</div><div class="stancegrid">' +
       BIZ.map(function (b) { var s = stanceInfo(m.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
     h += aiHTML(m.ai);
@@ -479,6 +485,8 @@
   var initialView = new URLSearchParams(location.search).get("view");
   if (initialView === "cabinet" || initialView === "assembly") { state.view = initialView; if (landing) landing.classList.add("hidden"); }
   document.getElementById("homeBtn").onclick = function () { if (landing) landing.classList.remove("hidden"); };
+  var brandLogo = document.querySelector(".brandwrap");
+  if (brandLogo) { brandLogo.style.cursor = "pointer"; brandLogo.onclick = function () { if (landing) landing.classList.remove("hidden"); }; }
 
   // 마지막 업데이트 시각 표시
   function updateLastUpdateTime() {
