@@ -160,3 +160,37 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .org-note{font-size:11.5px;color:var(--muted);text-align:center;margin-top:12px;line-height:1.6}
 .org-note code{background:#eef1f6;border:1px solid #e0e6ef;border-radius:5px;padding:1px 5px;font-family:Consolas,monospace}
 @media (max-width:760px){ .org-grid{grid-template-columns:repeat(2,1fr)} }
+/* 조직도 카드 성향 색칩 + 클릭 */
+.obadges{display:flex;flex-wrap:wrap;gap:3px;justify-content:center;margin-top:8px}
+.obadges .ob{font-size:9.5px;font-weight:800;padding:1px 6px;border-radius:5px;color:#fff}
+.org-box.clickable{cursor:pointer}
+.org-box.clickable:hover{box-shadow:0 0 0 2px rgba(22,102,193,.35), var(--shadow)}
+/* 회의록 분석 요약 */
+.cab-summary{display:flex;gap:10px;flex-wrap:wrap}
+.cab-summary .cs{flex:1;min-width:110px;background:#f8fafd;border:1px solid var(--line);border-radius:10px;padding:10px 12px;text-align:center}
+.cab-summary .cs .n{font-size:20px;font-weight:800}
+.cab-summary .cs .l{font-size:11px;color:var(--muted);margin-top:2px}
+/* 발언 카드 */
+.stmt{border:1px solid var(--line);border-radius:10px;padding:10px 12px;margin-bottom:8px}
+.stmt .sh{display:flex;align-items:center;gap:8px;flex-wrap:wrap;margin-bottom:5px}
+.stmt .sp{font-weight:800;font-size:13.5px}
+.stmt .rl{font-size:11.5px;color:var(--muted)}
+.stmt .mt{font-size:11px;color:var(--muted);margin-left:auto}
+.stmt .qt{font-size:13px;line-height:1.6}
+.stmt .nt{font-size:11.5px;color:#2b3b57;margin-top:6px;background:#f7f9fc;border-radius:6px;padding:5px 8px}
+.slv{font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:6px;color:#fff}
+#cabStatements{max-height:620px;overflow:auto;padding-right:4px}
+
+/* 처음(랜딩) 화면 — 동료 정책돋보기 디자인 */
+.landing{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;overflow:auto;padding:36px 28px}
+.landing.hidden{display:none !important}
+.landing .bg-decor{z-index:0}
+.landing-top{position:relative;z-index:1;display:flex;justify-content:flex-start}
+.landing-logo{height:auto;width:min(84vw,360px);display:block}
+.landing-cards{position:relative;z-index:1;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:32px;width:100%;max-width:880px;margin:0 auto;align-content:center;transform:translateY(-16px)}
+.navcard{position:relative;aspect-ratio:1/1;border:1px solid rgba(0,0,0,.06);background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(20,40,80,.10);overflow:hidden;cursor:pointer;padding:0}
+.navcard img{width:100%;height:100%;object-fit:contain;padding:40px;transition:transform .3s ease}
+.navcard:hover img{transform:scale(1.05)}
+.navcard-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);color:#fff;font-size:18px;font-weight:800;letter-spacing:.5px;opacity:0;transition:background .3s ease,opacity .3s ease}
+.navcard:hover .navcard-ov{background:rgba(0,0,0,.6);opacity:1}
+@media (max-width:640px){ .landing-cards{grid-template-columns:1fr;gap:18px;max-width:420px} .navcard-ov{opacity:1;background:rgba(0,0,0,.28)} }

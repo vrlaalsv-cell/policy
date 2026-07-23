@@ -8,9 +8,54 @@
   var BIZ = META.businesses.filter(function (b) { return b.id !== "all"; });
   var byId = {}; MEMBERS.forEach(function (m) { byId[m.id] = m; });
 
-  // 앵커(시도 q,r) 및 이름/순서
-  var ANCHOR = {}, SIDONAME = {}, SIDOORDER = [];
-  SIDO.forEach(function (s) { ANCHOR[s.code] = [s.q, s.r]; SIDONAME[s.code] = s.name; SIDOORDER.push(s.code); });
+  // 이름/순서
+  var SIDONAME = {}, SIDOORDER = [];
+  SIDO.forEach(function (s) { SIDONAME[s.code] = s.name; SIDOORDER.push(s.code); });
+  // 오프셋(col,row) → axial (odd-r). ASCII 마스크를 화면 좌표로 변환.
+  function offAx(col, row) { return [col - Math.floor(row / 2), row]; }
+  // ── 한반도 실루엣 마스크 (X=지역구 셀, 합계 254). 마지막 그룹은 제주(분리). ──
+  var MASK = [
+    "    XXXXXX",
+    "   XXXXXXXXX",
+    "  XXXXXXXXXXXXX",
+    " XXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXX",
+    "XXXXXXXXXXXXXXXX",
+    " XXXXXXXXXXXXXXX",
+    " XXXXXXXXXXXXXX",
+    "  XXXXXXXXXXX",
+    "  XXXXXXXXXX",
+    "  XXXXXXXXXX",
+    "  XXXXXXXXXX",
+    "  XXXXXXXXXXX",
+    "  XXXXXXXXXXX",
+    "  XXXXXXXXXXX",
+    "   XXXXXXXXXX",
+    "   XXXXXXXXXX",
+    "   XXXXXXXXXX",
+    "   XXXXXXXXXX",
+    "    XXXXXXX",
+    "    XXXXXX",
+    "     XXXX",
+    "",
+    "   XXX"
+  ];
+  var MASKSET = {}, MASKLIST = [];
+  MASK.forEach(function (rowStr, row) {
+    for (var col = 0; col < rowStr.length; col++) {
+      if (rowStr.charAt(col) === "X") { var a = offAx(col, row); MASKSET[a[0] + "," + a[1]] = true; MASKLIST.push(a); }
+    }
+  });
+  // 시도 앵커(오프셋 col,row) — 한반도 지리 배치
+  var ANCHOR_OFF = {
+    SEOUL: [8, 2], INCHEON: [2, 4], GYEONGGI: [7, 5], GANGWON: [14, 3],
+    CHUNGNAM: [3, 9], SEJONG: [6, 9], CHUNGBUK: [9, 9], DAEJEON: [6, 11],
+    GYEONGBUK: [11, 11], DAEGU: [9, 13], JEONBUK: [3, 13], GYEONGNAM: [8, 16],
+    ULSAN: [12, 15], BUSAN: [10, 18], GWANGJU: [4, 18], JEONNAM: [4, 21], JEJU: [4, 24]
+  };
+  var ANCHOR = {};
+  Object.keys(ANCHOR_OFF).forEach(function (c) { ANCHOR[c] = offAx(ANCHOR_OFF[c][0], ANCHOR_OFF[c][1]); });
   function regionOf(m) { return ANCHOR[m.sido] ? m.sido : "PROP"; }
 
   var state = { view: "assembly", business: "all", region: "ALL", query: "" };
@@ -41,31 +86,44 @@
     return p.join(" ");
   }
 
-  // 각 의원에게 셀(q,r) 배정 — 모든 시도 앵커에서 링을 동시 확장(다중 소스).
-  // 같은 반경(d)에서 지역별로 가장 가까운 빈 셀을 차지 → 빈틈 없이 맞물린 연결 카토그램.
-  var cellOf = {};        // memberId -> {q,r}
+  // 지역구: 한반도 마스크 안에서 시도 앵커부터 링 확장(큰 시도 우선) → 셀 배정.
+  // 비례대표: 우측 세로 일렬.
+  var cellOf = {};        // memberId -> {q,r} (지역구) 또는 {fx,fy} (비례)
   var regionCells = {};   // region -> [[q,r],...]
   (function layout() {
     var byRegion = {};
     MEMBERS.forEach(function (m) { var rg = regionOf(m); if (rg === "PROP") return; (byRegion[rg] = byRegion[rg] || []).push(m); });
-    var codes = Object.keys(byRegion), occupied = {}, remaining = {};
-    codes.forEach(function (c) { regionCells[c] = []; remaining[c] = byRegion[c].length; });
-    for (var d = 0; d < 140; d++) {
-      var anyLeft = false;
-      for (var ci = 0; ci < codes.length; ci++) {
-        var code = codes[ci]; if (remaining[code] <= 0) continue; anyLeft = true;
-        var a = ANCHOR[code] || [0, 0], cells = ring(a[0], a[1], d);
-        for (var i = 0; i < cells.length && remaining[code] > 0; i++) {
-          var key = cells[i][0] + "," + cells[i][1];
-          if (!occupied[key]) { occupied[key] = true; regionCells[code].push(cells[i]); remaining[code]--; }
+    var codes = Object.keys(byRegion).sort(function (a, b) { return byRegion[b].length - byRegion[a].length; });
+    var occupied = {};
+    codes.forEach(function (code) {
+      var a = ANCHOR[code] || [0, 0], list = byRegion[code], cells = [];
+      for (var d = 0; d < 60 && cells.length < list.length; d++) {
+        var rg = ring(a[0], a[1], d);
+        for (var i = 0; i < rg.length && cells.length < list.length; i++) {
+          var key = rg[i][0] + "," + rg[i][1];
+          if (MASKSET[key] && !occupied[key]) { occupied[key] = true; cells.push(rg[i]); }
         }
       }
-      if (!anyLeft) break;
-    }
-    codes.forEach(function (code) {
-      byRegion[code].forEach(function (m, idx) { var c = regionCells[code][idx]; if (c) cellOf[m.id] = { q: c[0], r: c[1] }; });
+      regionCells[code] = cells;
+      list.forEach(function (m, idx) { if (cells[idx]) cellOf[m.id] = { q: cells[idx][0], r: cells[idx][1] }; });
     });
+    // 비례대표 → 우측 세로 나열 (한반도 높이에 맞춰 2~3열로 균형 배치)
+    var prop = MEMBERS.filter(function (m) { return regionOf(m) === "PROP"; });
+    if (prop.length) {
+      var maxx = -1e9, miny = 1e9, maxy = -1e9;
+      MASKLIST.forEach(function (a) { var p = px(a[0], a[1]); if (p.x > maxx) maxx = p.x; if (p.y < miny) miny = p.y; if (p.y > maxy) maxy = p.y; });
+      var vgap = SIZE * 1.75, hgap = SIZE * 1.9;
+      var perColMax = Math.max(1, Math.floor((maxy - miny) / vgap) + 1);
+      var cols = Math.max(1, Math.ceil(prop.length / perColMax));   // 한반도 높이에 맞춘 열 수 (2~3)
+      var perCol = Math.ceil(prop.length / cols);                    // 열별 균등 분배
+      var x0 = maxx + SIZE * 3.2, y0 = miny + SIZE * 0.6;
+      prop.forEach(function (m, i) {
+        var col = Math.floor(i / perCol), row = i % perCol;
+        cellOf[m.id] = { fx: x0 + col * hgap, fy: y0 + row * vgap };
+      });
+    }
   })();
+  function posOf(m) { var c = cellOf[m.id]; if (!c) return null; return c.fx != null ? { x: c.fx, y: c.fy } : px(c.q, c.r); }
 
   // ---------- filter chips ----------
   function renderChips() {
@@ -86,7 +144,7 @@
   function renderMap() {
     var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
     MEMBERS.forEach(function (m) {
-      var c = cellOf[m.id]; if (!c) return; var p = px(c.q, c.r);
+      var p = posOf(m); if (!p) return;
       if (p.x < minX) minX = p.x; if (p.y < minY) minY = p.y; if (p.x > maxX) maxX = p.x; if (p.y > maxY) maxY = p.y;
     });
     var W = (maxX - minX) + PAD * 2 + DRAW * 2, H = (maxY - minY) + PAD * 2 + DRAW * 2;
@@ -96,7 +154,7 @@
 
     var svg = '<svg viewBox="0 0 ' + W.toFixed(0) + ' ' + H.toFixed(0) + '" role="img" aria-label="국회의원 육각 지도">';
     MEMBERS.forEach(function (m) {
-      var c = cellOf[m.id]; if (!c) return; var p = px(c.q, c.r);
+      var p = posOf(m); if (!p) return;
       var dim = ids && !ids[m.id] ? " dim" : "";
       svg += '<polygon class="hexm' + dim + '" data-id="' + m.id + '" fill="' + hexColor(m) + '" points="' + corners(p.x + ox, p.y + oy) + '">' +
         '<title>' + m.name + " · " + partyShort(m.party) + " · " + m.district + "</title></polygon>";
@@ -108,6 +166,12 @@
       var cx = sx / cs.length + ox, cy = sy / cs.length + oy;
       svg += '<text class="region-label" x="' + cx.toFixed(1) + '" y="' + cy.toFixed(1) + '">' + SIDONAME[code] + "</text>";
     });
+    // 비례대표 라벨 (세로 열 상단)
+    var propList = MEMBERS.filter(function (m) { return regionOf(m) === "PROP" && cellOf[m.id]; });
+    if (propList.length) {
+      var c0 = cellOf[propList[0].id];
+      svg += '<text class="region-label" x="' + (c0.fx + ox).toFixed(1) + '" y="' + (c0.fy - SIZE * 1.6 + oy).toFixed(1) + '">비례대표</text>';
+    }
     svg += "</svg>";
 
     var map = document.getElementById("map");
@@ -116,7 +180,7 @@
       var t = e.target.closest ? e.target.closest(".hexm") : null;
       if (t) openModal(byId[t.getAttribute("data-id")]);
     });
-    document.getElementById("mapTitle").textContent = "전국 지도 · 지역구 " + Object.keys(cellOf).length + "명" + (state.business === "all" ? " (정당)" : " (" + bizLabel(state.business) + " 우호도)");
+    document.getElementById("mapTitle").textContent = "전국 지도 · " + Object.keys(cellOf).length + "명" + (state.business === "all" ? " (정당)" : " (" + bizLabel(state.business) + " 우호도)");
     renderLegend();
   }
 
@@ -268,10 +332,80 @@
     }).join("");
   })();
 
-  // 진입 뷰: URL ?view=assembly|cabinet (기본 assembly). 랜딩페이지의 국회/청와대 카드에서 연결됨.
+  // ── 청와대 회의록 분석 (window.CABINET_DATA) ──
+  var CAB = window.CABINET_DATA || null;
+  function bizLabelC(id) { var m = { LNG: "LNG", H2: "수소", RE: "재생E", CITYGAS: "도시가스", POWER: "전력" }; return m[id] || id; }
+  function stmtHTML(q) {
+    var s = stanceInfo(q.stance);
+    var biz = (q.businesses || []).map(bizLabelC).join(", ");
+    return '<div class="stmt"><div class="sh">' +
+      (q.speaker ? '<span class="sp">' + q.speaker + '</span><span class="rl">' + (q.role || "") + "</span>" : "") +
+      '<span class="slv" style="background:' + s.color + '">' + s.label + "</span>" +
+      (biz ? '<span class="rl">[' + biz + "]</span>" : "") +
+      '<span class="mt">' + (q.meeting || "") + "</span></div>" +
+      '<div class="qt">“' + q.quote + '”</div>' + (q.note ? '<div class="nt">→ ' + q.note + "</div>" : "") + "</div>";
+  }
+  function enrichCabinet() {
+    if (!CAB) return;
+    var byName = {}; CAB.speakers.forEach(function (s) { byName[s.name] = s; });
+    Array.prototype.forEach.call(document.querySelectorAll("#cabinetView .org-box"), function (box) {
+      var whoEl = box.querySelector(".who"); if (!whoEl) return;
+      var sp = byName[whoEl.textContent.trim()]; if (!sp) return;
+      var chips = BIZ.filter(function (b) { return sp.stance[b.id] && sp.stance[b.id] !== "unknown"; })
+        .map(function (b) { var s = stanceInfo(sp.stance[b.id]); return '<span class="ob" style="background:' + s.color + '" title="' + b.label + " " + s.label + '">' + b.label + "</span>"; }).join("");
+      if (chips) { var row = document.createElement("div"); row.className = "obadges"; row.innerHTML = chips; box.appendChild(row); }
+      box.classList.add("clickable");
+      box.addEventListener("click", function () { openCabinetModal(sp); });
+    });
+  }
+  function openCabinetModal(sp) {
+    var h = '<div class="mhd"><div><div style="font-size:19px;font-weight:800">' + sp.name + '</div><div style="font-size:12.5px;color:var(--muted);margin-top:5px">' + (sp.role || "") + " · 회의록 발언 " + sp.count + '건</div></div><button class="x" aria-label="닫기">×</button></div><div class="mbd">';
+    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin-bottom:2px">사업별 성향</div><div class="stancegrid">' +
+      BIZ.map(function (b) { var s = stanceInfo(sp.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
+    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 4px">근거 발언 (' + sp.quotes.length + ")</div>";
+    h += sp.quotes.map(stmtHTML).join("");
+    h += '<div class="disc">회의록 원문 발췌 기반. 성향은 SK E&amp;S 사업 관점(우호/중립/비우호) 해석입니다.</div></div>';
+    var modal = document.getElementById("modal"); modal.innerHTML = h;
+    modal.querySelector(".x").onclick = closeModal;
+    document.getElementById("overlay").classList.add("on");
+  }
+  function renderCabinetSummary() {
+    if (!CAB) return; var host = document.getElementById("cabSummary"); if (!host) return;
+    function cs(n, l, c) { return '<div class="cs"><div class="n"' + (c ? ' style="color:' + c + '"' : "") + ">" + n + '</div><div class="l">' + l + "</div></div>"; }
+    host.innerHTML = cs(CAB.totalStatements, "발췌 발언") + cs(CAB.speakers.length, "발언자") +
+      cs(CAB.stanceCount.favor || 0, "우호", META.stance.favor.color) + cs(CAB.stanceCount.neutral || 0, "중립", META.stance.neutral.color) + cs(CAB.stanceCount.oppose || 0, "비우호", META.stance.oppose.color);
+  }
+  var cabBiz = "all";
+  function renderCabChips() {
+    if (!CAB) return; var host = document.getElementById("cabBizChips"); if (!host) return; host.innerHTML = "";
+    META.businesses.forEach(function (b) {
+      var cnt = b.id === "all" ? CAB.totalStatements : (CAB.bizCount[b.id] || 0);
+      var el = document.createElement("button"); el.className = "chip" + (cabBiz === b.id ? " on" : "");
+      el.textContent = b.label + " " + cnt; el.onclick = function () { cabBiz = b.id; renderCabChips(); renderCabStatements(); };
+      host.appendChild(el);
+    });
+  }
+  function renderCabStatements() {
+    if (!CAB) return; var host = document.getElementById("cabStatements"); if (!host) return;
+    var list;
+    if (cabBiz === "all") { var seen = {}; list = []; BIZ.forEach(function (b) { (CAB.byBusiness[b.id] || []).forEach(function (q) { var k = q.speaker + "|" + (q.quote || "").slice(0, 30); if (!seen[k]) { seen[k] = 1; list.push(q); } }); }); }
+    else list = (CAB.byBusiness[cabBiz] || []).slice();
+    var ord = { oppose: 0, favor: 1, neutral: 2 };
+    list.sort(function (a, b) { return (ord[a.stance] - ord[b.stance]) || (a.meeting < b.meeting ? 1 : -1); });
+    var cntEl = document.getElementById("cabStmtCount"); if (cntEl) cntEl.textContent = list.length + "건";
+    host.innerHTML = list.map(stmtHTML).join("") || '<div style="color:var(--muted);font-size:13px">해당 사업 발언이 없습니다.</div>';
+  }
+
+  // 처음(랜딩) 화면 + ?view 딥링크
+  var landing = document.getElementById("landing");
+  function enterView(v) { state.view = v; if (landing) landing.classList.add("hidden"); applyView(); }
+  Array.prototype.forEach.call(document.querySelectorAll("#landing .navcard"), function (c) {
+    c.onclick = function () { enterView(c.getAttribute("data-view")); };
+  });
   var initialView = new URLSearchParams(location.search).get("view");
-  if (initialView === "cabinet" || initialView === "assembly") state.view = initialView;
-  document.getElementById("homeBtn").onclick = function () { window.location.href = document.referrer || "/"; };
+  if (initialView === "cabinet" || initialView === "assembly") { state.view = initialView; if (landing) landing.classList.add("hidden"); }
+  document.getElementById("homeBtn").onclick = function () { if (landing) landing.classList.remove("hidden"); };
 
   renderViewToggle(); applyView(); renderAll();
+  if (CAB) { enrichCabinet(); renderCabinetSummary(); renderCabChips(); renderCabStatements(); }
 })();

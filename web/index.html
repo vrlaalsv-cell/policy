@@ -15,6 +15,28 @@
   <span class="dotgrid"></span>
 </div>
 
+<!-- 처음(랜딩) 화면 — 국회/청와대 선택 -->
+<div id="landing" class="landing">
+  <div class="bg-decor" aria-hidden="true">
+    <span class="blob blob-a"></span>
+    <span class="blob blob-b"></span>
+    <span class="dotgrid"></span>
+  </div>
+  <header class="landing-top">
+    <img src="images/logo.png" alt="정책돋보기" class="landing-logo">
+  </header>
+  <main class="landing-cards">
+    <button class="navcard" data-view="cabinet" aria-label="청와대로 이동">
+      <img src="images/blue-house.png" alt="대한민국 청와대">
+      <span class="navcard-ov">청와대 바로가기 →</span>
+    </button>
+    <button class="navcard" data-view="assembly" aria-label="국회로 이동">
+      <img src="images/assembly.png" alt="대한민국 국회">
+      <span class="navcard-ov">국회 바로가기 →</span>
+    </button>
+  </main>
+</div>
+
 <header class="top">
   <div class="wrap">
     <div class="brandwrap">
@@ -95,9 +117,20 @@
             <span class="lg"><span class="dot concurrent"></span>국회의원 겸직</span>
             <span class="lg"><span class="dot energy"></span>에너지·산업 관련 부처</span>
             <span class="lg"><span class="dot vacant"></span>공석</span>
+            <span class="lg" style="margin-left:10px"><span class="dot" style="background:#0f7a4d"></span>우호<span class="dot" style="background:#6b7280;margin-left:8px"></span>중립<span class="dot" style="background:#b01e2e;margin-left:8px"></span>비우호 <span style="opacity:.7">(회의록 발언 기반)</span></span>
           </div>
-          <p class="org-note">※ 2026년 7월 기준 공개 조직도(참고용). 국무회의 회의록을 <code>data/cabinet_minutes/</code> 에 넣고 <code>pipeline/4_analyze_cabinet.mjs</code> 실행 시 국무위원별 에너지 성향이 이 카드에 추가됩니다.</p>
+          <p class="org-note">※ 조직도는 2026-07 기준 공개자료(참고용). 카드의 색점은 이재명 정부 <b>국무회의·차관회의 회의록(94건)</b>에서 발췌한 발언 기반 사업별 성향입니다. 성향이 있는 카드를 <b>클릭하면 근거 발언(원문)</b>을 볼 수 있습니다.</p>
         </div>
+      </div>
+    </div>
+
+    <div class="panel" style="margin:0 0 16px"><div class="hd"><h2>SK E&amp;S 관점 회의록 분석 요약</h2></div><div class="bd"><div class="cab-summary" id="cabSummary"></div></div></div>
+
+    <div class="panel" style="margin:0 0 60px">
+      <div class="hd" style="justify-content:space-between"><h2 style="margin:0;color:var(--brand);font-size:14.5px">사업별 주요 발언</h2><span class="count" id="cabStmtCount"></span></div>
+      <div class="bd">
+        <div id="cabBizChips" style="display:flex;gap:8px;flex-wrap:wrap;margin-bottom:12px"></div>
+        <div id="cabStatements"></div>
       </div>
     </div>
   </div>
@@ -111,6 +144,7 @@
 </div>
 
 <script src="data.js"></script>
+<script src="cabinet.js"></script>
 <script src="app.js"></script>
 </body>
 </html>
