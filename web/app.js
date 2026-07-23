@@ -273,8 +273,9 @@
     if (m.quotes && m.quotes.length) {
       h += m.quotes.map(function (q) {
         var hl = (state.business !== "all" && q.biz === state.business);
+        var src = q.meeting ? "📄 " + q.meeting : ((q.confer || "") + (q.date ? " · " + q.date : ""));
         return '<div class="qt" style="' + (hl ? "border-left-color:#0f7a4d;background:#eefaf3" : "") + '"><span class="badge" style="background:#eef3fb;color:#264a7d;border-color:#d7e2f4;margin-right:6px">' + bizLabel(q.biz) + "</span>" + q.text +
-          '<div class="qmeta">' + (q.confer || "") + " · " + (q.date || "") + " · " + (q.source && q.source !== "#" ? '<a href="' + q.source + '" target="_blank" rel="noopener">출처</a>' : "출처(샘플)") + "</div></div>";
+          '<div class="qmeta">' + (src || "출처 미상") + "</div></div>";
       }).join("");
     } else { h += '<div style="font-size:13px;color:var(--muted)">등록된 발언이 없습니다.</div>'; }
     var disc = META.stancePending
@@ -340,7 +341,7 @@
 
   // ── 청와대 회의록 분석 (window.CABINET_DATA) ──
   var CAB = window.CABINET_DATA || null;
-  function bizLabelC(id) { var m = { LNG: "LNG", H2: "수소", RE: "재생E", CITYGAS: "도시가스", POWER: "전력" }; return m[id] || id; }
+  function bizLabelC(id) { var m = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CITYGAS: "도시가스", NUCLEAR: "원전" }; return m[id] || id; }
   function stmtHTML(q) {
     var s = stanceInfo(q.stance);
     var biz = (q.businesses || []).map(bizLabelC).join(", ");
@@ -354,6 +355,17 @@
   function enrichCabinet() {
     if (!CAB) return;
     var byName = {}; CAB.speakers.forEach(function (s) { byName[s.name] = s; });
+    // 대통령(이재명): 명패 이미지라 별도로 성향 색점 + 클릭 연결
+    var plate = document.querySelector("#cabinetView .president-plate");
+    var pres = byName["이재명"];
+    if (plate && pres && !plate.getAttribute("data-enriched")) {
+      plate.setAttribute("data-enriched", "1");
+      var pchips = BIZ.filter(function (b) { return pres.stance[b.id] && pres.stance[b.id] !== "unknown"; })
+        .map(function (b) { var s = stanceInfo(pres.stance[b.id]); return '<span class="ob" style="background:' + s.color + '" title="' + b.label + " " + s.label + '">' + b.label + "</span>"; }).join("");
+      if (pchips) { var prow = document.createElement("div"); prow.className = "obadges"; prow.style.justifyContent = "center"; prow.style.alignSelf = "center"; prow.style.alignItems = "center"; prow.style.marginLeft = "12px"; prow.innerHTML = pchips; plate.parentNode.appendChild(prow); }
+      plate.classList.add("clickable");
+      plate.addEventListener("click", function () { openCabinetModal(pres); });
+    }
     Array.prototype.forEach.call(document.querySelectorAll("#cabinetView .org-box"), function (box) {
       var whoEl = box.querySelector(".who"); if (!whoEl) return;
       var sp = byName[whoEl.textContent.trim()]; if (!sp) return;
