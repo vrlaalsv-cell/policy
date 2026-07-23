@@ -345,7 +345,10 @@
     var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:var(--muted);font-weight:700">' + pos + '</span><span style="font-size:19px;font-weight:800">' + esc(name) + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
     h += '<div class="mprofile-wrap">' +
-      '<div class="mprofile-photo"><img src="images/bluehouse_photos/' + esc(name) + '.jpg" alt="' + esc(name) + '"></div>' +
+      // 사진 없는 발언자(차관·실장급 등)는 깨진 이미지 대신 사진 칸을 숨긴다.
+      '<div class="mprofile-photo"><img src="images/bluehouse_photos/' + esc(name) + '.jpg"' +
+      ' onerror="if(!this.dataset.alt){this.dataset.alt=1;this.src=\'images/bluehouse_photos/' + esc(name) + '.png\'}else{this.parentNode.style.display=\'none\'}"' +
+      ' alt="' + esc(name) + '"></div>' +
       '<div class="mprofile">' +
       '<div><span class="pl">직위</span><span class="pv">' + esc(pos) + '</span></div>' +
       '</div></div>';
