@@ -360,7 +360,6 @@
     document.getElementById("assemblyView").classList.toggle("hidden", !asm);
     document.getElementById("cabinetView").classList.toggle("hidden", asm);
     document.getElementById("filterbarWrap").classList.toggle("hidden", !asm);
-    document.querySelector(".updatewrap").classList.toggle("hidden", !asm);
     renderViewToggle();
   }
 
@@ -537,7 +536,7 @@
           updateLastUpdateTime();
           setTimeout(function () {
             updateBtn.textContent = "🔄 업데이트";
-          }, 1500);
+          }, 3000);
         })
         .catch(function (err) {
           localStorage.setItem("lastUpdateTime", new Date().toISOString());
