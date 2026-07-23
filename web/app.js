@@ -459,8 +459,12 @@
   }
   function openCabinetModal(sp) {
     var h = '<div class="mhd"><div><div style="font-size:19px;font-weight:800">' + sp.name + '</div><div style="font-size:12.5px;color:var(--muted);margin-top:5px">' + (sp.role || "") + " · 회의록 발언 " + sp.count + '건</div></div><button class="x" aria-label="닫기">×</button></div><div class="mbd">';
-    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin-bottom:2px">사업별 성향</div><div class="stancegrid">' +
-      BIZ.map(function (b) { var s = stanceInfo(sp.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
+    h += '<div style="display:flex;gap:14px;margin-bottom:16px">' +
+      '<div style="flex:0 0 140px;width:140px;height:160px;border-radius:12px;overflow:hidden;background:#f8fafd;border:1px solid var(--line);flex-shrink:0"><img src="images/bluehouse_photos/' + esc(sp.name) + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display=\'none\'"></div>' +
+      '<div style="flex:1">' +
+      '<div style="font-size:13px;font-weight:800;color:var(--brand);margin-bottom:8px">사업별 성향</div><div class="stancegrid">' +
+      BIZ.map(function (b) { var s = stanceInfo(sp.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>" +
+      '</div></div>';
     h += aiHTML(sp.ai);
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 4px">근거 발언 (' + sp.quotes.length + ")</div>";
     h += byMeetingDesc(sp.quotes).map(stmtHTML).join("");
