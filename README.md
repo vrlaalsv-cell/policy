@@ -98,6 +98,14 @@ npm run collect:news    # 수집 → data/news.json + web/news.js (약 3분, 300
 - 실명 정치인 공개 데이터를 다루므로 개인정보·명예에 유의하고, 출처를 표기합니다.
 - 엔드포인트 서비스 코드/필드는 착수 시 공식 명세서로 1회 재검증하세요.
 
+## NAS 배포 (7.yes-i-can.kr)
+
+Synology NAS 에 nginx + Cloudflare 터널 2컨테이너로 올린다. 절차·트러블슈팅은 **[DEPLOY.md](DEPLOY.md)**.
+
+```bash
+sudo docker compose up -d --build
+```
+
 ## Vercel 배포
 
 - **정적 배포**: `web/`를 배포 루트로 지정하면 그대로 서비스됩니다. (파이프라인이 생성한 `web/data.js` 포함)
