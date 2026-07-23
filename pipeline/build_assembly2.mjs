@@ -12,7 +12,7 @@ const BIZLABEL = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CIT
 // 발언 id → {meeting, text}
 const U = JSON.parse(readFileSync(join(paths.data, "utt_ctx.json"), "utf8")).bySpeaker || {};
 const byId = {};
-for (const name of Object.keys(U)) for (const u of U[name]) byId[u.id] = { meeting: u.meeting, text: u.text };
+for (const name of Object.keys(U)) for (const u of U[name]) byId[u.id] = { meeting: u.meeting, pre: u.pre, core: u.core, post: u.post };
 
 // 태깅 결과
 const res = JSON.parse(readFileSync(join(paths.data, "_ab2_results.json"), "utf8"));
@@ -36,7 +36,7 @@ for (const m of APP.members) {
       if (!u || !BIZ.includes(ev.biz)) continue;
       const k = ev.biz + "|" + ev.id;
       if (seen.has(k)) continue; seen.add(k);
-      quotes.push({ biz: ev.biz, text: u.text, meeting: u.meeting });
+      quotes.push({ biz: ev.biz, meeting: u.meeting, pre: u.pre, core: u.core, post: u.post });
     }
     if (BIZ.some((b) => stance[b] !== "unknown")) withStance++;
     quoteN += quotes.length;
@@ -49,7 +49,7 @@ for (const m of APP.members) {
 APP.meta.businesses = [{ id: "all", label: "전체" }].concat(BIZ.map((id) => ({ id, label: BIZLABEL[id] })));
 APP.meta.stancePending = false;
 APP.meta.isSample = false;
-if (APP.meta.stance && APP.meta.stance.unknown) APP.meta.stance.unknown.label = "자료부족";
+if (APP.meta.stance && APP.meta.stance.unknown) APP.meta.stance.unknown.label = "-";
 APP.meta.updatedAt = new Date().toISOString().slice(0, 10);
 
 const out = "/* 자동 생성 — build_assembly2.mjs. 22대 국회의원 명단+프로필+6사업(원전 포함) 성향(회의록 맥락 발췌·회의명 표기). */\nwindow.APP_DATA = " + JSON.stringify(APP) + ";\n";

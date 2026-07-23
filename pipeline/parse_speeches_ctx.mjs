@@ -45,11 +45,10 @@ for (const f of files) {
     if (!name) continue;
     const arr = (bySpeaker[name] || (bySpeaker[name] = []));
     if (arr.length >= CAP) continue;
-    const prev = rows[i - 1] ? cap(rows[i - 1].tx, 90) : "";
-    const next = rows[i + 1] ? cap(rows[i + 1].tx, 90) : "";
-    const core = cap(r.tx, 240);
-    const text = (prev ? "(앞) " + prev + " ⟩ " : "") + core + (next ? " ⟩ (뒤) " + next : "");
-    arr.push({ id: "u" + (uid++), meeting, text: cap(text, 460) });
+    const pre = rows[i - 1] ? cap(rows[i - 1].tx, 90) : "";
+    const post = rows[i + 1] ? cap(rows[i + 1].tx, 90) : "";
+    const core = cap(r.tx, 260);
+    arr.push({ id: "u" + (uid++), meeting, pre, core, post });
     kept++;
   }
 }
