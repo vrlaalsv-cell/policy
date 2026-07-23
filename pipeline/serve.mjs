@@ -4,6 +4,7 @@ import { readFile } from "node:fs/promises";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
+import { spawn } from "node:child_process";
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), "..", "web");
 const PORT = process.env.PORT || 8137;
@@ -13,8 +14,49 @@ const TYPES = {
   ".svg": "image/svg+xml", ".png": "image/png", ".jpg": "image/jpeg",
 };
 
+function runUpdate(res) {
+  return new Promise((resolve) => {
+    const child = spawn("node", [join(dirname(fileURLToPath(import.meta.url)), "update-assembly.mjs")], {
+      env: process.env,
+      stdio: ["ignore", "pipe", "pipe"],
+    });
+
+    let output = "";
+    let error = "";
+
+    child.stdout?.on("data", (data) => {
+      output += data.toString();
+    });
+
+    child.stderr?.on("data", (data) => {
+      error += data.toString();
+    });
+
+    child.on("close", (code) => {
+      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify({ success: code === 0, output, error, code }));
+      resolve();
+    });
+
+    setTimeout(() => {
+      if (!child.killed) {
+        child.kill();
+        res.writeHead(504, { "Content-Type": "application/json; charset=utf-8" });
+        res.end(JSON.stringify({ success: false, error: "업데이트 시간 초과" }));
+        resolve();
+      }
+    }, 300000); // 5분 타임아웃
+  });
+}
+
 createServer(async (req, res) => {
   try {
+    // API 엔드포인트
+    if (req.url === "/api/update" && req.method === "POST") {
+      await runUpdate(res);
+      return;
+    }
+
     let p = decodeURIComponent((req.url || "/").split("?")[0]);
     if (p === "/") p = "/index.html";
     const file = normalize(join(WEB, p));

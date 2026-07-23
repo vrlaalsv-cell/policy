@@ -459,6 +459,42 @@
   if (initialView === "cabinet" || initialView === "assembly") { state.view = initialView; if (landing) landing.classList.add("hidden"); }
   document.getElementById("homeBtn").onclick = function () { if (landing) landing.classList.remove("hidden"); };
 
+  // 업데이트 버튼 핸들러
+  var updateBtn = document.getElementById("updateBtn");
+  if (updateBtn) {
+    updateBtn.onclick = function () {
+      if (updateBtn.classList.contains("loading")) return;
+      updateBtn.classList.add("loading");
+      updateBtn.textContent = "🔄 업데이트 중…";
+      updateBtn.disabled = true;
+
+      fetch("/api/update", { method: "POST" })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          updateBtn.classList.remove("loading");
+          updateBtn.disabled = false;
+          if (data.success) {
+            updateBtn.textContent = "✓ 완료";
+            setTimeout(function () {
+              updateBtn.textContent = "🔄 업데이트";
+              location.reload();
+            }, 1500);
+          } else {
+            updateBtn.textContent = "❌ 실패";
+            console.error("Update error:", data.error);
+            setTimeout(function () { updateBtn.textContent = "🔄 업데이트"; }, 2000);
+          }
+        })
+        .catch(function (err) {
+          updateBtn.classList.remove("loading");
+          updateBtn.disabled = false;
+          updateBtn.textContent = "❌ 오류";
+          console.error("Update request error:", err);
+          setTimeout(function () { updateBtn.textContent = "🔄 업데이트"; }, 2000);
+        });
+    };
+  }
+
   renderViewToggle(); applyView(); renderAll();
   if (CAB) { enrichCabinet(); renderCabinetSummary(); renderCabChips(); renderCabStatements(); }
 })();
