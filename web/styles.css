@@ -250,6 +250,9 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .navcard:active .navcard-ov{background:rgba(0,0,0,.3);opacity:1;transition:none}
 
 @media (max-width:640px){
-  .landing{padding:24px 18px 36px}
-  .landing-cards{grid-template-columns:1fr;gap:18px;max-width:420px;align-content:start;transform:none;margin-top:28px}
+  /* 모바일 랜딩은 배경 장식(블롭·도트그리드) 없이 전부 흰색 — 카드 경계가 보이지 않게 */
+  .landing{padding:24px 18px 36px;background:#fff}
+  .landing .bg-decor{display:none}
+  .landing-cards{grid-template-columns:1fr;gap:14px;max-width:420px;align-content:start;transform:none;margin-top:24px}
+  .navcard{border-color:transparent;box-shadow:none;background:transparent}
 }
