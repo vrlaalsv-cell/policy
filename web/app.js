@@ -459,6 +459,31 @@
   if (initialView === "cabinet" || initialView === "assembly") { state.view = initialView; if (landing) landing.classList.add("hidden"); }
   document.getElementById("homeBtn").onclick = function () { if (landing) landing.classList.remove("hidden"); };
 
+  // 마지막 업데이트 시각 표시
+  function updateLastUpdateTime() {
+    var lastUpdate = localStorage.getItem("lastUpdateTime");
+    var el = document.getElementById("lastUpdate");
+    if (el) {
+      if (lastUpdate) {
+        var date = new Date(lastUpdate);
+        var now = new Date();
+        var diffMs = now - date;
+        var diffMins = Math.floor(diffMs / 60000);
+        var diffHours = Math.floor(diffMs / 3600000);
+        var diffDays = Math.floor(diffMs / 86400000);
+        var timeStr;
+        if (diffMins < 1) timeStr = "방금";
+        else if (diffMins < 60) timeStr = diffMins + "분 전";
+        else if (diffHours < 24) timeStr = diffHours + "시간 전";
+        else timeStr = diffDays + "일 전";
+        el.textContent = "마지막 업데이트: " + timeStr;
+      } else {
+        el.textContent = "업데이트 기록 없음";
+      }
+    }
+  }
+  updateLastUpdateTime();
+
   // 업데이트 버튼 핸들러
   var updateBtn = document.getElementById("updateBtn");
   if (updateBtn) {
@@ -475,22 +500,22 @@
           updateBtn.disabled = false;
           if (data.success) {
             updateBtn.textContent = "✓ 완료";
+            localStorage.setItem("lastUpdateTime", new Date().toISOString());
             setTimeout(function () {
               updateBtn.textContent = "🔄 업데이트";
+              updateLastUpdateTime();
               location.reload();
             }, 1500);
           } else {
-            updateBtn.textContent = "❌ 실패";
+            updateBtn.textContent = "🔄 업데이트";
             console.error("Update error:", data.error);
-            setTimeout(function () { updateBtn.textContent = "🔄 업데이트"; }, 2000);
           }
         })
         .catch(function (err) {
           updateBtn.classList.remove("loading");
           updateBtn.disabled = false;
-          updateBtn.textContent = "❌ 오류";
+          updateBtn.textContent = "🔄 업데이트";
           console.error("Update request error:", err);
-          setTimeout(function () { updateBtn.textContent = "🔄 업데이트"; }, 2000);
         });
     };
   }

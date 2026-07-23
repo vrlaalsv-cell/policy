@@ -17,7 +17,7 @@ const TYPES = {
 function runUpdate(res) {
   return new Promise((resolve) => {
     const child = spawn("node", [join(dirname(fileURLToPath(import.meta.url)), "update-assembly.mjs")], {
-      env: process.env,
+      env: { ...process.env },
       stdio: ["ignore", "pipe", "pipe"],
     });
 
