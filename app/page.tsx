@@ -31,7 +31,7 @@ export default function Home() {
           src="/images/logo.png"
           alt="정책돋보기"
           width={520}
-          height={170}
+          height={260}
           priority
           className="h-auto w-80 sm:w-96"
         />

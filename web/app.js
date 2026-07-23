@@ -316,7 +316,7 @@
           ? (q.pre ? esc(q.pre) + " " : "") + "<b>" + esc(q.core) + "</b>" + (q.post ? " " + esc(q.post) : "")
           : esc(q.text || "");
         return '<div class="qt" style="' + (hl ? "border-left-color:#0f7a4d;background:#eefaf3" : "") + '"><span class="badge" style="background:#eef3fb;color:#264a7d;border-color:#d7e2f4;margin-right:6px">' + bizLabel(q.biz) + "</span>" + body +
-          '<div class="qmeta">' + (src || "출처 미상") + "</div></div>";
+          '<div class="qmeta"><a href="https://record.assembly.go.kr/assembly/" target="_blank">' + (src || "출처 미상") + "</a></div></div>";
       }).join("");
     } else { h += '<div style="font-size:13px;color:var(--muted)">등록된 발언이 없습니다.</div>'; }
     var disc = META.stancePending
