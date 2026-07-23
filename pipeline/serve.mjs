@@ -5,6 +5,7 @@ import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
 import { spawn } from "node:child_process";
+import { networkInterfaces } from "node:os";
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), "..", "web");
 const PORT = process.env.PORT || 8137;
@@ -69,9 +70,8 @@ createServer(async (req, res) => {
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("404 Not Found");
   }
 }).listen(PORT, "0.0.0.0", () => {
-  const os = require("node:os");
-  const interfaces = os.networkInterfaces();
   let ip = "localhost";
+  const interfaces = networkInterfaces();
   for (const [name, addrs] of Object.entries(interfaces)) {
     for (const addr of addrs) {
       if (addr.family === "IPv4" && !addr.internal) {
