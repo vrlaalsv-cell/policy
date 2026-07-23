@@ -16,7 +16,8 @@
 ## 최근 기사 수집 (모달 최하단 · 에너지원 라벨)
 
 ```bash
-npm run collect:news                                  # 최근 90일 · 의원당 5건
+npm run collect:news                                  # ① 기사 목록 (최근 90일 · 의원당 5건)
+npm run fetch:excerpts                                # ② 기사마다 원문 링크 + 발췌 1~2줄
 node pipeline/5_collect_news.mjs --days=180 --per=8    # 기간·건수 조정
 node pipeline/5_collect_news.mjs --only=김성환          # 한 명만 (테스트)
 node pipeline/5_collect_news.mjs --source=naver        # 소스 강제 (auto|naver|google)
@@ -30,6 +31,23 @@ npm run build:news                                    # 재수집 없이 web/new
 - **한계**: 동명이인을 구분할 수 없습니다. `의원/정당/지역구` 단서가 있는 기사를 위로 정렬(`strong`)하고,
   나머지에는 화면에 "동명이인 확인" 표시를 답니다.
 - 산출물 `web/news.js` 는 `web/data.js` 와 **분리**돼 있어 성향 분석 작업과 충돌하지 않습니다.
+
+### 발췌(`6_fetch_excerpts.mjs`)가 하는 일
+
+1. Google 뉴스 링크(리다이렉트 페이지)를 **실제 언론사 기사 URL** 로 복원 — 화면 링크도 이걸 쓴다.
+2. 기사에서 `og:description`(리드 문단)을 가져오고, 없으면 본문에서 **키워드가 든 문장**을 고른다.
+   네비게이션·저작권 문구는 걸러내고 220자로 자른다.
+3. 본문까지 보고 **오탐 제거** — 동명이인 스포츠 기사, `전력질주·전심전력` 같은 全力(동음이의).
+4. 화면 강조용 키워드(`hl`)를 저장 → 대시보드에서 그 단어만 굵게 표시.
+
+```bash
+node pipeline/6_fetch_excerpts.mjs --force      # 전부 다시
+node pipeline/6_fetch_excerpts.mjs --limit=20   # 앞 20건만 (테스트)
+```
+
+⚠ 링크 복원은 `news.google.com` 내부 API 를 이용한다. Google 이 바꾸면 복원만 실패하고
+기사 목록 자체는 그대로 남는다(발췌가 비어 있으면 제목만 표시). 네이버 소스로 수집했다면
+`link` 가 이미 원문이라 이 단계를 건너뛴다.
 
 ## 발언 데이터(2단계) 준비 방법
 1. 국회도서관 **발언 빅데이터**(dataset.nanet.go.kr)에서 발언 단위 EXCEL/CSV 다운로드
