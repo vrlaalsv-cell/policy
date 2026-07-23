@@ -26,7 +26,7 @@ const arg = (k, d) => {
   const hit = process.argv.find((a) => a.startsWith(`--${k}=`));
   return hit ? hit.split("=").slice(1).join("=") : d;
 };
-const DAYS = Number(arg("days", 90));
+const DAYS = Number(arg("days", 365));
 const PER = Number(arg("per", 5));
 const LIMIT = Number(arg("limit", 0));
 const ONLY = arg("only", "");
@@ -40,17 +40,33 @@ if (!["naver", "google"].includes(SOURCE)) { console.error(`--source 는 naver|g
 // ---------- 의원 명단 ----------
 // data/members.json 이 있으면 그걸, 없으면 이미 만들어져 있는 web/data.js 를 읽는다.
 function loadMembers() {
+  let base;
   const p = join(paths.data, "members.json");
-  if (existsSync(p)) return JSON.parse(readFileSync(p, "utf8"));
-  const dj = join(paths.web, "data.js");
-  if (!existsSync(dj)) {
-    console.error("data/members.json 도 web/data.js 도 없습니다. 먼저 `npm run collect:members`.");
-    process.exit(1);
+  if (existsSync(p)) base = JSON.parse(readFileSync(p, "utf8"));
+  else {
+    const dj = join(paths.web, "data.js");
+    if (!existsSync(dj)) {
+      console.error("data/members.json 도 web/data.js 도 없습니다. 먼저 `npm run collect:members`.");
+      process.exit(1);
+    }
+    const src = readFileSync(dj, "utf8");
+    const i = src.indexOf("window.APP_DATA");
+    const body = src.slice(src.indexOf("=", i) + 1).trim().replace(/;\s*$/, "");
+    base = JSON.parse(body).members;
   }
-  const src = readFileSync(dj, "utf8");
-  const i = src.indexOf("window.APP_DATA");
-  const body = src.slice(src.indexOf("=", i) + 1).trim().replace(/;\s*$/, "");
-  return JSON.parse(body).members;
+  // 청와대 국무위원도 뉴스 수집 대상에 포함 (id="CAB:이름", 힌트=직위)
+  try {
+    const cj = join(paths.web, "cabinet.js");
+    if (existsSync(cj)) {
+      const cs = readFileSync(cj, "utf8");
+      const cb = JSON.parse(cs.slice(cs.indexOf("{"), cs.lastIndexOf("}") + 1));
+      for (const sp of (cb.speakers || [])) {
+        if (!sp.name || /[()]/.test(sp.name)) continue; // '미표기(상정안건)' 등 제외
+        base.push({ id: "CAB:" + sp.name, name: sp.name, party: "", district: "", committee: sp.role ? [sp.role] : [], cabinet: 1 });
+      }
+    }
+  } catch (e) { /* cabinet.js 없으면 국회 명단만 */ }
+  return base;
 }
 
 const decode = (s) => String(s || "")
