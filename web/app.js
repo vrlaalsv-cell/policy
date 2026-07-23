@@ -501,10 +501,9 @@
           updateBtn.classList.remove("loading");
           updateBtn.disabled = false;
           updateBtn.textContent = "✓ 완료";
+          updateLastUpdateTime();
           setTimeout(function () {
             updateBtn.textContent = "🔄 업데이트";
-            updateLastUpdateTime();
-            location.reload();
           }, 1500);
         })
         .catch(function (err) {
