@@ -98,7 +98,7 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .modal .mhd{flex:0 0 auto;padding:18px 20px;border-bottom:1px solid var(--line);display:flex;align-items:flex-start;gap:10px}
 .modal .mhd .x{margin-left:auto;border:0;background:#eef1f5;border-radius:8px;width:32px;height:32px;font-size:16px;cursor:pointer;color:var(--muted)}
 .modal .mbd{flex:1 1 auto;padding:18px 20px;overflow:auto;max-height:none}
-.stancegrid{display:grid;grid-template-columns:repeat(auto-fit,minmax(92px,1fr));gap:8px;margin:6px 0 16px}
+.stancegrid{display:grid;grid-template-columns:repeat(3,1fr);gap:8px;margin:6px 0 16px}
 .sg{border:1px solid var(--line);border-radius:10px;padding:9px;text-align:center}
 .sg .b{font-size:12px;color:var(--muted);margin-bottom:5px}
 .sg .v{font-size:13px;font-weight:800;padding:3px 0;border-radius:6px}
