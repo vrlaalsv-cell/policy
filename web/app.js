@@ -98,6 +98,9 @@
     var s = {}; currentMembers().forEach(function (m) { s[m.id] = true; }); return s;
   }
   function renderMap() {
+    var _mapEl = document.getElementById("map");
+    if (state.business !== "all") { _mapEl.style.maxWidth = "none"; renderBizBoard(_mapEl); return; }
+    _mapEl.style.maxWidth = "";
     var minX = 1e9, minY = 1e9, maxX = -1e9, maxY = -1e9;
     MEMBERS.forEach(function (m) {
       var p = posOf(m); if (!p) return;
@@ -133,6 +136,33 @@
     });
     document.getElementById("mapTitle").textContent = "의석 배치도 · " + Object.keys(cellOf).length + "석" + (state.business === "all" ? " (정당)" : " (" + bizLabel(state.business) + " 우호도)");
     renderLegend();
+  }
+
+  // 사업 선택 시: 우호/중립/비우호 3열 보드 (발언 많은 의원 TOP5 + 대표 발언)
+  function renderBizBoard(mapEl) {
+    document.getElementById("legend").innerHTML = "";
+    var biz = state.business;
+    document.getElementById("mapTitle").textContent = bizLabel(biz) + " 발언 의원 · 우호 / 중립 / 비우호";
+    var BOARD = (window.BIZ_BOARD || {})[biz];
+    if (!BOARD) { mapEl.innerHTML = '<div class="bb-empty">보드 데이터가 없습니다.</div>'; return; }
+    var cols = [["favor", "우호"], ["neutral", "중립"], ["oppose", "비우호"]];
+    var html = '<div class="bizboard">';
+    cols.forEach(function (c) {
+      var s = stanceInfo(c[0]), list = BOARD[c[0]] || [];
+      html += '<div class="bbcol"><div class="bbhd" style="background:' + s.bg + ";color:" + s.color + '">' + c[1] + ' <span>' + list.length + '명</span></div>';
+      if (!list.length) { html += '<div class="bb-empty">해당 발언 의원 없음</div>'; }
+      list.forEach(function (p) {
+        var body = p.summary ? '<div class="bbsum">' + esc(p.summary) + "</div>"
+          : '<div class="bbq">' + (p.quotes || []).map(function (q) { return '<div class="bbqi">“' + esc(q) + '”</div>'; }).join("") + "</div>";
+        html += '<div class="bbcard" data-id="' + p.id + '"><div class="bbtop"><span class="pchip" style="background:' + partyColor(p.party) + '">' + partyShort(p.party) + '</span><span class="bbnm">' + esc(p.name) + '</span><span class="bbcnt">발언 ' + p.count + '건</span></div>' + body + "</div>";
+      });
+      html += "</div>";
+    });
+    html += "</div>";
+    mapEl.innerHTML = html;
+    Array.prototype.forEach.call(mapEl.querySelectorAll(".bbcard"), function (el) {
+      el.addEventListener("click", function () { openModal(byId[el.getAttribute("data-id")]); });
+    });
   }
 
   function renderLegend() {

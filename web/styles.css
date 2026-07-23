@@ -215,6 +215,21 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .aihd .aitag{margin-left:auto;font-size:10px;font-weight:700;color:#5b8a82;background:#e2f2ee;border:1px solid #c7e5de;border-radius:999px;padding:2px 8px}
 .aibox .aihl{font-size:14px;font-weight:800;color:var(--brand);margin:8px 0 4px;line-height:1.45}
 .aibox .aitx{font-size:13px;color:var(--ink);line-height:1.65}
+/* 사업별 우호/중립/비우호 보드 */
+.bizboard{display:grid;grid-template-columns:repeat(3,1fr);gap:12px}
+@media (max-width:780px){ .bizboard{grid-template-columns:1fr} }
+.bbcol{background:#f8fafd;border:1px solid var(--line);border-radius:12px;padding:8px;display:flex;flex-direction:column;gap:8px}
+.bbhd{font-size:13px;font-weight:800;border-radius:8px;padding:7px 10px;text-align:center}
+.bbhd span{font-weight:700;opacity:.8;font-size:11.5px}
+.bb-empty{font-size:12px;color:var(--muted);text-align:center;padding:14px 6px}
+.bbcard{background:#fff;border:1px solid var(--line);border-radius:10px;padding:9px 10px;cursor:pointer;transition:.12s}
+.bbcard:hover{border-color:#8fcec3;box-shadow:var(--shadow);transform:translateY(-1px)}
+.bbtop{display:flex;align-items:center;gap:7px;margin-bottom:7px;flex-wrap:wrap}
+.bbnm{font-weight:800;font-size:17px;color:var(--ink);letter-spacing:-.2px}
+.bbcnt{margin-left:auto;font-size:11px;font-weight:700;color:var(--brand2);background:#e6f5f1;border-radius:999px;padding:2px 8px;white-space:nowrap}
+.bbsum{font-size:12.5px;color:#31405a;line-height:1.6;border-left:2px solid var(--line);padding-left:9px}
+.bbq{display:flex;flex-direction:column;gap:5px}
+.bbqi{font-size:12px;color:#3d4a5e;line-height:1.5;border-left:2px solid var(--line);padding-left:8px}
 
 /* 처음(랜딩) 화면 — 동료 정책돋보기 디자인 */
 .landing{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;overflow:auto;padding:36px 28px}
