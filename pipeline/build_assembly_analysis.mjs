@@ -29,7 +29,7 @@ APP.members.forEach((m) => {
   const t = byName[m.name];
   if (t && t.stance) {
     m.stance = {}; BIZ.forEach((b) => m.stance[b] = t.stance[b] || "unknown");
-    m.quotes = (t.quotes || []).map((q) => ({ biz: q.biz, text: q.text, source: "", date: "", confer: "국회 회의록" }));
+    m.quotes = (t.quotes || []).map((q) => ({ biz: q.biz, text: q.text, source: q.source || "", date: q.date || "", confer: q.confer || "국회 회의록" }));
     if (BIZ.some((b) => m.stance[b] !== "unknown")) withStance++;
     BIZ.forEach((b) => { if (m.stance[b] === "favor") favor++; else if (m.stance[b] === "oppose") oppose++; else if (m.stance[b] === "neutral") neutral++; });
   } else { m.stance = { ...EMPTY }; m.quotes = []; }

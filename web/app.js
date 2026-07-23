@@ -275,7 +275,7 @@
       h += m.quotes.map(function (q) {
         var hl = (state.business !== "all" && q.biz === state.business);
         return '<div class="qt" style="' + (hl ? "border-left-color:#0f7a4d;background:#eefaf3" : "") + '"><span class="badge" style="background:#eef3fb;color:#264a7d;border-color:#d7e2f4;margin-right:6px">' + bizLabel(q.biz) + "</span>" + q.text +
-          '<div class="qmeta">' + (q.confer || "") + " · " + (q.date || "") + " · " + (q.source && q.source !== "#" ? '<a href="' + q.source + '" target="_blank" rel="noopener">출처</a>' : "출처(샘플)") + "</div></div>";
+          '<div class="qmeta">' + (q.confer || "") + "</div></div>";
       }).join("");
     } else { h += '<div style="font-size:13px;color:var(--muted)">등록된 발언이 없습니다.</div>'; }
     var disc = META.stancePending
