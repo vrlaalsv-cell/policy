@@ -304,7 +304,10 @@
     var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
     h += '<div class="mprofile-wrap">' +
-      '<div class="mprofile-photo"><img src="images/parliament_photos/' + esc(m.name) + '.jpg" onerror="this.src=\'images/parliament_photos/' + esc(m.name) + '.png\'" alt="' + esc(m.name) + '"></div>' +
+      // jpg → png 순으로 시도하고, 둘 다 없으면 사진 칸을 숨긴다(깨진 이미지 아이콘 방지).
+      '<div class="mprofile-photo"><img src="images/parliament_photos/' + esc(m.name) + '.jpg"' +
+      ' onerror="if(!this.dataset.alt){this.dataset.alt=1;this.src=\'images/parliament_photos/' + esc(m.name) + '.png\'}else{this.parentNode.style.display=\'none\'}"' +
+      ' alt="' + esc(m.name) + '"></div>' +
       '<div class="mprofile">' +
       '<div><span class="pl">정당</span><span class="pv">' + m.party + '</span></div>' +
       '<div><span class="pl">선거구</span><span class="pv">' + m.district + '</span></div>' +
