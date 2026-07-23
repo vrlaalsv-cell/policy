@@ -12,12 +12,12 @@ out
 .github
 .vercel
 
-# 파이프라인 원본·중간 산출물 (배포에는 web/ 만 필요)
-data
-pipeline
+# 배포에 필요 없는 것
 app
 components
 public
+data/raw
+data/cabinet_minutes
 
 *.log
 .DS_Store

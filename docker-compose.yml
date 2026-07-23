@@ -1,6 +1,8 @@
-# NAS(Synology) 배포 — 대시보드(nginx) + Cloudflare 터널 2컨테이너
+# NAS(Synology) 배포 — 대시보드(Node) + Cloudflare 터널 2컨테이너
 #   사용: sudo docker compose up -d --build
-#   .env 에 CLOUDFLARE_TUNNEL_TOKEN=eyJ... 필요 (git 에 올리지 말 것)
+#   .env 필요: CLOUDFLARE_TUNNEL_TOKEN=eyJ...  (git 에 올리지 말 것)
+#   업데이트 버튼(POST /api/update)까지 쓰려면 .env 에
+#   ASSEMBLY_API_KEY / GOOGLE_CREDENTIALS / GOOGLE_FOLDER_ID 도 넣는다.
 services:
   app:
     build:
@@ -8,12 +10,16 @@ services:
       dockerfile: deploy/Dockerfile
     container_name: policy-web
     restart: unless-stopped
+    env_file:
+      - .env
     # Tailscale 로 직접 볼 때: http://ys:8007
-    # Cloudflare 터널만 쓸 거면 아래 ports 두 줄을 지워도 된다(터널은 컨테이너망으로 붙음).
     ports:
-      - "8007:80"
+      - "8007:8137"
     expose:
-      - "80"
+      - "8137"
+    # 업데이트 버튼이 만든 data/members.json·xlsx 가 재배포 후에도 남도록
+    volumes:
+      - ./data:/app/data
 
   tunnel:
     image: cloudflare/cloudflared:latest
