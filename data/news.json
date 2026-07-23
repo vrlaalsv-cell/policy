@@ -4,9 +4,9 @@
   "days": 365,
   "perMember": 5,
   "collectedAt": "2026-07-23 12:00:37",
-  "members": 132,
-  "articles": 419,
-  "excerpts": 413,
+  "members": 130,
+  "articles": 412,
+  "excerpts": 406,
   "excerptAt": "2026-07-23 12:16:25"
  },
  "byMember": {
@@ -769,18 +769,6 @@
     "url": "https://m.ekn.kr/view.php?key=20251230027063102",
     "excerpt": "국민의힘 김상훈 의원(대구 서구)이 노후 도시가스 배관으로 인한 안전사고를 예방하고, 수소 혼입 시대에 대비한 관리체계를 확립하기 위해 `장기사용 도시가스배관`의 개념 도입 및 관..",
     "hl": "수소"
-   },
-   {
-    "title": "[오피셜] KIA 전력분석총괄→NC로 간다, NEW 코치진 영입 작업 단행 '이승호·김상훈 코치 합류'",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFBKQzBDRjVJUzlMMTZkeE50X2duMEpwZWFiLVh2Uko1cENaa01kdUJwWU15Wm4yQmVHNk85MEd3WWthZjh4ZGhIZzl1dHNxMlE?oc=5",
-    "press": "v.daum.net",
-    "date": "2025-10-20",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://v.daum.net/v/20251020104845700",
-    "excerpt": "[오피셜] KIA 전력분석총괄→NC로 간다, NEW 코치진 영입 작업 단행 '이승호·김상훈 코치 합류' 야구 [오피셜] KIA 전력분석총괄→NC로 간다, NEW 코치진 영입 작업 단행 '이승호·김상훈 코치 합류' 김우종 기자 2025.",
-    "hl": "전력"
    }
   ],
   "M071": [
@@ -975,30 +963,6 @@
    }
   ],
   "M081": [
-   {
-    "title": "윤상현 국립공주대 박사과정, 수소 모빌리티 논문 JCR 상위 1% 저널 게재",
-    "link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE0xU2VYaHgwaWR6cF9ibDhsQWNRQmY4WjFUaXNkeVFEWGZMTnJiQzVqRlVualFybktSd2tlcGg1d2Z4SUxiN3RteDhlOEpvZUFLTG1yUHI1dUswdDktc1RKZWw2dXMtODVP?oc=5",
-    "press": "금강일보",
-    "date": "2026-07-21",
-    "labels": [
-     "H2"
-    ],
-    "url": "http://www.ggilbo.com/news/articleView.html?idxno=1170488",
-    "excerpt": "국립공주대 제공 국립공주대학교 미래자동차공학과 윤상현 박사과정(지도교수 한재영)이 에너지 분야 세계적 권위의 SCI 국제학술지 'Energy Conversion and Management' (Impact Factor 11.8, Thermodynamics & Mechanics 분야 상위 1.9%)에 논문을 게재하며 수소 모빌리티 부품 기업들의 개발 패러다임을 바꿀 차세대 가상 검증 및 제어…",
-    "hl": "수소"
-   },
-   {
-    "title": "국립공주대 윤상현 박사과정, JCR 상위 1% 국제학술지 게재…수소 모빌리티 SW 기술력 입증",
-    "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE5XYVN3Szg3UFBwUExBVFRockNyZE45ODBJTnBGUHJVXzFPOE9EMlVCWEZjNFR6M2NDRDktSUZ5MEhJZVhXTW82Y1NQMURJRVFZc3BvanBFdkU1YXdUX3FZN0lId3hzTGFtbnlWYw?oc=5",
-    "press": "중도일보",
-    "date": "2026-07-20",
-    "labels": [
-     "H2"
-    ],
-    "url": "https://www.joongdo.co.kr/web/view.php?key=20260720010005721",
-    "excerpt": "중도일보 - 국립공주대 윤상현 박사과정, JCR 상위 1% 국제학술지 게재…수소 모빌리티 SW 기술력 입증 뉴스 전체기사 기획/연재 운세 기획/연재 창간호 기획 펫챠 잊혀진 동굴을 찾아서 곽성열의 판깔아드립니다 스토리가 있는 대전·충남 대학 공간 대전의 아름다운 건축물 얼마나 아니?",
-    "hl": "수소"
-   },
    {
     "title": "국립공주대 윤상현, JCR 상위 7% 국제저널 게재…수소 미래모빌리티 연구역량 입증",
     "link": "https://news.google.com/rss/articles/CBMibEFVX3lxTE4zZUZJZ3dRMGYxRWtWNXNickk3SV9kSG1IYnFXcndxb2txTlJleERCNk5MYUFfWVZSV3h5M1dtQTNrOEJXTzhtX0tQek41WWNmaFRReGp5YV9rWTFxdkM1Z1lheGhYOEtwa292NtIBcEFVX3lxTE5CQmdGQktzTzdpZ0NCS2NfNjg5Z08yLW1iajlTcWZVUi1ndHdfbkxmZzJEZkhsVThaLV8ybnRsTzB6TzlibVRLTlRnMHFLUWNPOEZrZm55S0dYU0hrOXVNdWs4bGYybFNrSVM4aDltdG4?oc=5",
@@ -1251,18 +1215,6 @@
     "strong": 1,
     "url": "https://www.yna.co.kr/view/AKR20251021154800054",
     "excerpt": "(광주=연합뉴스) 천정인 기자 = 신형 고속열차인 KTX-청룡 운행이 전력 부족으로 차질을 빚고 있다며 조속히 발전 용량을 확충해야 한다는 지적...",
-    "hl": "전력"
-   },
-   {
-    "title": "전북대 정준호 박사·김민수 연구교수, ‘초저소비전력 디스플레이 상용화 기술’ 개발 쾌거",
-    "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTE5jZlIyZUUtNEgtRm9mUlVobXAyQkJ3d3N1QXV6OEtoVFNzUF9QZW9idnRaSFd2MzlMb0dYUXVRdC1sTk8ya2hwNkk1Zi1uLXZJWnh5LUdHclFIMXN1cWd4Sml6RDRNVFXSAWtBVV95cUxQQlVMaW9pTVVjWWwtLVA4cHFzWG8xaW1pRXJQRW83UExJcVYwUGt4WUVDamJYOTdBOE9QWHhlaGhwanJpUVlBZXVYdTN2MWxxRlRkd1p5QXpYc0x0dzdoNk5YbmNfLUN1WEZuQQ?oc=5",
-    "press": "이투뉴스",
-    "date": "2025-07-24",
-    "labels": [
-     "POWER"
-    ],
-    "url": "http://www.e2news.com/news/articleView.html?idxno=321733",
-    "excerpt": "전북대학교(총장 양오봉)는 공과대학 고분자나노공학과·나노융합공학과·JBNU-KIST산학연융합학과의 이승희 교수 연구팀(정준호 박사, 김민수 연구교수)이 상용화 가능한 초저소비전력 액정디스플레이(LCD) 기술을 개발했다고 밝혔다.이 기술은 그동안 상용화가 어려웠던 초저소비전력 구동 방식",
     "hl": "전력"
    }
   ],
@@ -2037,33 +1989,6 @@
     "hl": "전력"
    }
   ],
-  "M167": [
-   {
-    "title": "“백야 뚫고 날았다”…항공대 배재성·박상혁 교수팀, 남극 태양광 무인기 비행 가능성 입증",
-    "link": "https://news.google.com/rss/articles/CBMiW0FVX3lxTE1aanVCZWpLRTNXcmRHeDdpUUZDd0d4bXhwU0RiYWFLdUphVmdScU5ZZ2tuM0FQV0l5ZDZMY2FwaFVzSGFIb3l0dEIzOVRuMF9sbnJ5Skt0SmR6UTA?oc=5",
-    "press": "에너지경제신문",
-    "date": "2025-12-02",
-    "labels": [
-     "RE"
-    ],
-    "url": "https://m.ekn.kr/view.php?key=20251202020463766",
-    "excerpt": "한국항공대학교 배재성·박상혁 교수팀이 극한의 남극 환경에서 태양광 무인항공기의 운용 가능성을 세계 최초로 입증했다. 한국항공대는 배재성·박상혁 교수 연구팀이 지난달 8일부터 17일..",
-    "hl": "태양광"
-   },
-   {
-    "title": "연구성과> 배재성·박상혁 교수 개발 태양광 무인항공기, 세계 최초 남극 비행 성공",
-    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE03UUFLMzduZlFObzFGNC1fVXFVQ3g3a3NpenBSMmx1bXBlbGdHYjV6c21qRkUyYlU2ZHFoYjZNN3Q5dW9haGRndWJJaFVwOGgwQU5OY1ltU1NNMkhQWFJreHN4b0hrcGpNXzlFcHN6NUo?oc=5",
-    "press": "한국항공대학교",
-    "date": "2025-12-02",
-    "labels": [
-     "RE",
-     "POWER"
-    ],
-    "url": "https://kaunews.kau.ac.kr/pages/research.php?mode=read&seq=3323",
-    "excerpt": "날개에 장착된 태양전지판으로 낮 동안 햇빛을 받아 배터리를 충전하고, 야간에는 충전된 전력으로 비행이 가능해 장기간 체공할 수 있다는 점이 특징이다.",
-    "hl": "태양전지"
-   }
-  ],
   "M168": [
    {
     "title": "더불어민주당 송옥주 국회의원, '농어촌 재생에너지 소득마을법' 발의…주민참여형 에너지 수익모델 제도화 추진",
@@ -2364,20 +2289,6 @@
     "url": "https://www.viva100.com/article/20260618500670",
     "excerpt": "정부가 수소특화단지 신규 지정 확대를 통해 수소산업 육성에 속도를 내고 있는 가운데, 수소특화단지의 탄력적 운영 근거를 마련하는 법안이 발의됐다. 18일 국회 의안정보시스템에 따르면 국민의힘 이철규 의원은 최근 이 같은 내용을 담은 ‘수소경제 육성 및 수소 안전관리에",
     "hl": "수소"
-   }
-  ],
-  "M182": [
-   {
-    "title": "[인터뷰] ‘도시가스·LPG’ 시공전문업체 신보령(주) 이양수 본부장“안전은 서류 아닌 현장에서 완성되죠”",
-    "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTFAyWEpWTlM4QXlKdW9naV9uTm5rSHJ3X1BqbU5LV0JaSHhRQzF3NTI4c2lUV1htTWZnQ3JsS0ZoVGpla25kSmdSdjBYTXBtUG1Cc0R6UU94cXQ4VnF5NUw1N1pPSVItY2NmSWc?oc=5",
-    "press": "가스신문",
-    "date": "2026-07-09",
-    "labels": [
-     "CITYGAS"
-    ],
-    "url": "https://www.gasnews.com/news/articleView.html?idxno=125925",
-    "excerpt": "[가스신문 = 김재형 기자] “가스시공은 결국 사람이 하는 일입니다. 아무리 법과 제도가 강화돼도 현장에서 위험을 미리 발견하고 대응할 수 있는 경험이 없다면 사고를 막기 어렵습니다. 그래서 저는 항상 기본과 안전을 가장 먼저 강조합니다.”충남 보령을 기반으로 도시가스 시공업을 수행하고 있는 신보령(주)의 이양수 본부장(65)은 1987년부터 가스시공업계에 몸담아 온 베테랑 기술인이다.…",
-    "hl": "도시가스"
    }
   ],
   "M187": [

@@ -18,7 +18,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { loadEnv, paths } from "./lib/env.mjs";
-import { labelsOf, QUERY_TERMS, NOISE_RE, isMilitaryPower } from "./lib/news_labels.mjs";
+import { labelsOf, QUERY_TERMS, NOISE_RE, isMilitaryPower, isOtherPerson } from "./lib/news_labels.mjs";
 import { buildNewsWeb } from "./build_news_web.mjs";
 
 // ---------- args ----------
@@ -160,6 +160,7 @@ for (let i = 0; i < targets.length; i++) {
       if (!text.includes(m.name)) continue;                             // 이름 없는 기사 제외
       if (NOISE_RE.test(a.title)) continue;                             // 스포츠·연예 동명이인
       if (isMilitaryPower(text, labels)) continue;                      // 군사 '전력(戰力)' 기사
+      if (isOtherPerson(text, m.name)) continue;                        // 동명이인(교수·연구자 등)
       const labels = labelsOf(text);
       if (!labels.length) continue;                                     // 에너지 기사 아님
       const key = a.title.replace(/[^가-힣A-Za-z0-9]/g, "").slice(0, 40);
