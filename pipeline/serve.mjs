@@ -68,4 +68,18 @@ createServer(async (req, res) => {
   } catch {
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("404 Not Found");
   }
-}).listen(PORT, () => console.log(`대시보드: http://localhost:${PORT}`));
+}).listen(PORT, "0.0.0.0", () => {
+  const os = require("node:os");
+  const interfaces = os.networkInterfaces();
+  let ip = "localhost";
+  for (const [name, addrs] of Object.entries(interfaces)) {
+    for (const addr of addrs) {
+      if (addr.family === "IPv4" && !addr.internal) {
+        ip = addr.address;
+        break;
+      }
+    }
+    if (ip !== "localhost") break;
+  }
+  console.log(`대시보드: http://${ip}:${PORT}`);
+});
