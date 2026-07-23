@@ -346,6 +346,7 @@
     document.getElementById("assemblyView").classList.toggle("hidden", !asm);
     document.getElementById("cabinetView").classList.toggle("hidden", asm);
     document.getElementById("filterbarWrap").classList.toggle("hidden", !asm);
+    document.querySelector(".updatewrap").classList.toggle("hidden", !asm);
     renderViewToggle();
   }
 
