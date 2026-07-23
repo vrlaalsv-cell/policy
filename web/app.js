@@ -530,12 +530,14 @@
         .then(function (res) { return res.json(); })
         .then(function (data) {
           localStorage.setItem("lastUpdateTime", new Date().toISOString());
-          updateBtn.classList.remove("loading");
-          updateBtn.disabled = false;
-          updateBtn.textContent = "✓ 완료";
-          updateLastUpdateTime();
           setTimeout(function () {
-            updateBtn.textContent = "🔄 업데이트";
+            updateBtn.classList.remove("loading");
+            updateBtn.disabled = false;
+            updateBtn.textContent = "✓ 완료";
+            updateLastUpdateTime();
+            setTimeout(function () {
+              updateBtn.textContent = "🔄 업데이트";
+            }, 1500);
           }, 3000);
         })
         .catch(function (err) {
