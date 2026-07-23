@@ -74,6 +74,22 @@ cd /volume2/docker/policy
 sudo docker compose up -d --build
 ```
 
+**터널 토큰이 아직 없다면** — 대시보드만 먼저 띄우고(Tailscale `http://ys:8007`) 나중에 터널을 붙여도 된다.
+`.env` 는 비어 있어도 파일 자체는 있어야 한다:
+
+```bash
+cd /volume2/docker/policy
+echo 'CLOUDFLARE_TUNNEL_TOKEN=' > .env
+sudo docker compose up -d --build app
+```
+
+토큰이 생기면 `.env` 를 채우고 전체 기동:
+
+```bash
+cd /volume2/docker/policy
+sudo docker compose up -d
+```
+
 > J4125 라서 첫 빌드에 몇 분 걸린다. 멈춘 것처럼 보여도 **Ctrl+C 금지**.
 > `sudo` 비밀번호는 **`yongsilver` 계정 비번**(DSM 로그인 이메일 아님)이고 입력해도 화면에 안 보이는 게 정상.
 
