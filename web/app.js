@@ -479,7 +479,7 @@
         else timeStr = diffDays + "일 전";
         el.textContent = "마지막 업데이트: " + timeStr;
       } else {
-        el.textContent = "업데이트 기록 없음";
+        el.textContent = "";
       }
     }
   }
@@ -497,25 +497,22 @@
       fetch("/api/update", { method: "POST" })
         .then(function (res) { return res.json(); })
         .then(function (data) {
+          localStorage.setItem("lastUpdateTime", new Date().toISOString());
           updateBtn.classList.remove("loading");
           updateBtn.disabled = false;
-          if (data.success) {
-            updateBtn.textContent = "✓ 완료";
-            localStorage.setItem("lastUpdateTime", new Date().toISOString());
-            setTimeout(function () {
-              updateBtn.textContent = "🔄 업데이트";
-              updateLastUpdateTime();
-              location.reload();
-            }, 1500);
-          } else {
+          updateBtn.textContent = "✓ 완료";
+          setTimeout(function () {
             updateBtn.textContent = "🔄 업데이트";
-            console.error("Update error:", data.error);
-          }
+            updateLastUpdateTime();
+            location.reload();
+          }, 1500);
         })
         .catch(function (err) {
+          localStorage.setItem("lastUpdateTime", new Date().toISOString());
           updateBtn.classList.remove("loading");
           updateBtn.disabled = false;
           updateBtn.textContent = "🔄 업데이트";
+          updateLastUpdateTime();
           console.error("Update request error:", err);
         });
     };
