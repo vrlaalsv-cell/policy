@@ -190,6 +190,21 @@ if (existsSync(outPath)) {
     prev = j.byMember || j;
   } catch { prev = {}; }
 }
+// 이미 받아둔 발췌·원문링크(6_fetch_excerpts.mjs 산출물)는 제목이 같으면 그대로 물려준다.
+// 이게 없으면 재수집할 때마다 발췌가 통째로 날아가 화면에 제목만 남는다.
+const titleKey = (t) => String(t || "").replace(/[^가-힣A-Za-z0-9]/g, "").slice(0, 40);
+const carry = {};
+for (const list of Object.values(prev)) {
+  for (const a of list || []) { if (a && a.excerpt) carry[titleKey(a.title)] = { excerpt: a.excerpt, hl: a.hl, url: a.url }; }
+}
+let carried = 0;
+for (const list of Object.values(byMember)) {
+  for (const a of list) {
+    const c = carry[titleKey(a.title)];
+    if (c) { a.excerpt = c.excerpt; if (c.hl) a.hl = c.hl; if (c.url) a.url = c.url; carried++; }
+  }
+}
+
 for (const m of targets) { delete prev[m.id]; }          // 이번 대상은 결과로 교체(0건이면 제거)
 const merged = { ...prev, ...byMember };
 
@@ -207,5 +222,8 @@ const payload = {
 writeFileSync(outPath, JSON.stringify(payload, null, 1), "utf8");
 console.log(`✔ data/news.json — 의원 ${payload.meta.members}명 · 기사 ${payload.meta.articles}건 (조회 성공 ${okCount}/${targets.length})`);
 if (failed.length) console.log(`  ! 실패 ${failed.length}건: ${failed.slice(0, 8).join(", ")}${failed.length > 8 ? " …" : ""}`);
+if (carried) console.log(`  · 기존 발췌 ${carried}건 그대로 유지`);
+const noExcerpt = Object.values(merged).reduce((n, v) => n + v.filter((a) => !a.excerpt).length, 0);
+if (noExcerpt) console.log(`\n👉 발췌 없는 기사 ${noExcerpt}건 — 이어서 실행하세요:  npm run fetch:excerpts`);
 
 buildNewsWeb();
