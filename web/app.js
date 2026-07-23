@@ -477,6 +477,8 @@
   var initialView = new URLSearchParams(location.search).get("view");
   if (initialView === "cabinet" || initialView === "assembly") { state.view = initialView; if (landing) landing.classList.add("hidden"); }
   document.getElementById("homeBtn").onclick = function () { if (landing) landing.classList.remove("hidden"); };
+  var brandLogo = document.querySelector(".brandwrap");
+  if (brandLogo) { brandLogo.style.cursor = "pointer"; brandLogo.onclick = function () { if (landing) landing.classList.remove("hidden"); }; }
 
   // 마지막 업데이트 시각 표시
   function updateLastUpdateTime() {
