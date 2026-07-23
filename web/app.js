@@ -360,7 +360,6 @@
     document.getElementById("assemblyView").classList.toggle("hidden", !asm);
     document.getElementById("cabinetView").classList.toggle("hidden", asm);
     document.getElementById("filterbarWrap").classList.toggle("hidden", !asm);
-    document.querySelector(".updatewrap").classList.toggle("hidden", !asm);
     renderViewToggle();
   }
 
@@ -526,17 +525,20 @@
       updateBtn.textContent = "🔄 업데이트 중…";
       updateBtn.disabled = true;
 
-      fetch("/api/update", { method: "POST" })
+      var endpoint = state.view === "cabinet" ? "/api/update-cabinet" : "/api/update";
+      fetch(endpoint, { method: "POST" })
         .then(function (res) { return res.json(); })
         .then(function (data) {
           localStorage.setItem("lastUpdateTime", new Date().toISOString());
-          updateBtn.classList.remove("loading");
-          updateBtn.disabled = false;
-          updateBtn.textContent = "✓ 완료";
-          updateLastUpdateTime();
           setTimeout(function () {
-            updateBtn.textContent = "🔄 업데이트";
-          }, 1500);
+            updateBtn.classList.remove("loading");
+            updateBtn.disabled = false;
+            updateBtn.textContent = "✓ 완료";
+            updateLastUpdateTime();
+            setTimeout(function () {
+              updateBtn.textContent = "🔄 업데이트";
+            }, 1500);
+          }, 3000);
         })
         .catch(function (err) {
           localStorage.setItem("lastUpdateTime", new Date().toISOString());
