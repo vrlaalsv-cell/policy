@@ -205,12 +205,13 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 /* 의원 프로필 블록 */
 .mprofile-wrap{display:flex;gap:14px;margin:4px 0 16px;align-items:flex-start}
 .mprofile-photo{flex:0 0 140px;width:140px;height:160px;border-radius:12px;overflow:hidden;background:#f8fafd;border:1px solid var(--line);flex-shrink:0}
-.mprofile-photo img{width:100%;height:100%;object-fit:cover}
+.mprofile-photo img{width:100%;height:100%;object-fit:cover;object-position:top center}
 .mprofile{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:0;flex:1}
 .mprofile>div{background:#f8fafd;border:1px solid var(--line);border-radius:9px;padding:8px 11px;display:flex;flex-direction:column;gap:3px}
 .mprofile .pl{font-size:11px;color:var(--muted);font-weight:700}
 .mprofile .pv{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.4}
-@media (max-width:520px){ .mprofile-wrap{flex-direction:column}.mprofile-photo{flex:0 0 auto;width:100%;height:200px}.mprofile{grid-template-columns:1fr} }
+/* 모바일: 사진칸을 가로 100%로 늘리면 세로형 인물사진이 잘려 얼굴만 확대된다 → 세로 비율 유지 */
+@media (max-width:520px){ .mprofile-wrap{flex-direction:column;align-items:center}.mprofile-photo{flex:0 0 auto;width:160px;height:200px}.mprofile{grid-template-columns:1fr;width:100%} }
 /* AI 종합 분석 박스 */
 .aibox{margin:10px 0 6px;border:1px solid #d5ebe6;background:linear-gradient(180deg,#f2fbf9,#f8fdfc);border-radius:11px;padding:11px 13px}
 .aihd{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--brand2)}
