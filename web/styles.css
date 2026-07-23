@@ -202,6 +202,20 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .slv{font-size:10.5px;font-weight:800;padding:1px 8px;border-radius:6px;color:#fff}
 #cabStatements{max-height:620px;overflow:auto;padding-right:4px}
 
+/* 의원 프로필 블록 */
+.mprofile{display:grid;grid-template-columns:1fr 1fr;gap:8px;margin:2px 0 16px}
+.mprofile>div{background:#f8fafd;border:1px solid var(--line);border-radius:9px;padding:8px 11px;display:flex;flex-direction:column;gap:3px}
+.mprofile .pl{font-size:11px;color:var(--muted);font-weight:700}
+.mprofile .pv{font-size:13.5px;font-weight:700;color:var(--ink);line-height:1.4}
+@media (max-width:520px){ .mprofile{grid-template-columns:1fr} }
+/* AI 종합 분석 박스 */
+.aibox{margin:10px 0 6px;border:1px solid #d5ebe6;background:linear-gradient(180deg,#f2fbf9,#f8fdfc);border-radius:11px;padding:11px 13px}
+.aihd{display:flex;align-items:center;gap:6px;font-size:12.5px;font-weight:800;color:var(--brand2)}
+.aihd .aiic{font-size:14px}
+.aihd .aitag{margin-left:auto;font-size:10px;font-weight:700;color:#5b8a82;background:#e2f2ee;border:1px solid #c7e5de;border-radius:999px;padding:2px 8px}
+.aibox .aihl{font-size:14px;font-weight:800;color:var(--brand);margin:8px 0 4px;line-height:1.45}
+.aibox .aitx{font-size:13px;color:var(--ink);line-height:1.65}
+
 /* 처음(랜딩) 화면 — 동료 정책돋보기 디자인 */
 .landing{position:fixed;inset:0;z-index:200;background:var(--bg);display:flex;flex-direction:column;overflow:auto;padding:36px 28px}
 .landing.hidden{display:none !important}

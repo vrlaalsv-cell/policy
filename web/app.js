@@ -265,17 +265,28 @@
   function openModal(m) {
     if (!m) return;
     var pc = partyColor(m.party);
-    var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div>' +
-      '<div style="font-size:12.5px;color:var(--muted);margin-top:6px">' + m.district + " · " + m.committee.join(", ") + " · " + (m.terms || "?") + "선</div></div>" +
+    var termsTxt = m.terms ? m.terms + "선" : "-";
+    var commTxt = (m.committee && m.committee.length) ? m.committee.join(", ") : "-";
+    var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
-    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin-bottom:2px">사업별 우호도</div><div class="stancegrid">' +
+    h += '<div class="mprofile">' +
+      '<div><span class="pl">정당</span><span class="pv">' + m.party + '</span></div>' +
+      '<div><span class="pl">선거구</span><span class="pv">' + m.district + '</span></div>' +
+      '<div><span class="pl">선수</span><span class="pv">' + termsTxt + '</span></div>' +
+      '<div><span class="pl">소속위원회</span><span class="pv">' + commTxt + '</span></div></div>';
+    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:4px 0 2px">사업별 우호도</div><div class="stancegrid">' +
       BIZ.map(function (b) { var s = stanceInfo(m.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
+    h += aiHTML(m.ai);
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 2px">근거 발언</div>';
     if (m.quotes && m.quotes.length) {
       h += m.quotes.map(function (q) {
         var hl = (state.business !== "all" && q.biz === state.business);
-        return '<div class="qt" style="' + (hl ? "border-left-color:#0f7a4d;background:#eefaf3" : "") + '"><span class="badge" style="background:#eef3fb;color:#264a7d;border-color:#d7e2f4;margin-right:6px">' + bizLabel(q.biz) + "</span>" + q.text +
-          '<div class="qmeta">' + (q.confer || "") + " · " + (q.date || "") + " · " + (q.source && q.source !== "#" ? '<a href="' + q.source + '" target="_blank" rel="noopener">출처</a>' : "출처(샘플)") + "</div></div>";
+        var src = q.meeting ? "📄 " + q.meeting : ((q.confer || "") + (q.date ? " · " + q.date : ""));
+        var body = (q.core != null)
+          ? (q.pre ? esc(q.pre) + " " : "") + "<b>" + esc(q.core) + "</b>" + (q.post ? " " + esc(q.post) : "")
+          : esc(q.text || "");
+        return '<div class="qt" style="' + (hl ? "border-left-color:#0f7a4d;background:#eefaf3" : "") + '"><span class="badge" style="background:#eef3fb;color:#264a7d;border-color:#d7e2f4;margin-right:6px">' + bizLabel(q.biz) + "</span>" + body +
+          '<div class="qmeta"><a href="https://record.assembly.go.kr/assembly/" target="_blank">' + (src || "출처 미상") + "</a></div></div>";
       }).join("");
     } else { h += '<div style="font-size:13px;color:var(--muted)">등록된 발언이 없습니다.</div>'; }
     var disc = META.stancePending
@@ -289,6 +300,13 @@
     document.getElementById("overlay").classList.add("on");
   }
   function closeModal(){ document.getElementById("overlay").classList.remove("on"); }
+  // AI 종합 분석 섹션 (사전 생성된 요약: 발언+기사+성향 종합)
+  function aiHTML(o) {
+    if (!o || !o.analysis) return "";
+    return '<div class="aibox"><div class="aihd"><span class="aiic">🧠</span> AI 종합 분석<span class="aitag">AI 생성 · 참고용</span></div>' +
+      (o.headline ? '<div class="aihl">' + esc(o.headline) + "</div>" : "") +
+      '<div class="aitx">' + esc(o.analysis) + "</div></div>";
+  }
 
   // ---------- view toggle ----------
   function renderViewToggle() {
@@ -344,7 +362,7 @@
 
   // ── 청와대 회의록 분석 (window.CABINET_DATA) ──
   var CAB = window.CABINET_DATA || null;
-  function bizLabelC(id) { var m = { LNG: "LNG", H2: "수소", RE: "재생E", CITYGAS: "도시가스", POWER: "전력" }; return m[id] || id; }
+  function bizLabelC(id) { var m = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CITYGAS: "도시가스", NUCLEAR: "원전" }; return m[id] || id; }
   function stmtHTML(q) {
     var s = stanceInfo(q.stance);
     var biz = (q.businesses || []).map(bizLabelC).join(", ");
@@ -358,6 +376,15 @@
   function enrichCabinet() {
     if (!CAB) return;
     var byName = {}; CAB.speakers.forEach(function (s) { byName[s.name] = s; });
+    // 대통령(이재명): 명패엔 색점을 표시하지 않되, 클릭하면 사업별 성향·근거발언 모달을 연다
+    var plate = document.querySelector("#cabinetView .president-plate");
+    var pres = byName["이재명"];
+    if (plate && pres && !plate.getAttribute("data-enriched")) {
+      plate.setAttribute("data-enriched", "1");
+      plate.classList.add("clickable");
+      plate.setAttribute("title", "이재명 대통령 · 사업별 성향·근거발언 보기");
+      plate.addEventListener("click", function () { openCabinetModal(pres); });
+    }
     Array.prototype.forEach.call(document.querySelectorAll("#cabinetView .org-box"), function (box) {
       var whoEl = box.querySelector(".who"); if (!whoEl) return;
       var sp = byName[whoEl.textContent.trim()]; if (!sp) return;
@@ -372,6 +399,7 @@
     var h = '<div class="mhd"><div><div style="font-size:19px;font-weight:800">' + sp.name + '</div><div style="font-size:12.5px;color:var(--muted);margin-top:5px">' + (sp.role || "") + " · 회의록 발언 " + sp.count + '건</div></div><button class="x" aria-label="닫기">×</button></div><div class="mbd">';
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin-bottom:2px">사업별 성향</div><div class="stancegrid">' +
       BIZ.map(function (b) { var s = stanceInfo(sp.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
+    h += aiHTML(sp.ai);
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 4px">근거 발언 (' + sp.quotes.length + ")</div>";
     h += sp.quotes.map(stmtHTML).join("");
     h += '<div class="disc">회의록 원문 발췌 기반. 성향은 SK E&amp;S 사업 관점(우호/중립/비우호) 해석입니다.</div></div>';
