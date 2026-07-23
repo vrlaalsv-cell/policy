@@ -301,6 +301,7 @@
     var pc = partyColor(m.party);
     var termsTxt = m.terms ? m.terms + "선" : "-";
     var commTxt = (m.committee && m.committee.length) ? m.committee.join(", ") : "-";
+    var hasQuotes = m.quotes && m.quotes.length;
     var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
     h += '<div class="mprofile-wrap">' +
@@ -311,11 +312,11 @@
       '<div><span class="pl">선수</span><span class="pv">' + termsTxt + '</span></div>' +
       '<div><span class="pl">소속위원회</span><span class="pv">' + commTxt + '</span></div>' +
       '</div></div>';
-    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:4px 0 2px">사업별 우호도</div><div class="stancegrid">' +
-      BIZ.map(function (b) { var s = stanceInfo(m.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
-    h += aiHTML(m.ai);
-    h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 2px">근거 발언</div>';
-    if (m.quotes && m.quotes.length) {
+    if (hasQuotes) {
+      h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:4px 0 2px">사업별 우호도</div><div class="stancegrid">' +
+        BIZ.map(function (b) { var s = stanceInfo(m.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
+      h += aiHTML(m.ai);
+      h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 2px">근거 발언</div>';
       h += byMeetingDesc(m.quotes).map(function (q) {
         var hl = (state.business !== "all" && q.biz === state.business);
         var src = q.meeting ? "📄 " + q.meeting : ((q.confer || "") + (q.date ? " · " + q.date : ""));
@@ -325,12 +326,26 @@
         return '<div class="qt" style="' + (hl ? "border-left-color:#0f7a4d;background:#eefaf3" : "") + '"><span class="badge" style="background:#eef3fb;color:#264a7d;border-color:#d7e2f4;margin-right:6px">' + bizLabel(q.biz) + "</span>" + body +
           '<div class="qmeta"><a href="https://record.assembly.go.kr/assembly/" target="_blank">' + (src || "출처 미상") + "</a></div></div>";
       }).join("");
-    } else { h += '<div style="font-size:13px;color:var(--muted)">등록된 발언이 없습니다.</div>'; }
-    var disc = META.stancePending
-      ? "ℹ 명단·지역구·정당은 <b>실제 22대 국회의원</b>(위키백과 기준)입니다. 에너지 성향은 <b>아직 분석 전(자료부족)</b> — 회의록 분석(파이프라인) 후 채워집니다."
-      : "⚠ 성향 라벨은 회의록 발언을 AI가 요약·분류한 <b>참고용</b> 정보입니다. 반드시 근거 원문·출처와 함께 확인하세요." + (META.isSample ? " 현재 화면은 <b>가상 샘플 데이터</b>입니다." : "");
-    h += '<div class="disc">' + disc + '</div>';
-    h += newsHTML(m);            // 최하단: 최근 3개월 에너지 기사 (에너지원 라벨 포함)
+      var disc = META.stancePending
+        ? "ℹ 명단·지역구·정당은 <b>실제 22대 국회의원</b>(위키백과 기준)입니다. 에너지 성향은 <b>아직 분석 전(자료부족)</b> — 회의록 분석(파이프라인) 후 채워집니다."
+        : "⚠ 성향 라벨은 회의록 발언을 AI가 요약·분류한 <b>참고용</b> 정보입니다. 반드시 근거 원문·출처와 함께 확인하세요." + (META.isSample ? " 현재 화면은 <b>가상 샘플 데이터</b>입니다." : "");
+      h += '<div class="disc">' + disc + '</div>';
+      h += newsHTML(m);
+    }
+    h += '</div>';
+    var modal = document.getElementById("modal"); modal.innerHTML = h;
+    modal.querySelector(".x").onclick = closeModal;
+    document.getElementById("overlay").classList.add("on");
+  }
+  function openCabinetSimpleModal(pos, name) {
+    if (!name || name === "공석") return;
+    var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span style="font-size:13px;color:var(--muted);font-weight:700">' + pos + '</span><span style="font-size:19px;font-weight:800">' + esc(name) + '</span></div></div>' +
+      '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
+    h += '<div class="mprofile-wrap">' +
+      '<div class="mprofile-photo"><img src="images/bluehouse_photos/' + esc(name) + '.jpg" alt="' + esc(name) + '"></div>' +
+      '<div class="mprofile">' +
+      '<div><span class="pl">직위</span><span class="pv">' + esc(pos) + '</span></div>' +
+      '</div></div>';
     h += '</div>';
     var modal = document.getElementById("modal"); modal.innerHTML = h;
     modal.querySelector(".x").onclick = closeModal;
@@ -393,8 +408,12 @@
     var host = document.getElementById("ministers"); if (!host) return;
     host.innerHTML = CABINET.map(function (m) {
       var cls = "org-box" + (m.energy ? " energy" : "") + (m.concurrent ? " concurrent" : "") + (m.vacant ? " vacant" : "");
-      return '<div class="' + cls + '"><span class="pos">' + m.pos + '</span><span class="who">' + m.who + "</span></div>";
+      return '<div class="' + cls + '" data-pos="' + m.pos + '" data-who="' + m.who + '"><span class="pos">' + m.pos + '</span><span class="who">' + m.who + "</span></div>";
     }).join("");
+    host.addEventListener("click", function (e) {
+      var box = e.target.closest(".org-box");
+      if (box) openCabinetSimpleModal(box.dataset.pos, box.dataset.who);
+    });
   })();
 
   // ── 청와대 회의록 분석 (window.CABINET_DATA) ──
