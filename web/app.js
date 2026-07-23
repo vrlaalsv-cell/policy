@@ -69,6 +69,10 @@
   function stanceOf(m, biz) { return biz === "all" ? overallStance(m) : (m.stance[biz] || "unknown"); }
   function hexColor(m) { return state.business === "all" ? partyColor(m.party) : stanceInfo(stanceOf(m, state.business)).color; }
   function bizLabel(id) { var b = META.businesses.find(function (x) { return x.id === id; }); return b ? b.label : id; }
+  // 외부(기사) 문자열은 그대로 innerHTML 에 넣지 않는다.
+  var ESCMAP = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ESCMAP[c]; }); }
+  function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
 
   // ---------- hex packing (axial, pointy-top) ----------
   var SIZE = 11, DRAW = SIZE * 0.9, PAD = 14;
@@ -254,6 +258,53 @@
     host.appendChild(frag);
   }
 
+  // ---------- 최근 기사 (window.NEWS_DATA — pipeline/5_collect_news.mjs 산출물) ----------
+  var NEWS = window.NEWS_DATA || null;
+  var NEWSMETA = (NEWS && NEWS.meta) || { days: 90, source: "", collectedAt: "" };
+  var NEWSLAB = {};
+  ((NEWS && NEWS.labels) || []).forEach(function (l) { NEWSLAB[l.id] = l; });
+  function newsOf(m) { return (NEWS && NEWS.byMember && NEWS.byMember[m.id]) || m.news || []; }
+  function newsChip(id) {
+    var l = NEWSLAB[id] || { label: id, color: "#5c6b82", bg: "#eef3fb" };
+    return '<span class="nlab" style="background:' + l.bg + ";color:" + l.color + '">' + esc(l.label) + "</span>";
+  }
+  // 사업 필터가 켜져 있으면 그 에너지원 기사를 위로. (원전은 사업 목록에 없어 필터 대상 아님)
+  function newsSorted(m) {
+    var list = newsOf(m).slice();
+    if (state.business !== "all") {
+      list.sort(function (a, b) {
+        var am = (a.labels || []).indexOf(state.business) >= 0 ? 1 : 0;
+        var bm = (b.labels || []).indexOf(state.business) >= 0 ? 1 : 0;
+        return bm - am;
+      });
+    }
+    return list;
+  }
+  function newsHTML(m) {
+    var list = newsSorted(m), days = NEWSMETA.days || 90;
+    var h = '<div style="display:flex;align-items:baseline;gap:8px;margin:16px 0 4px">' +
+      '<span style="font-size:13px;font-weight:800;color:var(--brand)">최근 기사</span>' +
+      '<span style="font-size:11.5px;color:var(--muted)">최근 ' + days + "일 · " + list.length + "건</span></div>";
+    if (!list.length) {
+      return h + '<div class="nwempty">최근 ' + days + "일 내 에너지(LNG·수소·원전·재생E·도시가스·전력) 관련 기사가 없습니다." +
+        (NEWS ? "" : " <b>news.js 미생성</b> — <code>npm run collect:news</code> 실행 후 표시됩니다.") + "</div>";
+    }
+    h += list.map(function (a) {
+      var hl = state.business !== "all" && (a.labels || []).indexOf(state.business) >= 0;
+      var url = safeUrl(a.link);
+      var t = esc(a.title);
+      return '<div class="nw' + (hl ? " hl" : "") + '">' +
+        '<div class="nlabs">' + (a.labels || []).map(newsChip).join("") + "</div>" +
+        (url ? '<a class="nwt" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + t + "</a>"
+             : '<span class="nwt">' + t + "</span>") +
+        '<div class="nwm">' + esc(a.press || "") + (a.press && a.date ? " · " : "") + esc(a.date || "") + "</div></div>";
+    }).join("");
+    h += '<div class="nwsrc">출처: ' + esc(NEWSMETA.source === "naver" ? "네이버 뉴스 검색" : "Google 뉴스") +
+      (NEWSMETA.collectedAt ? " · 수집 " + esc(NEWSMETA.collectedAt) : "") +
+      " · 이름·에너지 키워드로 자동 수집한 목록이라 <b>동명이인·무관 기사</b>가 섞일 수 있습니다.</div>";
+    return h;
+  }
+
   // ---------- modal ----------
   function openModal(m) {
     if (!m) return;
@@ -274,12 +325,14 @@
     var disc = META.stancePending
       ? "ℹ 명단·지역구·정당은 <b>실제 22대 국회의원</b>(위키백과 기준)입니다. 에너지 성향은 <b>아직 분석 전(자료부족)</b> — 회의록 분석(파이프라인) 후 채워집니다."
       : "⚠ 성향 라벨은 회의록 발언을 AI가 요약·분류한 <b>참고용</b> 정보입니다. 반드시 근거 원문·출처와 함께 확인하세요." + (META.isSample ? " 현재 화면은 <b>가상 샘플 데이터</b>입니다." : "");
-    h += '<div class="disc">' + disc + '</div></div>';
+    h += '<div class="disc">' + disc + '</div>';
+    h += newsHTML(m);            // 최하단: 최근 3개월 에너지 기사 (에너지원 라벨 포함)
+    h += '</div>';
     var modal = document.getElementById("modal"); modal.innerHTML = h;
     modal.querySelector(".x").onclick = closeModal;
     document.getElementById("overlay").classList.add("on");
   }
-  function closeModal() { document.getElementById("overlay").classList.remove("on"); }
+  function closeModal(){ document.getElementById("overlay").classList.remove("on"); }
 
   // ---------- view toggle ----------
   function renderViewToggle() {
