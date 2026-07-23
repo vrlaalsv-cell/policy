@@ -28,6 +28,10 @@
   var ESCMAP = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
   function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ESCMAP[c]; }); }
   function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
+  // 회의록 문자열에서 날짜(YYYY.MM.DD 또는 YYYY-MM-DD) 추출 → 비교용 정수(YYYYMMDD)
+  function meetingTime(s) { var m = String(s || "").match(/(\d{4})[.\-\/](\d{1,2})[.\-\/](\d{1,2})/); return m ? (+m[1]) * 10000 + (+m[2]) * 100 + (+m[3]) : 0; }
+  // 근거 발언을 회의록 날짜 역순(최신 먼저)으로 정렬한 복사본 반환
+  function byMeetingDesc(arr) { return (arr || []).slice().sort(function (a, b) { return meetingTime(b.meeting) - meetingTime(a.meeting); }); }
 
   // ---------- hex packing (axial, pointy-top) ----------
   var SIZE = 11, DRAW = SIZE * 0.9, PAD = 14;
@@ -309,7 +313,7 @@
     h += aiHTML(m.ai);
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 2px">근거 발언</div>';
     if (m.quotes && m.quotes.length) {
-      h += m.quotes.map(function (q) {
+      h += byMeetingDesc(m.quotes).map(function (q) {
         var hl = (state.business !== "all" && q.biz === state.business);
         var src = q.meeting ? "📄 " + q.meeting : ((q.confer || "") + (q.date ? " · " + q.date : ""));
         var body = (q.core != null)
@@ -431,7 +435,7 @@
       BIZ.map(function (b) { var s = stanceInfo(sp.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
     h += aiHTML(sp.ai);
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 4px">근거 발언 (' + sp.quotes.length + ")</div>";
-    h += sp.quotes.map(stmtHTML).join("");
+    h += byMeetingDesc(sp.quotes).map(stmtHTML).join("");
     h += '<div class="disc">회의록 원문 발췌 기반. 성향은 SK E&amp;S 사업 관점(우호/중립/비우호) 해석입니다.</div></div>';
     var modal = document.getElementById("modal"); modal.innerHTML = h;
     modal.querySelector(".x").onclick = closeModal;
