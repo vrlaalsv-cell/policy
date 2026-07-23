@@ -436,7 +436,9 @@
     h += aiHTML(sp.ai);
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:6px 0 4px">근거 발언 (' + sp.quotes.length + ")</div>";
     h += byMeetingDesc(sp.quotes).map(stmtHTML).join("");
-    h += '<div class="disc">회의록 원문 발췌 기반. 성향은 SK E&amp;S 사업 관점(우호/중립/비우호) 해석입니다.</div></div>';
+    h += '<div class="disc">회의록 원문 발췌 기반. 성향은 SK E&amp;S 사업 관점(우호/중립/비우호) 해석입니다.</div>';
+    h += newsHTML({ id: "CAB:" + sp.name, name: sp.name });
+    h += "</div>";
     var modal = document.getElementById("modal"); modal.innerHTML = h;
     modal.querySelector(".x").onclick = closeModal;
     document.getElementById("overlay").classList.add("on");
