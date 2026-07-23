@@ -45,6 +45,10 @@
     <span class="sample-badge" id="sampleBadge">샘플 데이터</span>
     <div class="spacer"></div>
     <button id="homeBtn" class="homebtn" title="처음 화면">⌂ 처음</button>
+    <div class="updatewrap">
+      <button id="updateBtn" class="updatebtn" title="데이터 업데이트">🔄 업데이트</button>
+      <div id="lastUpdate" class="lastupdatetext"></div>
+    </div>
     <div class="viewtoggle" id="viewToggle">
       <button data-view="cabinet">청와대</button>
       <button data-view="assembly" class="on">국회</button>
@@ -64,11 +68,11 @@
   <div class="grid" id="assemblyView">
     <section>
       <div class="panel">
-        <div class="hd"><h2 id="mapTitle">전국 지도</h2></div>
+        <div class="hd"><h2 id="mapTitle">의석 배치도</h2></div>
         <div class="bd">
           <div id="map"></div>
           <div class="legend" id="legend"></div>
-          <div class="maphint">육각형 1개 = 국회의원 1명 · 지역별로 묶어 배치 · <b>클릭하면 프로필·성향</b>이 열립니다.</div>
+          <div class="maphint">육각형 1개 = 국회의원 1명 · 정당별로 묶어 배치 · <b>클릭하면 프로필·성향</b>이 열립니다.</div>
         </div>
       </div>
       <div class="stats" id="stats" style="margin-top:14px"></div>
@@ -145,6 +149,7 @@
 
 <script src="data.js"></script>
 <script src="cabinet.js"></script>
+<script src="news.js"></script>
 <script src="app.js"></script>
 </body>
 </html>

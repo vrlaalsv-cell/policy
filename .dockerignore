@@ -1,0 +1,24 @@
+# 이미지에 굽지 말아야 할 것 — .gitignore 만으로는 COPY 를 막지 못한다
+**/.env
+**/.env.*
+!**/.env.example
+*.key
+*.pem
+
+node_modules
+.next
+out
+.git
+.github
+.vercel
+
+# 배포에 필요 없는 것
+app
+components
+public
+data/raw
+data/cabinet_minutes
+
+*.log
+.DS_Store
+Thumbs.db

@@ -11,52 +11,7 @@
   // 이름/순서
   var SIDONAME = {}, SIDOORDER = [];
   SIDO.forEach(function (s) { SIDONAME[s.code] = s.name; SIDOORDER.push(s.code); });
-  // 오프셋(col,row) → axial (odd-r). ASCII 마스크를 화면 좌표로 변환.
-  function offAx(col, row) { return [col - Math.floor(row / 2), row]; }
-  // ── 한반도 실루엣 마스크 (X=지역구 셀, 합계 254). 마지막 그룹은 제주(분리). ──
-  var MASK = [
-    "    XXXXXX",
-    "   XXXXXXXXX",
-    "  XXXXXXXXXXXXX",
-    " XXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXX",
-    "XXXXXXXXXXXXXXXX",
-    " XXXXXXXXXXXXXXX",
-    " XXXXXXXXXXXXXX",
-    "  XXXXXXXXXXX",
-    "  XXXXXXXXXX",
-    "  XXXXXXXXXX",
-    "  XXXXXXXXXX",
-    "  XXXXXXXXXXX",
-    "  XXXXXXXXXXX",
-    "  XXXXXXXXXXX",
-    "   XXXXXXXXXX",
-    "   XXXXXXXXXX",
-    "   XXXXXXXXXX",
-    "   XXXXXXXXXX",
-    "    XXXXXXX",
-    "    XXXXXX",
-    "     XXXX",
-    "",
-    "   XXX"
-  ];
-  var MASKSET = {}, MASKLIST = [];
-  MASK.forEach(function (rowStr, row) {
-    for (var col = 0; col < rowStr.length; col++) {
-      if (rowStr.charAt(col) === "X") { var a = offAx(col, row); MASKSET[a[0] + "," + a[1]] = true; MASKLIST.push(a); }
-    }
-  });
-  // 시도 앵커(오프셋 col,row) — 한반도 지리 배치
-  var ANCHOR_OFF = {
-    SEOUL: [8, 2], INCHEON: [2, 4], GYEONGGI: [7, 5], GANGWON: [14, 3],
-    CHUNGNAM: [3, 9], SEJONG: [6, 9], CHUNGBUK: [9, 9], DAEJEON: [6, 11],
-    GYEONGBUK: [11, 11], DAEGU: [9, 13], JEONBUK: [3, 13], GYEONGNAM: [8, 16],
-    ULSAN: [12, 15], BUSAN: [10, 18], GWANGJU: [4, 18], JEONNAM: [4, 21], JEJU: [4, 24]
-  };
-  var ANCHOR = {};
-  Object.keys(ANCHOR_OFF).forEach(function (c) { ANCHOR[c] = offAx(ANCHOR_OFF[c][0], ANCHOR_OFF[c][1]); });
-  function regionOf(m) { return ANCHOR[m.sido] ? m.sido : "PROP"; }
+  function regionOf(m) { return m.sido; }
 
   var state = { view: "assembly", business: "all", region: "ALL", query: "" };
 
@@ -69,61 +24,62 @@
   function stanceOf(m, biz) { return biz === "all" ? overallStance(m) : (m.stance[biz] || "unknown"); }
   function hexColor(m) { return state.business === "all" ? partyColor(m.party) : stanceInfo(stanceOf(m, state.business)).color; }
   function bizLabel(id) { var b = META.businesses.find(function (x) { return x.id === id; }); return b ? b.label : id; }
+  // 외부(기사) 문자열은 그대로 innerHTML 에 넣지 않는다.
+  var ESCMAP = { "&": "&amp;", "<": "&lt;", ">": "&gt;", '"': "&quot;", "'": "&#39;" };
+  function esc(s) { return String(s == null ? "" : s).replace(/[&<>"']/g, function (c) { return ESCMAP[c]; }); }
+  function safeUrl(u) { return /^https?:\/\//i.test(String(u || "")) ? String(u) : ""; }
 
   // ---------- hex packing (axial, pointy-top) ----------
   var SIZE = 11, DRAW = SIZE * 0.9, PAD = 14;
-  var DIRS = [[1, 0], [1, -1], [0, -1], [-1, 0], [-1, 1], [0, 1]];
-  function ring(cq, cr, k) {
-    if (k <= 0) return [[cq, cr]];
-    var res = [], q = cq + DIRS[4][0] * k, r = cr + DIRS[4][1] * k;
-    for (var i = 0; i < 6; i++) for (var j = 0; j < k; j++) { res.push([q, r]); q += DIRS[i][0]; r += DIRS[i][1]; }
-    return res;
-  }
-  function px(q, r) { return { x: SIZE * Math.sqrt(3) * (q + r / 2), y: SIZE * 1.5 * r }; }
   function corners(cx, cy) {
     var p = [];
     for (var i = 0; i < 6; i++) { var a = Math.PI / 180 * (60 * i - 30); p.push((cx + DRAW * Math.cos(a)).toFixed(1) + "," + (cy + DRAW * Math.sin(a)).toFixed(1)); }
     return p.join(" ");
   }
 
-  // 지역구: 한반도 마스크 안에서 시도 앵커부터 링 확장(큰 시도 우선) → 셀 배정.
-  // 비례대표: 우측 세로 일렬.
-  var cellOf = {};        // memberId -> {q,r} (지역구) 또는 {fx,fy} (비례)
-  var regionCells = {};   // region -> [[q,r],...]
+  // 정당별 반원(半円) 의석 배치도: 큰 정당부터 좌→우로 이어붙여, 여러 겹의 아치 행(row)에
+  // 걸친 "쐐기" 모양으로 뭉치게 배치한다. 육각형 1개 = 의원 1명(비례대표도 동일하게 포함).
+  var cellOf = {};      // memberId -> {fx,fy}
+  var partySpan = {};   // party -> {mid, count} (라벨 위치용)
+  var ARC_LABEL_R = 0;
   (function layout() {
-    var byRegion = {};
-    MEMBERS.forEach(function (m) { var rg = regionOf(m); if (rg === "PROP") return; (byRegion[rg] = byRegion[rg] || []).push(m); });
-    var codes = Object.keys(byRegion).sort(function (a, b) { return byRegion[b].length - byRegion[a].length; });
-    var occupied = {};
-    codes.forEach(function (code) {
-      var a = ANCHOR[code] || [0, 0], list = byRegion[code], cells = [];
-      for (var d = 0; d < 60 && cells.length < list.length; d++) {
-        var rg = ring(a[0], a[1], d);
-        for (var i = 0; i < rg.length && cells.length < list.length; i++) {
-          var key = rg[i][0] + "," + rg[i][1];
-          if (MASKSET[key] && !occupied[key]) { occupied[key] = true; cells.push(rg[i]); }
-        }
-      }
-      regionCells[code] = cells;
-      list.forEach(function (m, idx) { if (cells[idx]) cellOf[m.id] = { q: cells[idx][0], r: cells[idx][1] }; });
-    });
-    // 비례대표 → 우측 세로 나열 (한반도 높이에 맞춰 2~3열로 균형 배치)
-    var prop = MEMBERS.filter(function (m) { return regionOf(m) === "PROP"; });
-    if (prop.length) {
-      var maxx = -1e9, miny = 1e9, maxy = -1e9;
-      MASKLIST.forEach(function (a) { var p = px(a[0], a[1]); if (p.x > maxx) maxx = p.x; if (p.y < miny) miny = p.y; if (p.y > maxy) maxy = p.y; });
-      var vgap = SIZE * 1.75, hgap = SIZE * 1.9;
-      var perColMax = Math.max(1, Math.floor((maxy - miny) / vgap) + 1);
-      var cols = Math.max(1, Math.ceil(prop.length / perColMax));   // 한반도 높이에 맞춘 열 수 (2~3)
-      var perCol = Math.ceil(prop.length / cols);                    // 열별 균등 분배
-      var x0 = maxx + SIZE * 3.2, y0 = miny + SIZE * 0.6;
-      prop.forEach(function (m, i) {
-        var col = Math.floor(i / perCol), row = i % perCol;
-        cellOf[m.id] = { fx: x0 + col * hgap, fy: y0 + row * vgap };
-      });
+    var ARC_SPACING = SIZE * 1.9;   // 행 안/행 간 최소 중심 간격
+    var ARC_R0 = SIZE * 12;         // 안쪽 반지름(가운데 캡션 공간 확보)
+    var rows = [], r = ARC_R0, totalCap = 0;
+    while (totalCap < MEMBERS.length) {
+      var cap = Math.round(Math.PI * r / ARC_SPACING) + 1;
+      rows.push({ r: r, cap: cap, count: cap }); totalCap += cap; r += ARC_SPACING;
     }
+    // 초과분(shortfall)은 한 행에 몰아서 자르지 않고 모든 행에 골고루 조금씩 나눠서 뺀다.
+    // (한 행을 통째로 비우면 그 행의 좌석이 폭 전체에 늘어나며 정당 뭉치가 흐트러짐)
+    var shortfall = totalCap - MEMBERS.length, ri = 0;
+    while (shortfall > 0) {
+      if (rows[ri % rows.length].count > 1) { rows[ri % rows.length].count--; shortfall--; }
+      ri++;
+    }
+    var slots = [];
+    rows.forEach(function (row) {
+      var step = row.cap > 1 ? Math.PI / (row.cap - 1) : 0;
+      for (var j = 0; j < row.count; j++) { slots.push({ r: row.r, angle: Math.round((Math.PI - j * step) * 1e6) / 1e6 }); }
+    });
+    slots.sort(function (a, b) { return (b.angle - a.angle) || (a.r - b.r); }); // 왼쪽(π) → 오른쪽(0)
+
+    var byParty = {};
+    MEMBERS.forEach(function (m) { (byParty[m.party] = byParty[m.party] || []).push(m); });
+    var partyOrder = Object.keys(byParty).sort(function (a, b) { return byParty[b].length - byParty[a].length; });
+    var k = 0;
+    partyOrder.forEach(function (p) {
+      var list = byParty[p], angles = [];
+      list.forEach(function (m) {
+        var s = slots[k++];
+        cellOf[m.id] = { fx: s.r * Math.cos(s.angle), fy: -s.r * Math.sin(s.angle) };
+        angles.push(s.angle);
+      });
+      partySpan[p] = { mid: (Math.max.apply(null, angles) + Math.min.apply(null, angles)) / 2, count: list.length };
+    });
+    ARC_LABEL_R = rows[rows.length - 1].r + SIZE * 2.5;
   })();
-  function posOf(m) { var c = cellOf[m.id]; if (!c) return null; return c.fx != null ? { x: c.fx, y: c.fy } : px(c.q, c.r); }
+  function posOf(m) { var c = cellOf[m.id]; if (!c) return null; return { x: c.fx, y: c.fy }; }
 
   // ---------- filter chips ----------
   function renderChips() {
@@ -159,19 +115,14 @@
       svg += '<polygon class="hexm' + dim + '" data-id="' + m.id + '" fill="' + hexColor(m) + '" points="' + corners(p.x + ox, p.y + oy) + '">' +
         '<title>' + m.name + " · " + partyShort(m.party) + " · " + m.district + "</title></polygon>";
     });
-    // 지역 라벨 (셀 중심 평균)
-    Object.keys(regionCells).forEach(function (code) {
-      var cs = regionCells[code]; if (!cs.length) return;
-      var sx = 0, sy = 0; cs.forEach(function (c) { var p = px(c[0], c[1]); sx += p.x; sy += p.y; });
-      var cx = sx / cs.length + ox, cy = sy / cs.length + oy;
-      svg += '<text class="region-label" x="' + cx.toFixed(1) + '" y="' + cy.toFixed(1) + '">' + SIDONAME[code] + "</text>";
+    // 정당별 라벨 (해당 정당 쐐기의 바깥쪽)
+    Object.keys(partySpan).forEach(function (p) {
+      var sp = partySpan[p];
+      var lx = ARC_LABEL_R * Math.cos(sp.mid) + ox, ly = -ARC_LABEL_R * Math.sin(sp.mid) + oy;
+      svg += '<text class="region-label" x="' + lx.toFixed(1) + '" y="' + ly.toFixed(1) + '">' + partyShort(p) + " " + sp.count + "석</text>";
     });
-    // 비례대표 라벨 (세로 열 상단)
-    var propList = MEMBERS.filter(function (m) { return regionOf(m) === "PROP" && cellOf[m.id]; });
-    if (propList.length) {
-      var c0 = cellOf[propList[0].id];
-      svg += '<text class="region-label" x="' + (c0.fx + ox).toFixed(1) + '" y="' + (c0.fy - SIZE * 1.6 + oy).toFixed(1) + '">비례대표</text>';
-    }
+    // 가운데 캡션
+    svg += '<text class="region-label" x="' + ox.toFixed(1) + '" y="' + (SIZE * 2 + oy).toFixed(1) + '">국회의원 · 총 ' + MEMBERS.length + "석</text>";
     svg += "</svg>";
 
     var map = document.getElementById("map");
@@ -180,7 +131,7 @@
       var t = e.target.closest ? e.target.closest(".hexm") : null;
       if (t) openModal(byId[t.getAttribute("data-id")]);
     });
-    document.getElementById("mapTitle").textContent = "전국 지도 · " + Object.keys(cellOf).length + "명" + (state.business === "all" ? " (정당)" : " (" + bizLabel(state.business) + " 우호도)");
+    document.getElementById("mapTitle").textContent = "의석 배치도 · " + Object.keys(cellOf).length + "석" + (state.business === "all" ? " (정당)" : " (" + bizLabel(state.business) + " 우호도)");
     renderLegend();
   }
 
@@ -254,6 +205,53 @@
     host.appendChild(frag);
   }
 
+  // ---------- 최근 기사 (window.NEWS_DATA — pipeline/5_collect_news.mjs 산출물) ----------
+  var NEWS = window.NEWS_DATA || null;
+  var NEWSMETA = (NEWS && NEWS.meta) || { days: 90, source: "", collectedAt: "" };
+  var NEWSLAB = {};
+  ((NEWS && NEWS.labels) || []).forEach(function (l) { NEWSLAB[l.id] = l; });
+  function newsOf(m) { return (NEWS && NEWS.byMember && NEWS.byMember[m.id]) || m.news || []; }
+  function newsChip(id) {
+    var l = NEWSLAB[id] || { label: id, color: "#5c6b82", bg: "#eef3fb" };
+    return '<span class="nlab" style="background:' + l.bg + ";color:" + l.color + '">' + esc(l.label) + "</span>";
+  }
+  // 사업 필터가 켜져 있으면 그 에너지원 기사를 위로. (원전은 사업 목록에 없어 필터 대상 아님)
+  function newsSorted(m) {
+    var list = newsOf(m).slice();
+    if (state.business !== "all") {
+      list.sort(function (a, b) {
+        var am = (a.labels || []).indexOf(state.business) >= 0 ? 1 : 0;
+        var bm = (b.labels || []).indexOf(state.business) >= 0 ? 1 : 0;
+        return bm - am;
+      });
+    }
+    return list;
+  }
+  function newsHTML(m) {
+    var list = newsSorted(m), days = NEWSMETA.days || 90;
+    var h = '<div style="display:flex;align-items:baseline;gap:8px;margin:16px 0 4px">' +
+      '<span style="font-size:13px;font-weight:800;color:var(--brand)">최근 기사</span>' +
+      '<span style="font-size:11.5px;color:var(--muted)">최근 ' + days + "일 · " + list.length + "건</span></div>";
+    if (!list.length) {
+      return h + '<div class="nwempty">최근 ' + days + "일 내 에너지(LNG·수소·원전·재생E·도시가스·전력) 관련 기사가 없습니다." +
+        (NEWS ? "" : " <b>news.js 미생성</b> — <code>npm run collect:news</code> 실행 후 표시됩니다.") + "</div>";
+    }
+    h += list.map(function (a) {
+      var hl = state.business !== "all" && (a.labels || []).indexOf(state.business) >= 0;
+      var url = safeUrl(a.link);
+      var t = esc(a.title);
+      return '<div class="nw' + (hl ? " hl" : "") + '">' +
+        '<div class="nlabs">' + (a.labels || []).map(newsChip).join("") + "</div>" +
+        (url ? '<a class="nwt" href="' + esc(url) + '" target="_blank" rel="noopener noreferrer">' + t + "</a>"
+             : '<span class="nwt">' + t + "</span>") +
+        '<div class="nwm">' + esc(a.press || "") + (a.press && a.date ? " · " : "") + esc(a.date || "") + "</div></div>";
+    }).join("");
+    h += '<div class="nwsrc">출처: ' + esc(NEWSMETA.source === "naver" ? "네이버 뉴스 검색" : "Google 뉴스") +
+      (NEWSMETA.collectedAt ? " · 수집 " + esc(NEWSMETA.collectedAt) : "") +
+      " · 이름·에너지 키워드로 자동 수집한 목록이라 <b>동명이인·무관 기사</b>가 섞일 수 있습니다.</div>";
+    return h;
+  }
+
   // ---------- modal ----------
   function openModal(m) {
     if (!m) return;
@@ -281,12 +279,14 @@
     var disc = META.stancePending
       ? "ℹ 명단·지역구·정당은 <b>실제 22대 국회의원</b>(위키백과 기준)입니다. 에너지 성향은 <b>아직 분석 전(자료부족)</b> — 회의록 분석(파이프라인) 후 채워집니다."
       : "⚠ 성향 라벨은 회의록 발언을 AI가 요약·분류한 <b>참고용</b> 정보입니다. 반드시 근거 원문·출처와 함께 확인하세요." + (META.isSample ? " 현재 화면은 <b>가상 샘플 데이터</b>입니다." : "");
-    h += '<div class="disc">' + disc + '</div></div>';
+    h += '<div class="disc">' + disc + '</div>';
+    h += newsHTML(m);            // 최하단: 최근 3개월 에너지 기사 (에너지원 라벨 포함)
+    h += '</div>';
     var modal = document.getElementById("modal"); modal.innerHTML = h;
     modal.querySelector(".x").onclick = closeModal;
     document.getElementById("overlay").classList.add("on");
   }
-  function closeModal() { document.getElementById("overlay").classList.remove("on"); }
+  function closeModal(){ document.getElementById("overlay").classList.remove("on"); }
 
   // ---------- view toggle ----------
   function renderViewToggle() {
@@ -300,6 +300,7 @@
     document.getElementById("assemblyView").classList.toggle("hidden", !asm);
     document.getElementById("cabinetView").classList.toggle("hidden", asm);
     document.getElementById("filterbarWrap").classList.toggle("hidden", !asm);
+    document.querySelector(".updatewrap").classList.toggle("hidden", !asm);
     renderViewToggle();
   }
 
@@ -423,6 +424,67 @@
   var initialView = new URLSearchParams(location.search).get("view");
   if (initialView === "cabinet" || initialView === "assembly") { state.view = initialView; if (landing) landing.classList.add("hidden"); }
   document.getElementById("homeBtn").onclick = function () { if (landing) landing.classList.remove("hidden"); };
+
+  // 마지막 업데이트 시각 표시
+  function updateLastUpdateTime() {
+    var lastUpdate = localStorage.getItem("lastUpdateTime");
+    var el = document.getElementById("lastUpdate");
+    if (el) {
+      if (lastUpdate) {
+        var date = new Date(lastUpdate);
+        var now = new Date();
+        var diffMs = now - date;
+        var diffMins = Math.floor(diffMs / 60000);
+        var diffHours = Math.floor(diffMs / 3600000);
+        var diffDays = Math.floor(diffMs / 86400000);
+        var timeStr;
+        if (diffMins < 1) timeStr = "방금";
+        else if (diffMins < 60) timeStr = diffMins + "분 전";
+        else if (diffHours < 24) timeStr = diffHours + "시간 전";
+        else timeStr = diffDays + "일 전";
+        el.textContent = "마지막 업데이트: " + timeStr;
+      } else {
+        el.textContent = "업데이트 기록 없음";
+      }
+    }
+  }
+  updateLastUpdateTime();
+
+  // 업데이트 버튼 핸들러
+  var updateBtn = document.getElementById("updateBtn");
+  if (updateBtn) {
+    updateBtn.onclick = function () {
+      if (updateBtn.classList.contains("loading")) return;
+      updateBtn.classList.add("loading");
+      updateBtn.textContent = "🔄 업데이트 중…";
+      updateBtn.disabled = true;
+
+      fetch("/api/update", { method: "POST" })
+        .then(function (res) { return res.json(); })
+        .then(function (data) {
+          updateBtn.classList.remove("loading");
+          updateBtn.disabled = false;
+          if (data.success) {
+            updateBtn.textContent = "✓ 완료";
+            localStorage.setItem("lastUpdateTime", new Date().toISOString());
+            setTimeout(function () {
+              updateBtn.textContent = "🔄 업데이트";
+              updateLastUpdateTime();
+              location.reload();
+            }, 1500);
+          } else {
+            updateBtn.textContent = "🔄 업데이트";
+            console.error("Update error:", data.error);
+          }
+        })
+        .catch(function (err) {
+          updateBtn.classList.remove("loading");
+          updateBtn.disabled = false;
+          updateBtn.textContent = "🔄 업데이트";
+          console.error("Update request error:", err);
+        });
+    };
+  }
 
   renderViewToggle(); applyView(); renderAll();
   if (CAB) { enrichCabinet(); renderCabinetSummary(); renderCabChips(); renderCabStatements(); }
