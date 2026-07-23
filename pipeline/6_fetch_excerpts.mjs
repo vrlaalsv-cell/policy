@@ -17,7 +17,7 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
-import { labelsOf, matchedKeyword, NEWS_LABELS, NOISE_RE } from "./lib/news_labels.mjs";
+import { labelsOf, matchedKeyword, NEWS_LABELS, NOISE_RE, isMilitaryPower } from "./lib/news_labels.mjs";
 import { buildNewsWeb } from "./build_news_web.mjs";
 
 const arg = (k, d) => {
@@ -152,7 +152,7 @@ for (let n = 0; n < targets.length; n++) {
 
     // 본문까지 보고 오탐 제거 (스포츠 동명이인 / 全力 같은 동음이의)
     const check = `${a.title} ${excerpt}`;
-    if (NOISE_RE.test(check) || !hasKw(check)) {
+    if (NOISE_RE.test(check) || isMilitaryPower(check, labelsOf(check)) || !hasKw(check)) {
       byMember[mid][i] = null;
       dropped++; drops.push(a.title.slice(0, 40));
       continue;

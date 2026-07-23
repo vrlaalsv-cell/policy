@@ -4,9 +4,9 @@
   "days": 365,
   "perMember": 5,
   "collectedAt": "2026-07-23 12:00:37",
-  "members": 135,
-  "articles": 435,
-  "excerpts": 429,
+  "members": 132,
+  "articles": 419,
+  "excerpts": 413,
   "excerptAt": "2026-07-23 12:16:25"
  },
  "byMember": {
@@ -23,56 +23,6 @@
     "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=162242",
     "excerpt": "[에너지데일리 송병훈 기자] 전기요금 결정의 핵심 기준이 시행령과 고시에 흩어져 있어 국회의 입법권을 침해하고 있다는 지적이 제기되면서, 해당 기준을 법률에 직접",
     "hl": "전기요금"
-   }
-  ],
-  "M007": [
-   {
-    "title": "해병 1·2사단 작전권, 50년만 원대복귀…안규백 \"해병대 전력 증강 추진\"",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFA3V2lHYUJfeXVoU0RibHAyNW9fY2hoQmlndS05MTdURFgzVzJBZXVJcnVMUkpzTGYzNVNaUnNGak5KRlRVYVFURjJndG0wVWs?oc=5",
-    "press": "v.daum.net",
-    "date": "2025-12-31",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://v.daum.net/v/20251231141542049",
-    "excerpt": "해병 1·2사단 작전권, 50년만 원대복귀…안규백 \"해병대 전력 증강 추진\" 정치 해병 1·2사단 작전권, 50년만 원대복귀…안규백 \"해병대 전력 증강 추진\" 손선희 2025.",
-    "hl": "전력"
-   },
-   {
-    "title": "안규백 국방부 장관, 해군 UDT/SEAL 방문…임무수행용 드론 전력 점검",
-    "link": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1ISk1uRHFqZWRac0ItbnNjV2NfRk1yTnpQR0E1Mi1acVRSUl9FQ0NEMnhncy1kUm5UcHFGQWlWQklNTXdISzNNLVZPcEUyYkthSXBYaTRlOGl4eXhCcnBBbXB3ZnU?oc=5",
-    "press": "드론매거진 뉴스",
-    "date": "2025-12-27",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.kdrm.kr/news/articleView.html?idxno=601755",
-    "excerpt": "[드론매거진 뉴스] 안규백 국방부 장관이 26일 해군특수전전단(UDT/SEAL)을 방문해 최전방 특수작전에 투입되는 임무수행용 드론 전력 운용 현황을 점검했다.안",
-    "hl": "전력"
-   },
-   {
-    "title": "안규백 국방장관, 35사단 신병교육대 방문…“실전훈련·드론전력 강화가 군 미래”",
-    "link": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBveDBSSVM3N01KQTA3aUQxcWRLemg1ZDN4bzl0ZDdUemdpS2ZBQmRreEppZEJmaVNSQXJXQUdqdFE1VkN5WUxQTS14ZHFka2dfNkpfN0NVMlhTSFNSNVkxWVJtUQ?oc=5",
-    "press": "쿠키뉴스",
-    "date": "2025-11-20",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.kukinews.com/article/view/kuk202511200200",
-    "excerpt": "특히 장관은 ‘실전적인 훈련을 통한 전투감각 배양’과 ‘드론전력 기반 신병 교육체계 구축’의 중요성을 강조했다.",
-    "hl": "전력"
-   },
-   {
-    "title": "[포토] 안규백 국방부 장관 축사 대독하는 이성은 전력정책국장 (2025 국방방산포럼)",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE95bWZyTmdNUVpGUzlMYjhJN29nU1ZyZWxDaF9pTmZlV3ZCUjBDd1NHQmRlN2JKTlRLWjNrWFhsYkpyNXo3SjNQUkd5NzVneGdSSEhvWGlJRU0yd9IBWEFVX3lxTE5UT1BfV3R3NzZBcm9nZW1XNEVWaXFZUUZFaEd5dDVEUDhYRmF1MTZ4d3VkNUdSd1M1TVpLaTlkc3lHUUVBcW5XeGRwMml1b05aV09ULTYzdUo?oc=5",
-    "press": "아주경제",
-    "date": "2025-11-20",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.ajunews.com/view/20251120185355861",
-    "excerpt": "이성은 국방부 전력정책국장이 20일 오후 서울 여의도 CCMM빌딩에서 열린 2025 국방방산포럼에서 안규백 국방부 장관의 축사를 대독하고 있다. 2025.11.2...",
-    "hl": "전력"
    }
   ],
   "M010": [
@@ -336,7 +286,8 @@
     "press": "이로운넷",
     "date": "2025-09-23",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.eroun.net/news/articleView.html?idxno=63647",
@@ -364,7 +315,8 @@
     "press": "v.daum.net",
     "date": "2026-07-10",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://v.daum.net/v/20260710154844362",
     "excerpt": "정청래(왼쪽부터), 송영길, 김민석 더불어민주당 의원이 3일 서울 용산 서울드래곤시티호텔에서 열린 더불어민주당 후반기 국회 대비 국회의원 워크숍에 참석해 미소짓고 있다. 뉴시스 [파이낸셜뉴스] 더불어민주당 대표 선거 출사표를 던진 송영길 의원은 10일 삼성전자 광주공장을 찾아 호남에 원자력발전소를 추가로 건설해야 한다고 주장했다. 이재명",
@@ -379,8 +331,7 @@
      "POWER"
     ],
     "url": "https://www.news1.kr/politics/assembly/6181475",
-    "excerpt": "정청래 \"이명박·박근혜·윤석열 감옥 3인방 설쳐…尹어게인 심판\" 장동혁 \"국민의힘·대한민국 지켜달라…李 독재·與 오만 막아야\" 6·3 지방선거 및 국회의원 재·보궐선거 사전투표 첫날인 29일 정청래 더불어민주당 총괄상임선대위원장과 장동혁 국민의힘 상임선대위원장은 각각 이재명 정부 지지와",
-    "hl": ""
+    "excerpt": "정청래 \"이명박·박근혜·윤석열 감옥 3인방 설쳐…尹어게인 심판\" 장동혁 \"국민의힘·대한민국 지켜달라…李 독재·與 오만 막아야\" 6·3 지방선거 및 국회의원 재·보궐선거 사전투표 첫날인 29일 정청래 더불어민주당 총괄상임선대위원장과 장동혁 국민의힘 상임선대위원장은 각각 이재명 정부 지지와"
    },
    {
     "title": "김경수 \"경남 이겨야 진짜 승리\"…정청래 \"김경수 전력 지원\"",
@@ -391,8 +342,7 @@
      "POWER"
     ],
     "url": "https://www.newstomato.com/readnews.aspx?no=1299822",
-    "excerpt": "(사진=김경수 민주당 경남도지사 후보 캠프) [창원=뉴스토마토 송정은 기자] 정청래 민주당 대표가 3일 경남 창원을 찾아 \"부산&middot;울산&middot;경남(부&middot;울&middot;경)이 함께 손잡고 발전하는 부&middot;울&middot;경 메가시티를 반드시 이루겠다고 약속하고 있다\"며 \"민주당이 전심전력으로 돕겠다\"고 말했습니다.",
-    "hl": ""
+    "excerpt": "(사진=김경수 민주당 경남도지사 후보 캠프) [창원=뉴스토마토 송정은 기자] 정청래 민주당 대표가 3일 경남 창원을 찾아 \"부산&middot;울산&middot;경남(부&middot;울&middot;경)이 함께 손잡고 발전하는 부&middot;울&middot;경 메가시티를 반드시 이루겠다고 약속하고 있다\"며 \"민주당이 전심전력으로 돕겠다\"고 말했습니다."
    },
    {
     "title": "영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’",
@@ -405,18 +355,6 @@
     "url": "https://v.daum.net/v/20260322100255573",
     "excerpt": "영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’ 정치 영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’ 박윤식 기자 2026.",
     "hl": "원전"
-   },
-   {
-    "title": "지방선거 앞두고 與 최고위원 줄사퇴…정청래 지도부 전력 누수 불가피",
-    "link": "https://news.google.com/rss/articles/CBMia0FVX3lxTE1Id2l3NXNhczh1NGdRYTduUUFEQWVlbTRNc0tBdFVCQl9YUm1RNW0yOWZSemZGS3ZZdWpTNTlPY29xZjRLQjRfOVZPYTh1Y3ZkT1ZSX0tFenhKcWI4NFZZa1g0NnJSSEhOenlz0gFvQVVfeXFMTXJ2eEh4bUIxVVlQWnNvaWcwZ0lEQWloTnZOdXlkeC14aUVYRFFDU0NGcGRPZVVjckxWOUtaTWlaSlRnVEdLOEU3TUROQWt5LWR2dkl3aWlKVGxadnpRRnlQWEpEWVlpYzdRWEdFN2c4?oc=5",
-    "press": "투데이신문",
-    "date": "2025-11-28",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.ntoday.co.kr/news/articleView.html?idxno=122234",
-    "excerpt": "정 대표로서는 대중성과 인지도가 높은 최고위원들이 대거 이탈할 경우 지도부의 정치적 무게감 하락과 전력 누수가 불가피한 상황을 맞게 될 수도 있다.",
-    "hl": "전력"
    }
   ],
   "M029": [
@@ -479,7 +417,8 @@
     "press": "v.daum.net",
     "date": "2026-07-10",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://v.daum.net/v/20260710154844362",
     "excerpt": "정청래(왼쪽부터), 송영길, 김민석 더불어민주당 의원이 3일 서울 용산 서울드래곤시티호텔에서 열린 더불어민주당 후반기 국회 대비 국회의원 워크숍에 참석해 미소짓고 있다. 뉴시스 [파이낸셜뉴스] 더불어민주당 대표 선거 출사표를 던진 송영길 의원은 10일 삼성전자 광주공장을 찾아 호남에 원자력발전소를 추가로 건설해야 한다고 주장했다. 이재명",
@@ -494,8 +433,7 @@
      "POWER"
     ],
     "url": "https://www.mt.co.kr/politics/2026/06/22/2026062214152913762",
-    "excerpt": "약 1년 동안 이재명 정부 초대 총리직을 수행한 김민석 국무총리가 \"청년 문제는 제가 1년 동안 가장 신경 써온 문제 중 하나\"라며 \"국회와 당에 돌아가서 청년(들이 겪는 어려움) 정책을 적극 추진하겠다\"고 말했다.",
-    "hl": ""
+    "excerpt": "약 1년 동안 이재명 정부 초대 총리직을 수행한 김민석 국무총리가 \"청년 문제는 제가 1년 동안 가장 신경 써온 문제 중 하나\"라며 \"국회와 당에 돌아가서 청년(들이 겪는 어려움) 정책을 적극 추진하겠다\"고 말했다."
    },
    {
     "title": "김민석 총리 “국회 돌아가면 당정 지지율 회복에 전력”",
@@ -506,8 +444,7 @@
      "POWER"
     ],
     "url": "https://www.khan.co.kr/article/202606222135005",
-    "excerpt": "김민석 국무총리는 22일 “선거관리위원회 개혁과 관련된 원포인트 개헌을 본격적으로 국회에서 논의하도록 하겠다”고 밝혔다. 김 총리는 이날 정부서울청사에서 출입기자단 간담회를 열고 “제가 총리를 그만두고 국회로 돌아가면 본격적으로 두 가지를 하려 한다”면서 선관위 개혁을 다루는 원포인트 개헌 논의와 여야·전문가 토론을 지속적으로 추진하겠다고 밝혔다. 김...",
-    "hl": ""
+    "excerpt": "김민석 국무총리는 22일 “선거관리위원회 개혁과 관련된 원포인트 개헌을 본격적으로 국회에서 논의하도록 하겠다”고 밝혔다. 김 총리는 이날 정부서울청사에서 출입기자단 간담회를 열고 “제가 총리를 그만두고 국회로 돌아가면 본격적으로 두 가지를 하려 한다”면서 선관위 개혁을 다루는 원포인트 개헌 논의와 여야·전문가 토론을 지속적으로 추진하겠다고 밝혔다. 김..."
    },
    {
     "title": "김민석 \"해상풍력은 국가 전략산업\"…공급망 경쟁력 강화 지원",
@@ -634,7 +571,8 @@
     "press": "매일경제",
     "date": "2026-07-10",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "RE"
     ],
     "url": "https://www.mk.co.kr/news/business/12095255",
     "excerpt": "정치권에서 ‘호남 반도체 클러스터’ 관련 논의가 활발한 가운데 고동진 국민의힘 의원이 정부를 향해 “그간 재생에너지를 두고 국민을 선동한 것에 대하여 대국민 사과를 한 이후에 원전이 정답이라는 것을 솔직히 인정해야 한다”고 촉구했다. 삼성전자 모바일 부문(옛 IM부문) 대표이사 사장 출신이자 ‘갤럭시 성공 신화’로 유명한 고 의원은 10일 사회관계망서비스(",
@@ -646,7 +584,8 @@
     "press": "v.daum.net",
     "date": "2026-07-08",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://v.daum.net/v/UwWZzPrNWy",
     "excerpt": "반도체와 인공지능(AI) 산업의 경쟁력은 이제 기술이 아니라 전력에서 갈린다. 세계 주요 기업들이 원전을 찾아 나서는 이유도 여기에 있다. 이런 가운데 삼성전자 사장 출신인 국민의힘 고동진 의원이 \"첨단산업에는 원전 PPA(전력구매계약)를 허용해야 한다\"는 화두를 던지면서 경북이 다시 주목받고 있다. 경북의 전력 자급률은 최근 자료 기준으로 2025년 1",
@@ -766,11 +705,12 @@
     "press": "edaily.co.kr",
     "date": "2026-06-27",
     "labels": [
+     "RE",
      "POWER"
     ],
     "url": "https://www.edaily.co.kr/News/Read?newsId=02883126645485984&mediaCodeNo=257",
     "excerpt": "한 의원은 전력 문제에 대해 “지금도 호남권은 과도한 태양광 설치로 인해서 전기를 생산해도 전력망에 들어오는 걸 막아버리는 출력제약이 빈번히 발생한다”며 “이는 송전망 설치는 외면하고 태양광 설비만 무턱대고 먼저 깔아버린 문재인정부 때부터의 과오”라고 지적했다.",
-    "hl": "전력"
+    "hl": "태양광"
    },
    {
     "title": "한동훈 “반도체는 100분의 1초도 못 멈춘다”… 李 ‘물 충분’에 전력·용수 제기",
@@ -822,12 +762,13 @@
     "press": "에너지경제신문",
     "date": "2025-12-30",
     "labels": [
+     "H2",
      "CITYGAS"
     ],
     "strong": 1,
     "url": "https://m.ekn.kr/view.php?key=20251230027063102",
     "excerpt": "국민의힘 김상훈 의원(대구 서구)이 노후 도시가스 배관으로 인한 안전사고를 예방하고, 수소 혼입 시대에 대비한 관리체계를 확립하기 위해 `장기사용 도시가스배관`의 개념 도입 및 관..",
-    "hl": "도시가스"
+    "hl": "수소"
    },
    {
     "title": "[오피셜] KIA 전력분석총괄→NC로 간다, NEW 코치진 영입 작업 단행 '이승호·김상훈 코치 합류'",
@@ -904,11 +845,12 @@
     "press": "데일리한국",
     "date": "2026-06-16",
     "labels": [
+     "RE",
      "POWER"
     ],
     "url": "https://daily.hankooki.com/news/articleView.html?idxno=1376923",
     "excerpt": "[데일리한국 안희민 기자] 에너지전환에서 산업성장을 고려한다면 다양한 전원과 송전망 확충, 전력시장 활성화가 필요하다는 주장이 나왔다.국회미래연구원이 16일 개최한 국회미래산업포럼에서 윤의준 한국공학한림원 회장과 이인선 국민의힘 의원은 재생에너지 중심 에너지전환에 대해 논의 했다.윤 회장은 한국에너지공대 초대 총장 출신으로 한국공학한림원을 이끄는 한국의 대표적인 과학자다. 이 의원은 계명대…",
-    "hl": "전력"
+    "hl": "재생에너지"
    }
   ],
   "M075": [
@@ -918,7 +860,8 @@
     "press": "대구일보",
     "date": "2026-03-12",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://www.idaegu.com/news/articleView.html?idxno=658515",
     "excerpt": "에너지가 6·3 지방선거 대구·경북(TK) 지역의 핵심 경제 의제로 떠올랐다. 국내 최대 전력 생산지인 TK가 단순한 ‘전기 생산 기지’에 머물지 않고 첨단 산업 거점으로 탈바꿈해야 한다는 목소리가 정치권 안팎에서 잇따르고 있다.경북도지사 선거에 출마한 최경환 예비후보(전 경제부총리)",
@@ -936,8 +879,7 @@
     ],
     "strong": 1,
     "url": "https://www.kyongbuk.co.kr/news/articleView.html?idxno=4074689",
-    "excerpt": "제9회 전국동시지방선거에서 대구시장에 당선된 추경호 당선인이 시민 감사 인사와 캠프 해단식을 잇따라 진행하며 민선 9기 시정을 위한 첫걸음을 내디뎠다.추 당선인은 4일 오전 8시께 대구 수성구 범어네거리에서 출근길 시민들을 향해 감사 인사를 전하는 것으로 공식 일정을 시작했다. 개표",
-    "hl": ""
+    "excerpt": "제9회 전국동시지방선거에서 대구시장에 당선된 추경호 당선인이 시민 감사 인사와 캠프 해단식을 잇따라 진행하며 민선 9기 시정을 위한 첫걸음을 내디뎠다.추 당선인은 4일 오전 8시께 대구 수성구 범어네거리에서 출근길 시민들을 향해 감사 인사를 전하는 것으로 공식 일정을 시작했다. 개표"
    },
    {
     "title": "김부겸, 정책공약 승부수 vs 추경호, 보수 세몰이 전력",
@@ -948,8 +890,7 @@
      "POWER"
     ],
     "url": "https://www.idaegu.co.kr/news/articleView.html?idxno=547123",
-    "excerpt": "대구시장 선거에 나선 여야 두 후보가 5월 첫 주 황금 연휴 민심잡기 ‘대전’을 펼쳤다. 한 달 남은 지방선거 시계에 발맞춰 시민들에게 존재감을 선점하기 위해 지",
-    "hl": ""
+    "excerpt": "대구시장 선거에 나선 여야 두 후보가 5월 첫 주 황금 연휴 민심잡기 ‘대전’을 펼쳤다. 한 달 남은 지방선거 시계에 발맞춰 시민들에게 존재감을 선점하기 위해 지"
    },
    {
     "title": "[이슈&논란] \"한수원 직원, 해외근무 3중으로 수당 1억9000만원 수령\"…추경호 \"공공기관 해외파견 부정수당 1076억원\"",
@@ -957,7 +898,8 @@
     "press": "뉴스스페이스",
     "date": "2025-10-04",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://www.newsspace.kr/mobile/article.html?no=9826",
     "excerpt": "[뉴스스페이스=김희선 기자] 한국 공공기관 해외파견직원들의 수당 관리 부실과 부당수령 실태가 국민권익위원회의 실태조사 결과 드러났다. 2021년부터 3년 반 동안 한전 등 전력그룹사 4개 기관이 UAE 원전 현장 등지에 파견된 1600여명에게 해외근무수당과 현장 가산 수당, 원전 가산 수당, 현지 수당 등 3중 이상의 추가 수당을 겹겹이 지급해 총 1076",
@@ -1010,7 +952,8 @@
     "press": "포커스인천",
     "date": "2026-06-23",
     "labels": [
-     "RE"
+     "RE",
+     "POWER"
     ],
     "strong": 1,
     "url": "http://www.focusincheon.com/news/articleView.html?idxno=9100",
@@ -1088,7 +1031,8 @@
     "press": "v.daum.net",
     "date": "2026-07-10",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://v.daum.net/v/20260710154844362",
     "excerpt": "정청래(왼쪽부터), 송영길, 김민석 더불어민주당 의원이 3일 서울 용산 서울드래곤시티호텔에서 열린 더불어민주당 후반기 국회 대비 국회의원 워크숍에 참석해 미소짓고 있다. 뉴시스 [파이낸셜뉴스] 더불어민주당 대표 선거 출사표를 던진 송영길 의원은 10일 삼성전자 광주공장을 찾아 호남에 원자력발전소를 추가로 건설해야 한다고 주장했다. 이재명",
@@ -1112,7 +1056,8 @@
     "press": "KBS 뉴스",
     "date": "2026-07-10",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://news.kbs.co.kr/news/view.do?ncd=8607836",
     "excerpt": "더불어민주당 당 대표 선거에 출마한 송영길 의원이 전남광주 반도체 산단의 전력 공급을 위해 원전 신설을...",
@@ -1136,7 +1081,8 @@
     "press": "파이낸셜뉴스",
     "date": "2026-07-08",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://www.fnnews.com/news/202607081925288661",
     "excerpt": "더불어민주당 대표 선거에 출마한 송영길 의원이 8일 호남 반도체 클러스터와 관련해 원자력발전소를 추가로 건설해야 한다고 주장했다.송 의원은 이날 유튜브 '장르만 여의도'에 출연해 800조원 규모 반도체 투자를 위해 필요한 전력 공급과 관련해 \"광주 군 공항 250..",
@@ -1247,12 +1193,13 @@
     "press": "kmsnews.co.kr",
     "date": "2026-05-21",
     "labels": [
+     "RE",
      "POWER"
     ],
     "strong": 1,
     "url": "https://www.kmsnews.co.kr/news/articleView.html?idxno=28670",
     "excerpt": "[국회=KMS뉴스] 홍준용 기자 = AI 데이터센터와 반도체 클러스터, 대규모 재생에너지 단지 조성 등으로 급증하는 전력 수요에 대응하기 위한 ‘전력망 확충 3법’이 국회 상임위 문턱을 넘었다.더불어민주당 안도걸 국회의원(광주 동구남구을)이 대표발의한 「국가기간전력망법」, 「전기사업법」, 「전원개발촉진법」 개정안이 지난 19일 국회 기후노동위원회 전체회의를 통과했다.이번 개정안의 핵심은…",
-    "hl": "전력"
+    "hl": "재생에너지"
    },
    {
     "title": "안도걸 의원, 전력망 확충 3법 개정안 상임위 통과",
@@ -1445,7 +1392,8 @@
     "press": "지디넷코리아",
     "date": "2026-01-08",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://zdnet.co.kr/view/?no=20260108144810",
@@ -1486,12 +1434,13 @@
     "press": "iusm.co.kr",
     "date": "2026-07-14",
     "labels": [
+     "NUCLEAR",
      "POWER"
     ],
     "strong": 1,
     "url": "https://www.iusm.co.kr/news/articleView.html?idxno=1065393",
     "excerpt": "김상욱 울산시장이 ‘메가프로젝트’에서 제시된 대규모 AI 데이터센터 울산 유치를 위해 지역별 전기요금제의 조기 도입을 정부에 요청했다.김 시장은 14일 한강홍수통제소에서 이호현 기후에너지환경부 제2차관을 만나 지역별 전기요금제를 영남권 등 전국 5개 권역에 차등 적용하고, 원자력을 비",
-    "hl": "전기요금"
+    "hl": "원자력"
    },
    {
     "title": "김상욱 당선인, 장생포 수소트램 재검토 주문",
@@ -1567,7 +1516,9 @@
     "press": "청년투데이",
     "date": "2025-10-21",
     "labels": [
-     "H2"
+     "H2",
+     "RE",
+     "LNG"
     ],
     "strong": 1,
     "url": "https://www.fnnews21.com/news/articleView.html?idxno=49047",
@@ -1580,11 +1531,13 @@
     "press": "한국전력신문",
     "date": "2026-05-22",
     "labels": [
+     "NUCLEAR",
+     "RE",
      "POWER"
     ],
     "url": "https://www.epnews.co.kr/news/articleView.html?idxno=65654",
     "excerpt": "한전기술(사장 김태균)은 19일 주주총회를 열고 김종민 기획관리본부장과 장병용 에너지신사업본부장을 각각 상임이사로 선임했다. 두 신임상임이사는 이날 취임식을 갖고 공식 업무에 착수했다.한전기술은 최근 원전 수출과 재생에너지 확대를 중심으로 사업 포트폴리오를 확장하는 가운데, 인공지능(AI) 기반 엔지니어링 체계 고도화에도 속도를 내고 있다. 이번 인사는 이러한 경영환경 변화에 부응하여 조직…",
-    "hl": "한전"
+    "hl": "원전"
    },
    {
     "title": "한전기술, 임시주총서 김종민·장병용 상임이사 선임",
@@ -1604,11 +1557,13 @@
     "press": "파이낸셜신문",
     "date": "2026-05-19",
     "labels": [
+     "NUCLEAR",
+     "RE",
      "POWER"
     ],
     "url": "https://www.efnews.co.kr/news/articleView.html?idxno=129845",
     "excerpt": "(사진=한전기술) 한국전력기술(이하 '한전기술')이 원전과 신재생에너지 중심의 사업 확대에 맞춰 조직 경쟁력 강화에 나섰다.",
-    "hl": "전력"
+    "hl": "원전"
    }
   ],
   "M121": [
@@ -1808,11 +1763,12 @@
     "press": "수소신문",
     "date": "2026-06-09",
     "labels": [
+     "H2",
      "POWER"
     ],
     "url": "https://www.hydrogennews.co.kr/news/articleView.html?idxno=4303",
     "excerpt": "[수소신문] 박해철 국회의원(더불어민주당)이 9일 대표발의한 △전기사업법 △분산에너지 활성화 특별법 △농어촌 전기공급사업 촉진법 일부개정법률안의 3개 법안이 전력 시장의 구조적 한계를 극복하고 지역 균형발전을 이끌어낼 핵심 열쇠로 주목받고 있다.이번 개정안은 현행 전력 체계의 취약점을 보완하고, 법적·제도적 연계를 통해 실질적인 변화를 유도하는 데 초점이 맞춰져 있다.■",
-    "hl": "전력"
+    "hl": "수소"
    }
   ],
   "M146": [
@@ -1863,7 +1819,8 @@
     "press": "시사위크",
     "date": "2025-10-23",
     "labels": [
-     "RE"
+     "RE",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.sisaweek.com/news/articleView.html?idxno=230076",
@@ -2099,7 +2056,8 @@
     "press": "한국항공대학교",
     "date": "2025-12-02",
     "labels": [
-     "RE"
+     "RE",
+     "POWER"
     ],
     "url": "https://kaunews.kau.ac.kr/pages/research.php?mode=read&seq=3323",
     "excerpt": "날개에 장착된 태양전지판으로 낮 동안 햇빛을 받아 배터리를 충전하고, 야간에는 충전된 전력으로 비행이 가능해 장기간 체공할 수 있다는 점이 특징이다.",
@@ -2180,7 +2138,8 @@
     "press": "v.daum.net",
     "date": "2026-01-07",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://v.daum.net/v/20260107052842503?f=p",
@@ -2193,7 +2152,8 @@
     "press": "v.daum.net",
     "date": "2026-01-28",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://v.daum.net/v/20260128064245560",
     "excerpt": "개혁신당 이준석 대표가 26일 서울 여의도 국회에서 열린 최고위원회의에서 모두발언을 하고 있다. 연합뉴스 개혁신당 이준석 대표는 정부의 원자력발전소 계획 추진을 환영하면서도 과거 ‘탈원전’ 취지의 여러 메시지를 냈던 이재명 대통령이 이제는 ‘일관된 메시지’를 내길 바란다고 밝혔다. 이 대표는 26일 자신의 사회관계망서비스(SNS)에 올린 글에서",
@@ -2205,11 +2165,13 @@
     "press": "시사연합신문",
     "date": "2026-01-26",
     "labels": [
+     "NUCLEAR",
+     "RE",
      "POWER"
     ],
     "url": "https://www.sisayonhapnews.com/news/curationView.html?idxno=46189",
     "excerpt": "정부가 신규 원전 3기 건설 계획을 공식적으로 발표했다.이와관련, 개혁신당 이준석 대표는 이번 발표에 대해 대형 원전 2기와 소형모듈원전(SMR) 1기를 2037~2038년 준공 목표로 추진한다고 설명했다.이 대표는 AI와 반도체 산업의 전력 수요 증가에 대응하기 위해 재생에너지의 간헐성 문제를 인정하고, 기저전력 확보의 필요성을 받아들인 점을 현실을 직시한 판단이라고 평가했다. 그는 이…",
-    "hl": "전력"
+    "hl": "원전"
    },
    {
     "title": "이준석 “원전은 미친짓이라던 李, 스스로 틀렸다고 인정한 것…짚고 넘어가야”",
@@ -2217,7 +2179,8 @@
     "press": "문화일보",
     "date": "2026-01-26",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://www.munhwa.com/article/11563793",
     "excerpt": "정부가 전면 재검토를 선언했던 신규 원자력 발전소 2기 건설을 결국 다시 원래 계획대로 추진하기로 하자 이준석 개혁신당 대표가 “민주당이 주장해온 탈원전 기조가 틀렸다는 것을 스스로 인정한 것”이라고 지적했다. 이 대표는 26일 자신의 소셜미디어(SNS)에 이날 정부가",
@@ -2339,11 +2302,13 @@
     "press": "v.daum.net",
     "date": "2026-07-07",
     "labels": [
+     "NUCLEAR",
+     "RE",
      "POWER"
     ],
     "url": "https://v.daum.net/v/1rKWWC71Z2",
     "excerpt": "(서울=뉴스1) 박기현 기자 = 인공지능(AI) 데이터센터와 반도체 산업 확대로 전력수요가 급증하는 가운데, 안정적인 전력 공급을 전제로 원전과 재생에너지를 아우르는 통합적 기후·에너지 정책을 마련해야 한다는 주장이 나왔다. 7일 김용태·김소희 국민의힘 의원과 경제사회연구원이 국회의원회관에서 공동 주최한 제1차 미래정책세미나",
-    "hl": "전력"
+    "hl": "원전"
    }
   ],
   "M176": [
@@ -2422,6 +2387,7 @@
     "press": "가스신문",
     "date": "2026-04-27",
     "labels": [
+     "LNG",
      "CITYGAS"
     ],
     "strong": 1,
@@ -2529,12 +2495,14 @@
     "press": "수소신문",
     "date": "2025-09-23",
     "labels": [
-     "POWER"
+     "NUCLEAR",
+     "H2",
+     "RE"
     ],
     "strong": 1,
     "url": "https://www.hydrogennews.co.kr/news/articleView.html?idxno=3224",
     "excerpt": "[수소신문] 이재명 정부가 기후위기 대응과 에너지산업 전환을 아우르는 ‘에너지고속도로’를 핵심 국정과제로 내세우면서 에너지 산업 전반이 큰 변화를 맞고 있다. 탄소중립 실현, 재생에너지 확대, 수소·원자력 정책 등 굵직한 현안이 산적한 가운데, 국회 역시 관련 법·제도 정비와 정책 방향 설정에 있어 중대한 역할을 요구받고 있다. 본지는 22대 산업통상자원중소벤처기업위원회 국회의원을 만나…",
-    "hl": "에너지고속도로"
+    "hl": "원자력"
    },
    {
     "title": "이재관 \"전력자립률, 충남 207% vs 서울 11%\"",
@@ -2620,7 +2588,8 @@
     "press": "v.daum.net",
     "date": "2026-03-26",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://v.daum.net/v/20260326092603655",
     "excerpt": "국민의힘 장동혁 대표가 26일 국회에서 열린 최고위원회의에 참석하기 위해 회의실로 향하고 있다. 연합뉴스 [파이낸셜뉴스] 국민의힘은 26일 최근 중동 사태로 인한 에너지 수급 위기를 해소하기 위해서 원자력발전소 확대를 바탕으로 한 에너지믹스 정책 재편이 필요하다고 주장했다. 정부·여당이 추진하고 있는 25조원 규모의",
@@ -2744,48 +2713,7 @@
      "POWER"
     ],
     "url": "https://www.localtoday.co.kr/news/articleView.html?idxno=408166",
-    "excerpt": "[로컬투데이=류재민 기자] 성일종 국회 국방위원장(국민의힘, 충남 서산·태안)이 오는 9일 국회의원회관 제2소회의실에서 ‘국방기술자립을 위한 국방반도체 법률안 세",
-    "hl": ""
-   }
-  ],
-  "M200": [
-   {
-    "title": "황명선 의원, K-방산·선진강군 위한 국방전력정책 기본법 발의",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFA4b21XMHZ1a09XbUJseElnUWtxNmpHOVZxOFVNTnl1NTIzZV85NWFwLTB3X0JWVzRNV181c3plbEo4c2sxeFF5NUJtNVpicGM?oc=5",
-    "press": "v.daum.net",
-    "date": "2026-03-31",
-    "labels": [
-     "POWER"
-    ],
-    "strong": 1,
-    "url": "https://v.daum.net/v/20260331105903199",
-    "excerpt": "대한민국 국방전력 정책을 체계적이고 종합적으로 추진하기 위한 ‘국방전력정책 기본법 제정안’이 발의됐다. 국회 국방위원회 더불어민주당 황명선 의원(충남 논산·계룡·금산)이 3월 31일 대표 발의한 법안으로, 국방전력 정책의 거시적 방향을 제시하고 전력체계의 통합적 관리를 명문화하는 게 핵심이다. 그동안 국방전력 정책은 추진 절차와 방식 등이 법률이 아닌 행정",
-    "hl": "전력"
-   },
-   {
-    "title": "황명선 의원 “기재부, 국방 전력운영비 2743억원 과다 편성”",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFAybjRSaUlsSjFJQ2l3ZjRyU094V1h1R0xMZ0Z0bFBGN3NwbTVxVTZkZDZ3eGVPS25JVEZXVGZoNllOa0kweWtveTdzNDNTTHc?oc=5",
-    "press": "v.daum.net",
-    "date": "2025-11-05",
-    "labels": [
-     "POWER"
-    ],
-    "strong": 1,
-    "url": "https://v.daum.net/v/20251105130953322",
-    "excerpt": "황명선 의원 “기재부, 국방 전력운영비 2743억원 과다 편성” 정치 황명선 의원 “기재부, 국방 전력운영비 2743억원 과다 편성” 윤희진 2025.",
-    "hl": "전력"
-   },
-   {
-    "title": "\"5년마다 전력 강화 계획 수립\"…與 황명선, 국방전력 정책 기본법 발의",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE03NjhjclhiMjZ6SGtzUmpSZFNaTnk2N2FIdVQ2YzduRlAtd3YyUVNxTTJUakRkYkxzdFYwRU1RZ0VQaE5PbUwxZ3RMN3lHbF9kaXY2NVlhM1J5UQ?oc=5",
-    "press": "한국경제",
-    "date": "2026-03-31",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.hankyung.com/article/202603318654i",
-    "excerpt": "\"5년마다 전력 강화 계획 수립\"…與 황명선, 국방전력 정책 기본법 발의, 이시은 기자, 정치",
-    "hl": "전력"
+    "excerpt": "[로컬투데이=류재민 기자] 성일종 국회 국방위원장(국민의힘, 충남 서산·태안)이 오는 9일 국회의원회관 제2소회의실에서 ‘국방기술자립을 위한 국방반도체 법률안 세"
    }
   ],
   "M201": [
@@ -3006,12 +2934,13 @@
     "press": "도민연합뉴스",
     "date": "2025-12-08",
     "labels": [
+     "RE",
      "POWER"
     ],
     "strong": 1,
     "url": "https://www.krcom.co.kr/news/articleView.html?idxno=69514",
     "excerpt": "[도민연합뉴스] 안호영 국회 기후에너지환경노동위원회 위원장이 송전탑건설백지화전북대책위원회와 12월 8일, 송전망 갈등 해법을 모색하는 정책토론회를 개최했다.지난해 11월에 이어 두 번째로 열린 이번 토론회는, 재생에너지 확대와 전력 수요 급증 속에서 전북이 ‘송전탑 피해 지역’이 되는",
-    "hl": "전력"
+    "hl": "재생에너지"
    },
    {
     "title": "안호영 의원, 새만금 RE100산단 기반 ‘재생에너지자립도시법’ 대표발의",
@@ -3019,7 +2948,8 @@
     "press": "환경포커스",
     "date": "2025-11-08",
     "labels": [
-     "RE"
+     "RE",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.ecofocus.co.kr/news/article.html?no=72036",
@@ -3110,7 +3040,8 @@
     "press": "에너지데일리",
     "date": "2025-11-25",
     "labels": [
-     "RE"
+     "RE",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=162206",
@@ -3139,7 +3070,8 @@
     "press": "더쎈뉴스",
     "date": "2026-07-23",
     "labels": [
-     "RE"
+     "RE",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.mhns.co.kr/news/articleView.html?idxno=754130",
@@ -3206,6 +3138,8 @@
     "press": "프레시안",
     "date": "2026-03-09",
     "labels": [
+     "H2",
+     "RE",
      "POWER"
     ],
     "strong": 1,
@@ -3257,7 +3191,8 @@
     "press": "전남인뉴스",
     "date": "2026-06-16",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.jninnews.com/news/articleView.html?idxno=40094",
@@ -3283,7 +3218,8 @@
     "press": "이로운넷",
     "date": "2025-12-10",
     "labels": [
-     "H2"
+     "H2",
+     "RE"
     ],
     "strong": 1,
     "url": "https://www.eroun.net/news/articleView.html?idxno=68832",
@@ -3480,7 +3416,8 @@
     "press": "철강금속신문",
     "date": "2026-06-16",
     "labels": [
-     "H2"
+     "H2",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.snmnews.com/news/articleView.html?idxno=570832",
@@ -3493,12 +3430,13 @@
     "press": "디지털데일리",
     "date": "2026-06-15",
     "labels": [
+     "H2",
      "POWER"
     ],
     "strong": 1,
     "url": "https://m.ddaily.co.kr/page/view/2026061514132235597",
     "excerpt": "탄소중립 지원 정책을 실제 전력비 부담 완화 장치로 구체화해 수소환원제철 등 저탄소 철강기술 도입 기업의 비용 부담을 낮추겠다는 취지다.",
-    "hl": "전력"
+    "hl": "수소"
    },
    {
     "title": "이상휘 의원, 글로벌 탄소 규제 장벽 넘을 제도적 발판 마련...전기요금 감면법 대표 발의",
@@ -3533,12 +3471,13 @@
     "press": "영남경제",
     "date": "2026-06-15",
     "labels": [
+     "H2",
      "POWER"
     ],
     "strong": 1,
     "url": "https://www.ynenews.kr/news/articleView.html?idxno=79187",
     "excerpt": "이상휘 국회의원(포항남·울릉, 국민의힘)은 15일 수소환원제철 등 저탄소철강기술을 사용하는 철강기업의 전기요금 부담을 완화하기 위한",
-    "hl": "전기요금"
+    "hl": "수소"
    }
   ],
   "M225": [
@@ -3796,7 +3735,8 @@
     "press": "에너지데일리",
     "date": "2026-07-22",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=201645",
@@ -3836,7 +3776,8 @@
     "press": "뉴스핌",
     "date": "2026-07-13",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.newspim.com/news/view/20260713000707",
@@ -4041,7 +3982,8 @@
     "press": "경남도민신문",
     "date": "2026-07-12",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "http://www.gndomin.com/news/articleView.html?idxno=481794",
@@ -4070,7 +4012,8 @@
     "press": "OhmyNews",
     "date": "2025-10-19",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003175037",
@@ -4243,7 +4186,8 @@
     "press": "머니투데이",
     "date": "2026-06-09",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://www.mt.co.kr/politics/2026/06/09/2026060912592689530",
     "excerpt": "박충권 국민의힘 의원이 탈원전 운동가 출신인 양이원영 전 더불어민주당 의원의 한국수력원자력 비상임이사 및 한전기술 상임감사 공모 참여에 대해 \"원전 산업을 부정해 온 인사의 선임 절차를 즉각 중단해야 한다\"고 주장했다.",
@@ -4271,7 +4215,8 @@
     "press": "환경포커스",
     "date": "2026-06-26",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.ecofocus.co.kr/news/article.html?no=73323",
@@ -4312,7 +4257,8 @@
     "press": "전자신문",
     "date": "2026-06-25",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.etnews.com/20260625000409",
@@ -4334,44 +4280,6 @@
    }
   ],
   "M266": [
-   {
-    "title": "[정치/국방] “장병 옷과 식량도 전투력”… 유용원 의원, 국회서 ‘K-전력지원체계’ 전시회 개최",
-    "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9UcWVNZC13djZKdlFvQzZHcTZrUGtGSE5qb3hUVExvbGRaQWExakRnMkxxb2wwdDdRWjNkX1ZwOXJKWFZDWTRKT251TXVWTHVDdGY0YlB2UlNCRXoyMi01Tl9oOFJpMTFlVmdmaU9n?oc=5",
-    "press": "koreasprint.com",
-    "date": "2026-06-11",
-    "labels": [
-     "POWER"
-    ],
-    "strong": 1,
-    "url": "https://www.koreasprint.com/news/articleView.html?idxno=12564",
-    "excerpt": "국회 국방위원회 소속 유용원 국민의힘 의원은 6월 11일부터 12일까지 이틀간 서울 여의도 국회의원회관 2층 제2로비에서 &lsquo;K-방산, K-전력지원체계와 함께 간다!&rsquo;라는 주제로 전력지원체계 국회 전시회를 개최 합니다.",
-    "hl": "전력"
-   },
-   {
-    "title": "유용원 의원, “K-방산 잇는 K-전력지원체계 신화 만들자”",
-    "link": "https://news.google.com/rss/articles/CBMijgFBVV95cUxQNDhZTlN3dVVGVGRRSVVnODJaMTR0SXNHN3pPMjN4dW11cTF3VlpFUjgxNmpWbHprVlhrUnBDc3ByUHN0ZkhWTnRHTU1HY19BVXNPMXUwUWFxb1l2ZUdYa1dweFZ2SnNDcW5MVDBGLTFJNExrejRiNzdvVWVJUjNJaGN6czY2VW1HVGl2WnV3?oc=5",
-    "press": "NKBS뉴스통신사",
-    "date": "2026-06-09",
-    "labels": [
-     "POWER"
-    ],
-    "strong": 1,
-    "url": "http://kbs12.co.kr/?m=bbs&bid=m2&uid=16039&PHPSESSID=3247357c66c024f8912ff5e61304cfce",
-    "excerpt": "국회 국방위원회 유용원 의원 국회 국방위원회 유용원 의원은 오는 11일부터 12일까지 국회의원회관 제2로비에서 ‘K-방산, K-전력지원체계와 함께 간다!’를 주제로 전시회를 개최한다고 밝혔다. 개회식은 11일 오전 10시에 열린다.이번 전시는 세",
-    "hl": "전력"
-   },
-   {
-    "title": "유용원 “K-방산 신화 잇는 K-전력지원체계 신화도 만들자”…11·12일 ‘K-전력지원체계’ 국회전시회",
-    "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9EVTFYa2ZCTXk2Q2tqQ20yT2Z3YVlLY2E4V1V0N3ZYOWRIcVRqR042N0hNYnpWSUU0M01jVXEzMUlzRml0dDFwWDM0UHgtQ1A0?oc=5",
-    "press": "문화일보",
-    "date": "2026-06-09",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.munhwa.com/article/11594228",
-    "excerpt": "국회 국방위원회 소속 유용원 국민의힘 의원은 오는 11·12 일 이틀간 국회의원회관 2층 제2로비에서 ‘K- 방산, K-전력지원체계와 함께 간다 !’ 를 주제로 전시회를 개최한다고 9일 밝혔다. 개회식은 11일 오전 10시에 열린다 . 이번 전시는 세계 시장에서 눈부시",
-    "hl": "전력"
-   },
    {
     "title": "유용원 “北 EMP 한방에 대한민국 석기시대로…경찰·소방·전력 등 국가 인프라 무방비”",
     "link": "https://news.google.com/rss/articles/CBMiUEFVX3lxTE9KTFd2ZVU5LTB5Y2VqWWxwWXZtQUVOV2Iwb012V1R0MktYWDVrZ0FDejRRcjFQaFp5a2FyLW1WSkEyWWxFVW1IdFBjUm91Ums1?oc=5",
@@ -4688,11 +4596,12 @@
     "press": "한국경제",
     "date": "2026-03-27",
     "labels": [
+     "NUCLEAR",
      "POWER"
     ],
     "url": "https://www.hankyung.com/article/202603271439h",
     "excerpt": "김재원 경북지사 예비후보, 포항 철강산업 붕괴 위기... 산업용 전기요금 대폭 인하 시급, 현대제철 노조 대화에서 반드시 SMR 건립할 것.",
-    "hl": "전기요금"
+    "hl": "SMR"
    }
   ],
   "M295": [
@@ -4717,12 +4626,13 @@
     "press": "에너지데일리",
     "date": "2026-07-21",
     "labels": [
+     "RE",
      "POWER"
     ],
     "strong": 1,
     "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=201594",
     "excerpt": "[에너지데일리 송병훈 기자] 재생에너지와 분산에너지, 인공지능(AI) 데이터센터 확산 등으로 전력시장 구조가 급변하는 가운데 전력시장 감시 기능을 전담할 '전력감",
-    "hl": "전력"
+    "hl": "재생에너지"
    },
    {
     "title": "서왕진 의원, “전력감독원 신설로 전력 거버넌스 혁신해야”",
@@ -4730,12 +4640,13 @@
     "press": "인사이트에너지뉴스",
     "date": "2026-07-21",
     "labels": [
+     "RE",
      "POWER"
     ],
     "strong": 1,
     "url": "https://www.inenews.kr/news/articleView.html?idxno=33180",
     "excerpt": "[인사이트에너지뉴스] 국회 기후에너지환경노동위원회 서왕진 의원은 오는 22일 국회의원회관에서 박지혜 의원, 전기위원회(기후에너지환경부)와 공동으로 ‘전력 거버넌스 혁신을 위한 토론회’를 개최한다. 이번 토론회는 전력감독원 신설을 위한 전기사업법 개정 논의에 앞서 국회·정부·전문가와 국민의 공감대를 넓히기 위해 마련됐다. 서왕진 의원은 인사말을 통해 “에너지 전환 시대를 맞아 전력산업이…",
-    "hl": "전력"
+    "hl": "에너지 전환"
    },
    {
     "title": "서왕진 의원, “AI·반도체 전력·용수 수요예측 전면 개편해야”…국가 통합계획 제도화 추진",
@@ -4756,7 +4667,8 @@
     "press": "냉동공조저널",
     "date": "2026-03-27",
     "labels": [
-     "RE"
+     "RE",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.hvacrj.co.kr/news/articleView.html?idxno=30845",
@@ -4888,7 +4800,8 @@
     "press": "한겨레",
     "date": "2026-05-21",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "url": "https://www.hani.co.kr/arti/society/environment/1259755.html",
@@ -4905,8 +4818,7 @@
     ],
     "strong": 1,
     "url": "https://www.mt.co.kr/politics/2026/05/19/2026051915542324436",
-    "excerpt": "19일 한일 공동언론발표",
-    "hl": ""
+    "excerpt": "19일 한일 공동언론발표"
    }
   ],
   "CAB:김정관": [
@@ -4916,12 +4828,13 @@
     "press": "네이트",
     "date": "2026-07-22",
     "labels": [
+     "NUCLEAR",
      "LNG",
      "POWER"
     ],
     "url": "https://news.nate.com/view/20260722n09268",
     "excerpt": "대미 투자 협상이 사실상 마지막 고비에 접어든 가운데, 정부 안팎에서는 액화천연가스(LNG) 복합발전소나 원전 등 에너지 분야가 유력하게 검토되고 있는 것으로 전해졌다.",
-    "hl": "LNG"
+    "hl": "원전"
    },
    {
     "title": "LNG선도 거세지는 中 추격… 김정관·김동관 만나고도 中에 1.3조 주문한 UAE ‘큰손’ - 조선비즈",
@@ -5015,7 +4928,8 @@
     "press": "에너지경제신문",
     "date": "2026-07-05",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://m.ekn.kr/view.php?key=20260705026209079",
     "excerpt": "기후에너지환경부는 이호현 제2차관이 경남 함안군에 위치한 군북-가야 전력구 공사 현장을 찾아 장마철 대비 안전관리 현황을 불시 점검했다고 3일 밝혔다. 이번 점검은 지난 6월 실시..",
@@ -5208,18 +5122,6 @@
     "url": "https://news.mtn.co.kr/news-detail/2026060915015416132",
     "excerpt": "행정안전부가 햇빛소득마을사업에 500개마을을 선정해 재생에너지 확산을 도모한다.행안부는 재생에너지 시설기금을 저금리로 대출해 마을이 재원을 마련할 수있도록 할 방침이다. 김민재 행정안전부 차관은 지난 8일 횡성군 하대리 햇빛소득마을 후보지를 방문해 주민들과 간담회를 갖고, 현장의 목소리를 들었다. '햇빛소득마을'은 단순히 재생에너지를 보급하는 차원을 넘어, 태양광 발전 수익을 주민들에게…",
     "hl": "재생에너지"
-   },
-   {
-    "title": "`김민재 영입설` 페네르바체, 살라 영입도 추진…`튀르키예 쉬페르리그 우승 가능한 전력 보강`",
-    "link": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE9RYmxlNHZ0V0ZWbWhGWHFiSk5aLV9OZENDZWJKNDBycUdtaEpKVnBzbldnSDN5cUpab0tQOGdhWnFHX0dZLUhyVkxtWDFMLS14cmJnbDZPaE1aUkZyWUdkWA?oc=5",
-    "press": "마이데일리",
-    "date": "2026-05-25",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://mydaily.co.kr/page/view/2026052423274536436",
-    "excerpt": "리버풀의 살라와 바이에른 뮌헨의 김민재가 2023년 8월 싱...",
-    "hl": ""
    }
   ],
   "CAB:최원호": [
@@ -5229,7 +5131,8 @@
     "press": "인사이트N파워",
     "date": "2026-07-13",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://www.inpnews.kr/news/articleView.html?idxno=7324",
     "excerpt": "최원호(사진) 원자력안전위원회 위원장은 지난 8일 전남 영광군 소재 한빛원자력발전소를 방문해 여름철 자연재해 대비 안전관리 실태를 점검했다.이번 점검에서는 집중호우 및 태풍 등 여름철 재난과 해양생물 유입에 대비한 설비 안전관리, 비상대응체계 운영 현황을 보고받았다. 특히 서해안 특성을 고려하여 해수 도수로(導水路) 펄 준설 설비 등 해수 취수 및 온도관리를 위한 시설의 운영 상황을…",
@@ -5278,7 +5181,8 @@
     "press": "에너지안전신문",
     "date": "2026-03-13",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://www.esnews.kr/news/articleView.html?idxno=2870",
     "excerpt": "【에너지안전신문=이정경 기자 】최원호 원자력안전위원회 위원장이 최근 급변하는 중동 상황에 대비해 국내 원자력발전소의 철저한 안전 관리를 지시했다. 불안정한 국제",
@@ -5345,7 +5249,8 @@
     "press": "v.daum.net",
     "date": "2026-07-10",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "url": "https://v.daum.net/v/20260710154844362",
     "excerpt": "정청래(왼쪽부터), 송영길, 김민석 더불어민주당 의원이 3일 서울 용산 서울드래곤시티호텔에서 열린 더불어민주당 후반기 국회 대비 국회의원 워크숍에 참석해 미소짓고 있다. 뉴시스 [파이낸셜뉴스] 더불어민주당 대표 선거 출사표를 던진 송영길 의원은 10일 삼성전자 광주공장을 찾아 호남에 원자력발전소를 추가로 건설해야 한다고 주장했다. 이재명",
@@ -5360,8 +5265,7 @@
      "POWER"
     ],
     "url": "https://www.mt.co.kr/politics/2026/06/22/2026062214152913762",
-    "excerpt": "약 1년 동안 이재명 정부 초대 총리직을 수행한 김민석 국무총리가 \"청년 문제는 제가 1년 동안 가장 신경 써온 문제 중 하나\"라며 \"국회와 당에 돌아가서 청년(들이 겪는 어려움) 정책을 적극 추진하겠다\"고 말했다.",
-    "hl": ""
+    "excerpt": "약 1년 동안 이재명 정부 초대 총리직을 수행한 김민석 국무총리가 \"청년 문제는 제가 1년 동안 가장 신경 써온 문제 중 하나\"라며 \"국회와 당에 돌아가서 청년(들이 겪는 어려움) 정책을 적극 추진하겠다\"고 말했다."
    },
    {
     "title": "김민석 총리 “국회 돌아가면 당정 지지율 회복에 전력”",
@@ -5372,8 +5276,7 @@
      "POWER"
     ],
     "url": "https://www.khan.co.kr/article/202606222135005",
-    "excerpt": "김민석 국무총리는 22일 “선거관리위원회 개혁과 관련된 원포인트 개헌을 본격적으로 국회에서 논의하도록 하겠다”고 밝혔다. 김 총리는 이날 정부서울청사에서 출입기자단 간담회를 열고 “제가 총리를 그만두고 국회로 돌아가면 본격적으로 두 가지를 하려 한다”면서 선관위 개혁을 다루는 원포인트 개헌 논의와 여야·전문가 토론을 지속적으로 추진하겠다고 밝혔다. 김...",
-    "hl": ""
+    "excerpt": "김민석 국무총리는 22일 “선거관리위원회 개혁과 관련된 원포인트 개헌을 본격적으로 국회에서 논의하도록 하겠다”고 밝혔다. 김 총리는 이날 정부서울청사에서 출입기자단 간담회를 열고 “제가 총리를 그만두고 국회로 돌아가면 본격적으로 두 가지를 하려 한다”면서 선관위 개혁을 다루는 원포인트 개헌 논의와 여야·전문가 토론을 지속적으로 추진하겠다고 밝혔다. 김..."
    },
    {
     "title": "김민석 \"해상풍력은 국가 전략산업\"…공급망 경쟁력 강화 지원",
@@ -5448,56 +5351,6 @@
     "url": "https://v.daum.net/v/20260705160021387",
     "excerpt": "송미령 농림축산식품부 장관은 5일 \"신안군이 재생에너지 수익금을 기본소득 재원으로 활용하는 지역재원창출형 모델을 선도하고 있다\"며 \"새로운 기본소득 모델이 될 수 있도록 노력해 달라\"고 당부했다. 송 장관은 이날 신안군 안좌도에 있는 안좌스마트팜앤쏠라시티를 방문해 \"농촌은 풍부한 재생에너지 발전 잠재력을 보유하고 있는 공간으로 국가 에너지 대전환을 이",
     "hl": "재생에너지"
-   }
-  ],
-  "CAB:안규백": [
-   {
-    "title": "해병 1·2사단 작전권, 50년만 원대복귀…안규백 \"해병대 전력 증강 추진\"",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTFA3V2lHYUJfeXVoU0RibHAyNW9fY2hoQmlndS05MTdURFgzVzJBZXVJcnVMUkpzTGYzNVNaUnNGak5KRlRVYVFURjJndG0wVWs?oc=5",
-    "press": "v.daum.net",
-    "date": "2025-12-31",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://v.daum.net/v/20251231141542049",
-    "excerpt": "해병 1·2사단 작전권, 50년만 원대복귀…안규백 \"해병대 전력 증강 추진\" 정치 해병 1·2사단 작전권, 50년만 원대복귀…안규백 \"해병대 전력 증강 추진\" 손선희 2025.",
-    "hl": "전력"
-   },
-   {
-    "title": "안규백 국방부 장관, 해군 UDT/SEAL 방문…임무수행용 드론 전력 점검",
-    "link": "https://news.google.com/rss/articles/CBMiZEFVX3lxTE1ISk1uRHFqZWRac0ItbnNjV2NfRk1yTnpQR0E1Mi1acVRSUl9FQ0NEMnhncy1kUm5UcHFGQWlWQklNTXdISzNNLVZPcEUyYkthSXBYaTRlOGl4eXhCcnBBbXB3ZnU?oc=5",
-    "press": "드론매거진 뉴스",
-    "date": "2025-12-27",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.kdrm.kr/news/articleView.html?idxno=601755",
-    "excerpt": "[드론매거진 뉴스] 안규백 국방부 장관이 26일 해군특수전전단(UDT/SEAL)을 방문해 최전방 특수작전에 투입되는 임무수행용 드론 전력 운용 현황을 점검했다.안",
-    "hl": "전력"
-   },
-   {
-    "title": "안규백 국방장관, 35사단 신병교육대 방문…“실전훈련·드론전력 강화가 군 미래”",
-    "link": "https://news.google.com/rss/articles/CBMiY0FVX3lxTFBveDBSSVM3N01KQTA3aUQxcWRLemg1ZDN4bzl0ZDdUemdpS2ZBQmRreEppZEJmaVNSQXJXQUdqdFE1VkN5WUxQTS14ZHFka2dfNkpfN0NVMlhTSFNSNVkxWVJtUQ?oc=5",
-    "press": "쿠키뉴스",
-    "date": "2025-11-20",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.kukinews.com/article/view/kuk202511200200",
-    "excerpt": "특히 장관은 ‘실전적인 훈련을 통한 전투감각 배양’과 ‘드론전력 기반 신병 교육체계 구축’의 중요성을 강조했다.",
-    "hl": "전력"
-   },
-   {
-    "title": "[포토] 안규백 국방부 장관 축사 대독하는 이성은 전력정책국장 (2025 국방방산포럼)",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE95bWZyTmdNUVpGUzlMYjhJN29nU1ZyZWxDaF9pTmZlV3ZCUjBDd1NHQmRlN2JKTlRLWjNrWFhsYkpyNXo3SjNQUkd5NzVneGdSSEhvWGlJRU0yd9IBWEFVX3lxTE5UT1BfV3R3NzZBcm9nZW1XNEVWaXFZUUZFaEd5dDVEUDhYRmF1MTZ4d3VkNUdSd1M1TVpLaTlkc3lHUUVBcW5XeGRwMml1b05aV09ULTYzdUo?oc=5",
-    "press": "아주경제",
-    "date": "2025-11-20",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.ajunews.com/view/20251120185355861",
-    "excerpt": "이성은 국방부 전력정책국장이 20일 오후 서울 여의도 CCMM빌딩에서 열린 2025 국방방산포럼에서 안규백 국방부 장관의 축사를 대독하고 있다. 2025.11.2...",
-    "hl": "전력"
    }
   ],
   "CAB:김용범": [
@@ -5747,8 +5600,7 @@
      "POWER"
     ],
     "url": "https://www.dailypharm.com/Users/News/NewsView.html?ID=328228",
-    "excerpt": "국회 보건복지위가 여야를 막론하고 정은경 장관이 이끄는 보건복지부의 인력 확충 필요성을 국감 질의해 주목된다. 보건복지부 예산은 올해 125조5000억원, 내년 137조6000억원 수준으로 규모 면에서 정부부처 가운데 월등히 1위인 반면, 조직 보강과 인력 확충 미흡으로 공무원 대다수가 업무량 과부하에 시달리는 실정이라는 게 여야 복지위원들의 지적이다. 정은경 장관은 행안부와…",
-    "hl": ""
+    "excerpt": "국회 보건복지위가 여야를 막론하고 정은경 장관이 이끄는 보건복지부의 인력 확충 필요성을 국감 질의해 주목된다. 보건복지부 예산은 올해 125조5000억원, 내년 137조6000억원 수준으로 규모 면에서 정부부처 가운데 월등히 1위인 반면, 조직 보강과 인력 확충 미흡으로 공무원 대다수가 업무량 과부하에 시달리는 실정이라는 게 여야 복지위원들의 지적이다. 정은경 장관은 행안부와…"
    }
   ]
  }
