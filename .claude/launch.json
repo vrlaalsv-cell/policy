@@ -3,7 +3,8 @@
   "configurations": [
     {
       "name": "policy-dev",
-      "url": "http://localhost:8137"
+      "url": "http://localhost:8137",
+      "autoPort": false
     }
   ]
 }
