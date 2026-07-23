@@ -303,11 +303,14 @@
     var commTxt = (m.committee && m.committee.length) ? m.committee.join(", ") : "-";
     var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
-    h += '<div class="mprofile">' +
+    h += '<div class="mprofile-wrap">' +
+      '<div class="mprofile-photo"><img src="images/parliament_photos/' + esc(m.name) + '.jpg" onerror="this.src=\'images/parliament_photos/' + esc(m.name) + '.png\'" alt="' + esc(m.name) + '"></div>' +
+      '<div class="mprofile">' +
       '<div><span class="pl">정당</span><span class="pv">' + m.party + '</span></div>' +
       '<div><span class="pl">선거구</span><span class="pv">' + m.district + '</span></div>' +
       '<div><span class="pl">선수</span><span class="pv">' + termsTxt + '</span></div>' +
-      '<div><span class="pl">소속위원회</span><span class="pv">' + commTxt + '</span></div></div>';
+      '<div><span class="pl">소속위원회</span><span class="pv">' + commTxt + '</span></div>' +
+      '</div></div>';
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:4px 0 2px">사업별 우호도</div><div class="stancegrid">' +
       BIZ.map(function (b) { var s = stanceInfo(m.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
     h += aiHTML(m.ai);
