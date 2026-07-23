@@ -15,6 +15,7 @@
     "analyze:cabinet": "node pipeline/4_analyze_cabinet.mjs",
     "collect:news": "node pipeline/5_collect_news.mjs",
     "build:data": "node pipeline/build_web_data.mjs",
+    "fetch:excerpts": "node pipeline/6_fetch_excerpts.mjs",
     "build:news": "node pipeline/build_news_web.mjs",
     "pipeline": "npm run collect:members && npm run collect:utterances && npm run analyze && npm run build:data"
   },

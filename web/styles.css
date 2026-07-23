@@ -112,6 +112,8 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .nlab{font-size:10.5px;font-weight:800;padding:2px 7px;border-radius:6px;letter-spacing:-.2px}
 .nw .nwt{display:block;font-size:13.5px;font-weight:700;color:var(--ink);text-decoration:none;line-height:1.45}
 .nw a.nwt:hover{color:var(--brand2);text-decoration:underline}
+.nw .nwx{font-size:12.5px;color:#3d4a5e;line-height:1.55;margin-top:5px;display:-webkit-box;-webkit-line-clamp:2;-webkit-box-orient:vertical;overflow:hidden}
+.nw .nwx b{color:var(--brand);font-weight:800}
 .nw .nwm{font-size:11px;color:var(--muted);margin-top:5px}
 .nwempty{font-size:12.5px;color:var(--muted);background:#f7f9fc;border:1px dashed var(--line);border-radius:8px;padding:10px 12px}
 .nwempty code{background:#eef1f6;border:1px solid #e0e6ef;border-radius:5px;padding:1px 5px;font-family:Consolas,monospace}
@@ -208,7 +210,16 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .landing-cards{position:relative;z-index:1;flex:1;display:grid;grid-template-columns:1fr 1fr;gap:32px;width:100%;max-width:880px;margin:0 auto;align-content:center;transform:translateY(-16px)}
 .navcard{position:relative;aspect-ratio:1/1;border:1px solid rgba(0,0,0,.06);background:#fff;border-radius:20px;box-shadow:0 10px 30px rgba(20,40,80,.10);overflow:hidden;cursor:pointer;padding:0}
 .navcard img{width:100%;height:100%;object-fit:contain;padding:40px;transition:transform .3s ease}
-.navcard:hover img{transform:scale(1.05)}
 .navcard-ov{position:absolute;inset:0;display:flex;align-items:center;justify-content:center;background:rgba(0,0,0,0);color:#fff;font-size:18px;font-weight:800;letter-spacing:.5px;opacity:0;transition:background .3s ease,opacity .3s ease}
-.navcard:hover .navcard-ov{background:rgba(0,0,0,.6);opacity:1}
-@media (max-width:640px){ .landing-cards{grid-template-columns:1fr;gap:18px;max-width:420px} .navcard-ov{opacity:1;background:rgba(0,0,0,.28)} }
+/* 오버레이는 마우스가 있는 기기에서만. 터치기기는 :hover 가 눌린 채로 남아 카드가 '눌린 상태'로 보인다. */
+@media (hover:hover) and (pointer:fine){
+  .navcard:hover img{transform:scale(1.05)}
+  .navcard:hover .navcard-ov{background:rgba(0,0,0,.6);opacity:1}
+}
+/* 터치는 누르는 동안만 살짝 어둡게 */
+.navcard:active .navcard-ov{background:rgba(0,0,0,.3);opacity:1;transition:none}
+
+@media (max-width:640px){
+  .landing{padding:24px 18px 36px}
+  .landing-cards{grid-template-columns:1fr;gap:18px;max-width:420px;align-content:start;transform:none;margin-top:28px}
+}
