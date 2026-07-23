@@ -143,6 +143,10 @@ header.top{background:#fff;color:var(--ink);border-bottom:1px solid var(--line)}
 .homebtn{border:0;background:var(--chip);color:var(--brand);font-weight:700;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;margin-right:8px}
 .homebtn:hover{background:#e4e9f1}
 
+.updatebtn{border:0;background:var(--brand2);color:#fff;font-weight:700;font-size:13px;padding:7px 12px;border-radius:999px;cursor:pointer;margin-right:8px;transition:.2s}
+.updatebtn:hover{background:#178070;box-shadow:0 4px 12px rgba(31,157,138,.3)}
+.updatebtn.loading{opacity:.6;cursor:not-allowed}
+
 /* 청와대 조직도 */
 .org{padding:6px 4px 4px}
 .org-tier{display:flex;justify-content:center;gap:14px;flex-wrap:wrap}
