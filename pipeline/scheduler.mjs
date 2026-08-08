@@ -2,7 +2,7 @@
 //
 //   사용: node pipeline/scheduler.mjs        (docker compose 의 scheduler 서비스가 이걸 실행)
 //   환경변수:
-//     NEWS_AT        수집 시각(KST). 쉼표로 여러 번 가능 — 기본 "07:00,13:00,19:00"
+//     NEWS_AT        수집 시각(KST). 쉼표로 여러 번 가능 — 기본 "06:00,09:00,12:00,15:00,18:00"
 //     NEWS_ON_START  컨테이너 시작 시 데이터가 낡았으면 즉시 1회 수집 (기본 "1")
 //     NEWS_MAX_AGE_H 낡음 판정 기준 시간 (기본 20시간)
 //
@@ -18,7 +18,7 @@ import { paths } from "./lib/env.mjs";
 
 // "07:00,13:00,19:00" 처럼 여러 시각 지원. 한 번만 돌리려면 "04:30" 하나만 적으면 된다.
 // 재수집은 증분(새 기사만 본문을 받아옴)이라 회당 4~5분이고 외부 유료 API 를 쓰지 않는다.
-const AT_LIST = (process.env.NEWS_AT || "07:00,13:00,19:00")
+const AT_LIST = (process.env.NEWS_AT || "06:00,09:00,12:00,15:00,18:00")
   .split(",").map((s) => s.trim()).filter((s) => /^\d{1,2}:\d{2}$/.test(s))
   .sort();
 if (!AT_LIST.length) AT_LIST.push("07:00");
