@@ -9,7 +9,7 @@
 //   ① relevant:false / businesses 비어 있음
 //   ② quote 가 원문에 실제로 없음 (AI 가 지어낸 인용 차단)
 //   ③ 회의록 목차·토의표 찌꺼기가 섞인 인용
-//   ④ 같은 회의·같은 발언자에서 기존 인용문과 내용이 겹침 (중복 게시 방지)
+//   ④ 같은 발언자의 기존 인용문과 내용이 겹침 (회의가 달라도 — 중복 게시 방지)
 import { readFileSync, writeFileSync, copyFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
@@ -36,9 +36,8 @@ const norm = (t) => String(t || "").replace(/\s+/g, "");
 const JUNK = /\[[가-힣]{2,6}(처|청|부|위원회)\]|ᄋ\s*토\s*의|의견\s*없음/;
 /** "제27회 국무회의 (2026.06.23)" → "제27회 국무회의 (2026-06-23)" (기존 표기에 맞춤) */
 const fixMeeting = (m) => String(m).replace(/\((\d{4})\.(\d{2})\.(\d{2})\)/, "($1-$2-$3)");
-const meetKey = (m) => (String(m).match(/제(\d+)회\s*(국무회의|차관회의)/) || []).slice(1, 3).join("|");
 
-/** 같은 회의·같은 발언자에 이미 비슷한 인용이 있는가 (20자 연속 일치를 겹침으로 본다) */
+/** 같은 발언자에게 이미 비슷한 인용이 있는가 (공백 제거 후 20자 연속 일치를 겹침으로 본다) */
 function overlaps(existing, q) {
   const a = norm(q);
   for (const e of existing) {
@@ -50,10 +49,12 @@ function overlaps(existing, q) {
   return false;
 }
 
-// 기존 발언을 회의|발언자 로 색인
+// 기존 발언을 발언자로 색인.
+//  ⚠ 회의 단위로 묶으면 안 된다 — 같은 법령 제안이유가 차관회의(심의)와 국무회의(의결)에
+//    한 번씩 실리는 일이 흔하다. 회의가 달라도 같은 사람의 같은 말이면 중복이다.
 const prior = new Map();
 for (const s of res.statements) {
-  const k = meetKey(s.meeting) + "|" + (s.speaker || "");
+  const k = s.speaker || "";
   if (!prior.has(k)) prior.set(k, []);
   prior.get(k).push(s.quote || "");
 }
@@ -72,7 +73,7 @@ for (const j of judged) {
   if (JUNK.test(quote)) { skipped.push(`${who}: 목차 찌꺼기`); continue; }
   if (!norm(r.text).includes(norm(quote).slice(0, 40))) { skipped.push(`${who}: ⚠ 인용이 원문에 없음`); continue; }
 
-  const k = meetKey(r.meeting) + "|" + r.speaker;
+  const k = r.speaker;
   const seen = prior.get(k) || [];
   if (overlaps(seen, quote)) { skipped.push(`${who}: 기존 발언과 중복`); continue; }
 

@@ -512,8 +512,11 @@
     var list;
     if (cabBiz === "all") { var seen = {}; list = []; BIZ.forEach(function (b) { (CAB.byBusiness[b.id] || []).forEach(function (q) { var k = q.speaker + "|" + (q.quote || "").slice(0, 30); if (!seen[k]) { seen[k] = 1; list.push(q); } }); }); }
     else list = (CAB.byBusiness[cabBiz] || []).slice();
+    // 성향(비우호 먼저) → 최신 회의 순.
+    // ⚠ 예전엔 2차 정렬이 meeting **문자열** 비교였다. "제7회…" > "제48회…" > "제27회…" 처럼
+    //   '제' 다음 글자(7>4>2)로 비교돼 사실상 회차 번호 첫 자리 내림차순이었다 — 날짜와 무관.
     var ord = { oppose: 0, favor: 1, neutral: 2 };
-    list.sort(function (a, b) { return (ord[a.stance] - ord[b.stance]) || (a.meeting < b.meeting ? 1 : -1); });
+    list.sort(function (a, b) { return (ord[a.stance] - ord[b.stance]) || (meetingTime(b.meeting) - meetingTime(a.meeting)); });
     var cntEl = document.getElementById("cabStmtCount"); if (cntEl) cntEl.textContent = list.length + "건";
     host.innerHTML = list.map(stmtHTML).join("") || '<div style="color:var(--muted);font-size:13px">해당 사업 발언이 없습니다.</div>';
   }

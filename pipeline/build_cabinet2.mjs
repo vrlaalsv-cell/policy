@@ -10,10 +10,14 @@ let stmts = res.statements || res || [];
 console.log(`발췌 발언 ${stmts.length}건 로드`);
 
 // dedup (speaker + quote 앞부분)
+//  ⚠ 공백을 제거하고 비교한다. 같은 법령 제안이유가 차관회의(심의)와 국무회의(의결)에 두 번 실리는데
+//    조판 때문에 띄어쓰기만 달라진다("할당대상" vs "할당 대상"). 공백을 안 지우면 다른 발언으로 남아
+//    화면 목록(앞 30자로 다시 dedup)과 칩 숫자가 어긋난다 — 실제로 296 vs 295 로 벌어져 있었다.
+const norm = (t) => String(t || "").replace(/\s+/g, "");
 const seen = new Set(); const uniq = [];
 for (const s of stmts) {
   if (!s || !s.quote) continue;
-  const k = (s.speaker || "") + "|" + (s.quote || "").slice(0, 40);
+  const k = (s.speaker || "") + "|" + norm(s.quote).slice(0, 40);
   if (seen.has(k)) continue; seen.add(k); uniq.push(s);
 }
 console.log(`중복 제거 후 ${uniq.length}건`);
