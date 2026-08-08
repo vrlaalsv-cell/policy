@@ -65,3 +65,6 @@ data/_ai/
 # 파이썬 캐시
 __pycache__/
 *.pyc
+
+# 발언 원본 xlsx (용량 큼) — collect_assembly_speeches.mjs 로 언제든 재수집 가능
+data/raw_speeches/
