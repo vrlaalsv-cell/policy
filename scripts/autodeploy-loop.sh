@@ -15,10 +15,18 @@ INTERVAL=600                     # 10분. 5분으로 줄이려면 300
 LOCK="$DIR/runtime/autodeploy.lock"
 mkdir -p "$DIR/runtime"
 
-# 중복 실행 방지 — 재부팅·수동 실행이 겹쳐 루프가 두 개 돌지 않게 한다.
+# 중복 실행 방지 — 재부팅·수동 실행·(실수로) 예약 작업에 걸어도 루프가 여러 개 쌓이지 않게 한다.
 if command -v flock >/dev/null 2>&1; then
   exec 9>"$LOCK"
   flock -n 9 || exit 0
+else
+  # flock 이 없는 환경 대비 — PID 파일로 같은 역할을 한다.
+  PIDF="$DIR/runtime/autodeploy-loop.pid"
+  if [ -f "$PIDF" ] && kill -0 "$(cat "$PIDF" 2>/dev/null)" 2>/dev/null; then
+    exit 0                       # 이미 돌고 있음
+  fi
+  echo $$ > "$PIDF"
+  trap 'rm -f "$PIDF"' EXIT INT TERM
 fi
 
 while true; do
