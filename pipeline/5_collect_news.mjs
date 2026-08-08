@@ -195,6 +195,19 @@ if (existsSync(outPath)) {
     prev = j.byMember || j;
   } catch { prev = {}; }
 }
+
+// 🛑 대량 실패 안전장치 — 네트워크가 끊기거나 Google 이 차단하면 조회가 몽땅 실패하는데,
+//    그대로 저장하면 "이번 대상은 결과로 교체" 규칙 때문에 **기존 기사 전체가 지워진다**.
+//    (2026-08-08 실제 발생: 336명 중 9명만 성공 → news.json 이 0건으로 덮여씀)
+//    그래서 성공률이 바닥이면 아무것도 쓰지 않고 종료한다.
+const prevArticles = Object.values(prev).reduce((n, v) => n + (v || []).length, 0);
+const okRate = targets.length ? okCount / targets.length : 1;
+if (prevArticles > 0 && (okRate < 0.6 || artCount === 0)) {
+  console.error(`\n🛑 중단: 조회 성공 ${okCount}/${targets.length} (${Math.round(okRate * 100)}%) · 수집 ${artCount}건`);
+  console.error(`   기존 데이터(${prevArticles}건)를 덮어쓰지 않고 그대로 둡니다.`);
+  console.error(`   네트워크·차단 여부를 확인한 뒤 다시 실행하세요. (--source=naver 로 전환도 가능)`);
+  process.exit(1);
+}
 // 이미 받아둔 발췌·원문링크(6_fetch_excerpts.mjs 산출물)는 제목이 같으면 그대로 물려준다.
 // 이게 없으면 재수집할 때마다 발췌가 통째로 날아가 화면에 제목만 남는다.
 const titleKey = (t) => String(t || "").replace(/[^가-힣A-Za-z0-9]/g, "").slice(0, 40);
