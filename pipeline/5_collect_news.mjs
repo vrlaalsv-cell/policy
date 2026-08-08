@@ -159,10 +159,12 @@ for (let i = 0; i < targets.length; i++) {
       const text = noUrl(a.press ? `${a.title} ${a.desc}`.split(a.press).join(" ") : `${a.title} ${a.desc}`);
       if (!text.includes(m.name)) continue;                             // 이름 없는 기사 제외
       if (NOISE_RE.test(a.title)) continue;                             // 스포츠·연예 동명이인
-      if (isMilitaryPower(text, labels)) continue;                      // 군사 '전력(戰力)' 기사
-      if (isOtherPerson(text, m.name)) continue;                        // 동명이인(교수·연구자 등)
+      // ⚠ labels 는 아래 필터들이 쓰므로 반드시 먼저 선언한다.
+      //   (선언보다 위에서 쓰면 TDZ ReferenceError 가 나고 try/catch 에 먹혀 '조회 실패'로 집계됨)
       const labels = labelsOf(text);
       if (!labels.length) continue;                                     // 에너지 기사 아님
+      if (isMilitaryPower(text, labels)) continue;                      // 군사 '전력(戰力)' 기사
+      if (isOtherPerson(text, m.name)) continue;                        // 동명이인(교수·연구자 등)
       const key = a.title.replace(/[^가-힣A-Za-z0-9]/g, "").slice(0, 40);
       if (seen[key]) continue;
       seen[key] = 1;
