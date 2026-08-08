@@ -472,6 +472,25 @@
     modal.querySelector(".x").onclick = closeModal;
     document.getElementById("overlay").classList.add("on");
   }
+  // 조직도 각주의 회의 수·반영 기간은 데이터에서 채운다 (하드코딩하면 갱신할 때마다 낡는다)
+  function renderOrgNote() {
+    if (!CAB) return;
+    var dates = [];
+    CAB.speakers.forEach(function (sp) {
+      (sp.quotes || []).forEach(function (q) {
+        var m = String(q.meeting || "").match(/(\d{4}-\d{2})-\d{2}/);
+        if (m) dates.push(m[1]);
+      });
+    });
+    dates.sort();
+    var meetings = {};
+    CAB.speakers.forEach(function (sp) { (sp.quotes || []).forEach(function (q) { if (q.meeting) meetings[q.meeting] = 1; }); });
+    var n = Object.keys(meetings).length;
+    var el = document.getElementById("orgMeetingCount");
+    if (el && n) el.textContent = "(" + n + "회)";
+    var er = document.getElementById("orgMeetingRange");
+    if (er && dates.length) er.textContent = " 현재 반영: " + dates[0] + " ~ " + dates[dates.length - 1] + " 회의.";
+  }
   function renderCabinetSummary() {
     if (!CAB) return; var host = document.getElementById("cabSummary"); if (!host) return;
     function cs(n, l, c) { return '<div class="cs"><div class="n"' + (c ? ' style="color:' + c + '"' : "") + ">" + n + '</div><div class="l">' + l + "</div></div>"; }
@@ -572,5 +591,5 @@
   }
 
   renderViewToggle(); applyView(); renderAll();
-  if (CAB) { enrichCabinet(); renderCabinetSummary(); renderCabChips(); renderCabStatements(); }
+  if (CAB) { enrichCabinet(); renderOrgNote(); renderCabinetSummary(); renderCabChips(); renderCabStatements(); }
 })();
