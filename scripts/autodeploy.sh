@@ -14,6 +14,13 @@ log() { echo "[$(date '+%Y-%m-%d %H:%M:%S')] $*" >> "$LOG"; }
 
 cd "$DIR" || { log "폴더 없음: $DIR"; exit 1; }
 
+# 중복 실행 방지 — 부팅 루프·예약 작업·수동 실행이 겹쳐도 재빌드가 동시에 돌지 않게 한다.
+# (docker compose up --build 이 두 개 겹치면 컨테이너가 꼬인다)
+if command -v flock >/dev/null 2>&1; then
+  exec 8>"$DIR/runtime/autodeploy.run.lock"
+  flock -n 8 || exit 0
+fi
+
 # ⚠ 스케줄러는 root 로 도는데 repo 는 yongsilver 소유 → git 이 'dubious ownership' 으로 거부한다.
 #   이게 자동배포가 조용히 멈추는 1순위 원인이라 매번 확인해서 스스로 고친다.
 git config --file /root/.gitconfig --get-all safe.directory | grep -qx "$DIR" 2>/dev/null \
