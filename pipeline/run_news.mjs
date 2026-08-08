@@ -11,7 +11,8 @@ const extra = process.argv.slice(2);
 function run(script, args = []) {
   return new Promise((resolve) => {
     const c = spawn(process.execPath, [join(HERE, script), ...args], {
-      cwd: join(HERE, ".."), env: process.env, stdio: ["ignore", "inherit", "inherit"],
+      // NEWS_CHAINED: 두 단계를 이어서 돌리는 중이라는 표시(수집기가 불필요한 안내문을 안 띄우게)
+      cwd: join(HERE, ".."), env: { ...process.env, NEWS_CHAINED: "1" }, stdio: ["ignore", "inherit", "inherit"],
     });
     c.on("close", resolve);
     c.on("error", () => resolve(-1));

@@ -243,7 +243,10 @@ writeFileSync(outPath, JSON.stringify(payload, null, 1), "utf8");
 console.log(`✔ data/news.json — 의원 ${payload.meta.members}명 · 기사 ${payload.meta.articles}건 (조회 성공 ${okCount}/${targets.length})`);
 if (failed.length) console.log(`  ! 실패 ${failed.length}건: ${failed.slice(0, 8).join(", ")}${failed.length > 8 ? " …" : ""}`);
 if (carried) console.log(`  · 기존 발췌 ${carried}건 그대로 유지`);
+// run_news.mjs(스케줄러)가 부른 경우엔 곧바로 발췌 단계로 이어지므로 안내를 띄우지 않는다.
 const noExcerpt = Object.values(merged).reduce((n, v) => n + v.filter((a) => !a.excerpt).length, 0);
-if (noExcerpt) console.log(`\n👉 발췌 없는 기사 ${noExcerpt}건 — 이어서 실행하세요:  npm run fetch:excerpts`);
+if (noExcerpt && !process.env.NEWS_CHAINED) {
+  console.log(`\n👉 발췌 없는 기사 ${noExcerpt}건 — 이어서 실행하세요:  npm run fetch:excerpts`);
+}
 
 buildNewsWeb();
