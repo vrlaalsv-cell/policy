@@ -2,7 +2,10 @@
 //
 //  1순위 소스: 국회도서관 "발언 빅데이터"(dataset.nanet.go.kr)에서 발언 단위 EXCEL/CSV 를
 //             내려받아 data/raw/ 에 두면 이 스크립트가 정규화한다.
-//  보조 소스 : 공공데이터포털 ProceedingInfoService 로 회의록 전문을 받아 '◯이름 직위' 정규식 분해.
+//             ⚠ 손으로 받을 필요 없다 — 인증키·로그인 없이 스크립트로 받는 경로를 확인해 뒀다.
+//               절차·함정은 `node pipeline/findings.mjs 발언` 참고 (data/findings.json).
+//  ✗ 폐기됨   : 공공데이터포털 ProceedingInfoService — 서비스 자체가 없어졌다(HTTP 400 code 12, 2026-08-08 실측).
+//             .env 의 DATA_GO_KR_API_KEY 도 실효 없음. 자세한 근거는 findings.json 의 dead_ends.
 //
 //  사용: node pipeline/2_collect_utterances.mjs            (data/raw/*.csv|*.json 파싱)
 //        node pipeline/2_collect_utterances.mjs --since=2025-01-01   (신규분 필터)

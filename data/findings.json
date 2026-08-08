@@ -1,0 +1,113 @@
+{
+ "_readme": "조사해서 확인한 사실을 쌓아두는 곳. 조사하기 전에 여기부터 뒤진다. dead_ends(찾아봤는데 없더라)를 반드시 함께 남긴다 — 음성 정보가 재조사를 막는다. 조회: node pipeline/findings.mjs <키워드>",
+ "updatedAt": "2026-08-08",
+ "findings": [
+  {
+   "id": "nanet-speech-bigdata",
+   "topic": "국회 회의록 발언 직접수집",
+   "title": "국회도서관 '발언 빅데이터'(dataset.nanet.go.kr) — 인증키·로그인 없이 발언 단위 수집 가능",
+   "verifiedAt": "2026-08-08",
+   "verifiedBy": "실제 호출(curl + openpyxl)로 재현 확인",
+   "summary": "지금 대시보드의 국회 발언 데이터(219개 엑셀을 손으로 받아 만든 것)를 스크립트로 완전 대체할 수 있다. 회원가입·인증키·세션쿠키 전부 불필요. 브라우저 User-Agent 만 필요.",
+   "steps": [
+    {
+     "step": 1,
+     "what": "검색 — contentId + 발언자 + 회의명 + 날짜 수집 (GET, 서버렌더 HTML)",
+     "url": "https://dataset.nanet.go.kr/content?searchWord=<키워드>&srchDisp=<키워드>&searchType=content&srchIdx=content&phraseField=content&phraseSearch=Y&tabGb=content&srchGb=total&orgId=NAM&sort=date:desc&pageNo=1&recordCountPerPage=1000&facetDaeNum=22",
+     "notes": [
+      "검색어 파라미터는 searchWord(+srchDisp). srchQ 는 에러 없이 조용히 0건.",
+      "orgId=NAM(국회) / LAM(지방의회). facetDaeNum=22 로 22대만 필터(실측 동작).",
+      "recordCountPerPage=1000 동작(화면 select 엔 10/20/30/50 만 노출).",
+      "sort=date:desc 는 엄격 단조감소 — '보유 최신일자보다 오래되면 중단' 증분 수집이 안전.",
+      "레코드 앵커: 'speak_contents_list' 로 split, contentId = value=\"<숫자>\" 체크박스 값"
+     ]
+    },
+    {
+     "step": 2,
+     "what": "xlsx 생성 (POST form-urlencoded, 1회 1000건)",
+     "url": "POST https://dataset.nanet.go.kr/content/down/ajax",
+     "body": "viewType=CONTENT_LIST & dataInfo=<contentId 콤마구분> & downFileType=xlsx & downFileName=<이름> & dataDownKeyId=<매번 새 uuid> & dataCount=<n> & downContentType= & orgId=NAM",
+     "notes": ["응답 {\"resultCode\":\"ERR-0000\", \"fid\":\"<uuid>\"} · 검색 파라미터 재전달 불필요(contentId 만으로 동작)"]
+    },
+    {
+     "step": 3,
+     "what": "파일 수신 (GET)",
+     "url": "https://dataset.nanet.go.kr/content/down/file?fid=<uuid>&ftype=xlsx&fnm=<이름>",
+     "notes": [
+      "진짜 OOXML(매직 PK\\x03\\x04). 시트 '_발언내용', 0행 제목·1행 공백·2행 헤더·3행부터 데이터.",
+      "21컬럼: 회의번호·회의록구분·대수·회의구분·위원회·회수·차수·기타정보·회의일자·안건1·안건2·발언자·의원ID·발언순번·발언내용1~7"
+     ]
+    }
+   ],
+   "coverage": "국회(orgId=NAM) 전 범위. 실측 최고(最古) 1999-10-12, 최신 2026-06~07. 회의구분 12종(본회의·상임위·특위·예결위·국정감사·국정조사·전원위·소위·인사청문회·공청회·청문회·연석회의) 전부. 발언자에 의원 외 국무위원·기관장·증인·참고인 포함(의원ID 유무로 필터).",
+   "gotchas": [
+    "🔴 검색 HTML 의 발언 본문은 검색어 주변만 잘린 KWIC 스니펫이다. 실측 대조: HTML '…자위대 기지나 아니면 원전의 1㎞ 반경에'(문장 중간 절단) vs 같은 발언 xlsx 전문 621자. → contentId 만 HTML 로 걷고 본문은 반드시 xlsx 로 받을 것.",
+    "🔴 발언내용1~7 은 엑셀 셀 한도(32,767자)에서 넘어간 것이지 고정 분할이 아니다. 짧은 발언도 3,661자까지 발언내용1 하나에 들어간다. → 무조건 1~7 순서대로 concat.",
+    "🔴 무제한토론(필리버스터) 행은 컬럼이 한 칸 우측 시프트된다. 판별: 안건2 가 '- 무제한토론 의원(…)', 회의록구분이 빈 값, 의원ID 자리에 이름이 들어옴. → 의원ID 가 숫자가 아니면 index 11 이후를 한 칸 되밀 것.",
+    "🔴 발언자 이름에 한자가 섞인다('柳榮夏 의원'). 표기도 '이재강' / '이재강 위원' / '위원장 이철규' 로 흔들린다. → 의원ID(숫자)를 조인 키로 쓰고 이름 매칭은 보조로만.",
+    "미존재·죽은 경로가 404 가 아니라 HTTP 200 + 353바이트 에러페이지로 온다. 상태코드만 보고 성공 판정 금지 — 본문 길이·내용 검사 필수.",
+    "브라우저 User-Agent 필수. 요청 간 0.5~1초 딜레이 권장(서버가 downSeq 로 다운로드 이력을 남긴다)."
+   ],
+   "compat": "기존 pipeline/parse_speeches.mjs 는 data/raw/국회 회의록/*.xls 를 HTML 테이블(td[0]=발언자, td[1]=발언텍스트)로 읽는다. 여기서 받는 건 진짜 OOXML 21컬럼이라 그 파서로는 못 읽는다 — 새 파서나 어댑터 필요."
+  },
+  {
+   "id": "record-assembly-viewer",
+   "topic": "국회 회의록 직접수집 (백업 경로)",
+   "title": "국회 회의록시스템 신주소 record.assembly.go.kr — 무인증, 회의 단위 전문",
+   "verifiedAt": "2026-08-08",
+   "summary": "키워드에 안 걸린 발언까지 회의 통째로 필요할 때 쓰는 보완 경로. 인증 불필요. 2025-03-31 개편으로 likms.assembly.go.kr/record → record.assembly.go.kr 로 이전됐고 XML 뷰어는 제20대 국회 이후 제공.",
+   "steps": [
+    { "step": 1, "what": "목록(대수·회의종류 트리)", "url": "GET https://record.assembly.go.kr/assembly/mnts/total/22.do?class_id_sch={1본회의|2상임위|5국정감사}&cmit_chk=all" },
+    { "step": 2, "what": "드릴다운(회의 id 획득)", "url": "POST /assembly/mnts/async/cmit.do (상임위·국정감사) 또는 /sess.do (본회의)", "notes": ["⚠ 헤더 X-Requested-With: XMLHttpRequest 없으면 404"] },
+    { "step": 3, "what": "회의록 전문(발언자별 div)", "url": "GET /assembly/viewer/minutes/xml.do?id=<mnts_id>&type=view" },
+    { "step": 4, "what": "발언자 단위 엑셀(실체는 HTML table)", "url": "GET /assembly/viewer/minutes/ajax/speakdownload.do?mnts_id=<id>&speaker=<mem_id>&chk_con=c&subject=<제목>" },
+    { "step": 5, "what": "원본 PDF", "url": "GET /assembly/viewer/minutes/download/pdf.do?id=<mnts_id>" }
+   ],
+   "gotchas": [
+    "🔴 xml.do?id= 가 엉뚱한 회의를 조용히 반환한 사례 2회 관측(HTTP 200 + 정상 HTML 이라 눈치채기 어려움). → 응답의 print.do?mnts_id= 값과 회의록 헤더를 요청 id 와 대조하고 불일치면 재요청.",
+    "위원회 코드가 class 별로 다르다(산자위: 상임위 AL / 국정감사 AN). class 5 코드표를 상임위에 재사용하면 엉뚱한 위원회를 긁는다.",
+    "speakdownload.do 응답은 Content-Type 이 application/vnd.ms-excel 이지만 실체는 UTF-8 HTML table.",
+    "국정감사는 2024·2025년만 있다(2026년 국감은 통상 10월). 대시보드가 2025-10 에 멈춘 건 데이터 부재가 아니라 국감 주기 탓일 수 있으니 상임위·본회의로 범위를 넓혀야 한다."
+   ],
+   "license": "record.assembly.go.kr 은 robots.txt 자체가 404(제한 없음). 푸터에 공공누리 링크가 있으나 유형(1~4형)은 미확인 — 사내 배포 전 확인 권장."
+  }
+ ],
+ "dead_ends": [
+  {
+   "what": "공공데이터포털 ProceedingInfoService (apis.data.go.kr/9710000/…)",
+   "verdict": "폐기됨. 저장소 주석(2_collect_utterances.mjs)의 '회의록 전문을 받는다'는 설명은 현재 기준 오정보.",
+   "evidence": "getProceeding/getProceedingList/getMeetingRecord/getRecentProceeding/getMeetingHistoryList 전부 HTTP 400 · NO_OPENAPI_SERVICE_ERROR(code 12). 대조군으로 실재 서비스+가짜키는 HTTP 403 code 30 이 나온다 — code 12 는 '서비스 자체가 없음'을 뜻한다.",
+   "verifiedAt": "2026-08-08"
+  },
+  {
+   "what": "data.go.kr 의 국회 회의록 API 30여 건",
+   "verdict": "전부 'API 유형 = LINK'. data.go.kr 서비스키로 호출되는 회의록 엔드포인트가 하나도 없고 open.assembly.go.kr 로 넘길 뿐이다. .env 의 DATA_GO_KR_API_KEY 는 실효 없음(코드에서도 안 씀).",
+   "verifiedAt": "2026-08-08"
+  },
+  {
+   "what": "구 국회회의록시스템 likms.assembly.go.kr/record",
+   "verdict": "사실상 사망 + robots.txt 전면 Disallow. 검색 백엔드가 'Can't connect to search server' 를 반환하고 목록 API 는 빈 배열. 2025-03-31 개편으로 record.assembly.go.kr 로 이전됐다.",
+   "verifiedAt": "2026-08-08"
+  },
+  {
+   "what": "dataset.nanet.go.kr 의 /list 경로 · downAll(전체받기) · 공식 Open API",
+   "verdict": "/list 와 /meeting/detail 은 항상 HTTP 200 + 353바이트 'error ocurred!' 페이지. /content/downAll/ajax(전체받기)도 서버 에러 → contentId 1000개 배치로 우회. 공식 Open API 는 없다(losi-open.nanet.go.kr 은 50X).",
+   "verifiedAt": "2026-08-08"
+  },
+  {
+   "what": "열린국회정보 OPEN API 를 키 없이 쓰기",
+   "verdict": "키 없이도 HTTP 200·INFO-000 이 오지만 pSize·pIndex 를 무시하고 5건 고정이라 목록 전수 열거 불가. sample 키도 거부(ERROR-290). 게다가 회의록 서비스가 주는 건 회의 단위 메타데이터(CONFER_NUM·PDF_LINK_URL 등)뿐이고 발언 텍스트는 없다 — 발언을 얻으려면 결국 record.assembly.go.kr 로 넘어가야 한다. 즉 이 경로에 키를 받을 실익이 낮다.",
+   "verifiedAt": "2026-08-08"
+  },
+  {
+   "what": "record.assembly.go.kr 의 검색 API (/assembly/mnts/search/search.do)",
+   "verdict": "실제 브라우저에서는 동작하지만(에너지 → allCount 7,851) curl 로는 동일 바디·쿠키·풀헤더로도 항상 allCount 0. 원인 미규명 → 검색에 의존하지 말고 '회의 전량 크롤 → 로컬 키워드 필터' 구조로 갈 것.",
+   "verifiedAt": "2026-08-08"
+  },
+  {
+   "what": "/assembly/mnts/async/sessCmit.do",
+   "verdict": "실브라우저에서도 404(죽은 JS 코드). 상임위 드릴다운은 cmit.do 로.",
+   "verifiedAt": "2026-08-08"
+  }
+ ]
+}
