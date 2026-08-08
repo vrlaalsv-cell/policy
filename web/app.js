@@ -184,14 +184,25 @@
 
   // ---------- stats ----------
   function renderStats() {
-    var list = currentMembers(), f = 0, n = 0, o = 0;
-    list.forEach(function (m) { var s = stanceOf(m, state.business); if (s === "favor") f++; else if (s === "oppose") o++; else n++; });
+    // '자료없음'을 중립에 합산하면 안 된다 — 분석 전(unknown) 의원까지 중립으로 읽혀 수치가 왜곡된다.
+    var list = currentMembers(), f = 0, n = 0, o = 0, u = 0;
+    list.forEach(function (m) {
+      var s = stanceOf(m, state.business);
+      if (s === "favor") f++; else if (s === "oppose") o++; else if (s === "neutral") n++; else u++;
+    });
     document.getElementById("stats").innerHTML =
-      stat(list.length, "표시 의원") + stat(f, "우호", META.stance.favor.color) + stat(n, "중립", META.stance.neutral.color) + stat(o, "비우호", META.stance.oppose.color);
+      stat(list.length, "표시 의원") + stat(f, "우호", META.stance.favor.color) + stat(n, "중립", META.stance.neutral.color) +
+      stat(o, "비우호", META.stance.oppose.color) + stat(u, "자료없음", META.stance.unknown.color);
   }
   function stat(n, l, c) { return '<div class="stat"><div class="n"' + (c ? ' style="color:' + c + '"' : "") + ">" + n + '</div><div class="l">' + l + "</div></div>"; }
 
   // ---------- list ----------
+  // 성향이 밝혀진 사업 수(0~6). 카드에 '-'(자료없음)가 적을수록 큰 값 = 정보가 많은 의원.
+  function knownCount(m) {
+    var n = 0;
+    BIZ.forEach(function (b) { var s = m.stance[b.id]; if (s && s !== "unknown") n++; });
+    return n;
+  }
   function currentMembers() {
     var q = state.query.trim();
     var list = MEMBERS.filter(function (m) {
@@ -199,8 +210,20 @@
       if (q && (m.name + " " + m.party + " " + m.district).indexOf(q) < 0) return false;
       return true;
     });
+    // 정보가 많은 의원부터: 성향이 밝혀진 사업 수 → 근거 발언 수 → 이름(가나다).
+    // 사업 필터가 켜져 있으면 그 사업의 성향(우호→중립→비우호→자료없음)을 먼저 본다.
     var ord = { favor: 0, neutral: 1, oppose: 2, unknown: 3 };
-    list.sort(function (a, b) { return ord[stanceOf(a, state.business)] - ord[stanceOf(b, state.business)]; });
+    list.sort(function (a, b) {
+      if (state.business !== "all") {
+        var d = ord[stanceOf(a, state.business)] - ord[stanceOf(b, state.business)];
+        if (d) return d;
+      }
+      var ka = knownCount(a), kb = knownCount(b);
+      if (ka !== kb) return kb - ka;
+      var qa = (a.quotes || []).length, qb = (b.quotes || []).length;
+      if (qa !== qb) return qb - qa;
+      return a.name.localeCompare(b.name, "ko");
+    });
     return list;
   }
   function badge(bizId, level) {
