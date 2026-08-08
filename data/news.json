@@ -3,401 +3,11 @@
   "source": "google",
   "days": 365,
   "perMember": 5,
-  "collectedAt": "2026-08-08 17:25:03",
+  "collectedAt": "2026-08-08 17:49:06",
   "members": 137,
-  "articles": 428,
-  "excerpts": 423,
-  "excerptAt": "2026-08-08 17:29:49"
+  "articles": 428
  },
  "byMember": {
-  "M001": [
-   {
-    "title": "“전기요금 인가 기준, 법률에 직접 명시”… 곽상언 의원, 전기사업법 개정안 발의",
-    "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE8wS3NBUkJBSUpVRUg1OFRfaVJ3bTdlc0kyU1lPQmNTUC1rRloxY0txRUlieHdCeVUzeVJJcVpyUlJuRzZPMnJJRjFySEh1cVRNVHhxSjI0cldsb1NFa3REOWo2MmpwcVhPR0tXUkJVXzY4QQ?oc=5",
-    "press": "에너지데일리",
-    "date": "2025-11-26",
-    "labels": [
-     "POWER"
-    ],
-    "strong": 1,
-    "excerpt": "[에너지데일리 송병훈 기자] 전기요금 결정의 핵심 기준이 시행령과 고시에 흩어져 있어 국회의 입법권을 침해하고 있다는 지적이 제기되면서, 해당 기준을 법률에 직접",
-    "hl": "전기요금",
-    "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=162242"
-   }
-  ],
-  "M007": [
-   {
-    "title": "안규백, 국방 인공지능 추진 점검회의서 \"AI는 필수 전력요소\"",
-    "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFBra1dmR3ltU3Vad296a1NhdmRZRWpBU0xRUU1fNTl2c0JnYVdUZGRxUGtJWGxncHJseTduOGpsTHJGa3lfUkYzYkFYbl9NOXFLV1dpd2o3VHZtOXA5VUVVbEo1VjRQNXM?oc=5",
-    "press": "연합뉴스TV",
-    "date": "2025-11-18",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.yonhapnewstv.co.kr/news/AKR202511181722100ac",
-    "excerpt": "안 장관은 \"병역자원 감소라는 도전에 대응하기 위해서는 부대·병력·전력 구조 개편이 연계돼야 한다\"며 \"그 과정에서 AI는 더 이상 선택이 아닌 필수 전력 요소\"라고 강조했습니다.",
-    "hl": "전력"
-   }
-  ],
-  "M010": [
-   {
-    "title": "황정아, 박홍근 기획예산처 장관 면담…\"원자력 R&D·출연연 처우 개선\"",
-    "link": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1hMU40LVc1Z1ItZHNMajRFY1VBVUdIVmhOQXotUTMzY1M3LWhRUHBMRGdtd1VSNFJQczNvUUx5Vkxvcndfdk5tUHhreTR1WE1wYUx3WThweHFTZWh2OGFJMQ?oc=5",
-    "press": "뉴스1",
-    "date": "2026-07-30",
-    "labels": [
-     "NUCLEAR"
-    ],
-    "url": "https://www.news1.kr/local/daejeon-chungnam/6244564",
-    "excerpt": "황정아 더불어민주당 국회의원(대전 유성을)은 30일 박홍근 기획예산처 장관을 만나 원자력 연구개발(R&D) 예산 확대와 정부출연연구기관(출연연) 연구자 처우 개선 …",
-    "hl": "원자력"
-   },
-   {
-    "title": "한화큐셀 찾은 기획예산처 박홍근 장관, “기술경쟁력 확보로 태양광 생태계 회복”",
-    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE82ZUpBZ0hnd3l0WjFvNTdwYTdJMllpbWF4RGZKOE9uMlVBZ1VkNG1kMno0S09Zd1lMenBUVzIwdjhKUmpaRFVTUXViZy1GQ2tPbUFLUlhLb1cxMVpLZjhWRFJKVWE3X1BZZTNDWXJsUmQ?oc=5",
-    "press": "솔라투데이",
-    "date": "2026-05-11",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "[인더스트리뉴스 정한교 기자] 기획예산처 박홍근 장관이 지난 8일 한화솔루션 큐셀부문(이하 한화큐셀) 진천공장을 찾았다.박 장관은 태양전지(셀)와 모듈 등 생산",
-    "hl": "태양전지",
-    "url": "https://www.solartodaymag.com/news/articleView.html?idxno=20691"
-   },
-   {
-    "title": "박홍근, 한화솔루션 방문 “신재생에너지 전환 적극 추진”",
-    "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFA4WklNTDBFZGFYbFBNUXdNYmhRSGJ3REdaZVdTMW9CQjdhZk9abERGam9yQ3VNRG02NllzU1hmY2FXbTR3dGNtdmdCQ2VqOXJ4NFhMY3NsZXhmODY1OFpwRTBsNHM5VWZDdl9xS1dtZw?oc=5",
-    "press": "서울신문",
-    "date": "2026-05-08",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "박홍근 기획예산처 장관이 한화솔루션 큐셀을 방문해 신재생에너지 전환을 적극 추진하겠다고 밝혔다. 태양광 보급, R&D, 금융지원으로 국내 생산기업의 경쟁력 회복을 돕고, 추경 사업의 차질 없는 집행도 당부했다.",
-    "hl": "재생에너지",
-    "url": "https://www.seoul.co.kr/news/economy/2026/05/08/20260508500129"
-   },
-   {
-    "title": "진천 찾은 박홍근 장관 \"태양광·햇빛소득마을 속도\"",
-    "link": "https://news.google.com/rss/articles/CBMid0FVX3lxTFBPMUhjQTJIQWJfbVhEdXVnc0xKRkdzMy1BaXpuQ25ES0gyWG0tZFF4S3Z6b0E3YWNHek9wTXVvc3lId09FYUk1WG5CdERrOFloREdmMUtSS3hwcUdTMXZYM2tmcDRQSzdpNy14Z1Z4SlNYV2QwZEV3?oc=5",
-    "press": "OhmyNews",
-    "date": "2026-05-08",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "박홍근 기획예산처 장관이 진천 소재 태양광 셀 제조기업인 한화솔루션 큐셀을 찾아 정부의 에너지 전환 정책 추진 의지를 밝혔다.박 장관은 8일 한화큐셀 진천 공장에서 업계·지방자치단체 관계자들과 간담회를 갖고 \"태양광 패널 등 신",
-    "hl": "태양광",
-    "url": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003232326"
-   },
-   {
-    "title": "박홍근 장관 태양광산업 생태계 회복 위해 중앙-지방 협력 강화를",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBjUHktWXF4ZlZ6SXc1ZmJsNk5GWkZuUVFVTGtFUE1razNwR1ZBNkh0b1BuU1oxd0ZydmNkbWZibHo4ZzIxYmtMcDBlNFljcGxHVnhody1JaWFHQdIBWEFVX3lxTE9NVHJScDJjdzd1STNaTkE0ZncwM1pQaWlzN1JoTGVydldxZlZGOEQxclBIaWVBbG4wQlI0bHNLT0ZEeVlLMFFzdFBVMkZ4eWFYTHNqTGlQdm0?oc=5",
-    "press": "아주경제",
-    "date": "2026-05-08",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "박홍근 기획예산처 장관은 8일 \"태양광 산업 생태계 회복을 위해 중앙정부와 지방자치단체의 협력을 강화해야 한다\"고 말했다.박 장관은 이날 진천의...",
-    "hl": "태양광",
-    "url": "https://www.ajunews.com/view/20260508135626908"
-   }
-  ],
-  "M015": [
-   {
-    "title": "[김재섭의 뒤집어보기] '6.3 지방선거' 두 달 앞인데, 가계통신비 부담 완화 정책이 보이지 않는 이유",
-    "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9DYUVIMkd2NzdncjlzYXNPOVBGb0c0MlRNbFB2aW5kVGVENGFWNUxXYkN4eGtHLU1TSENPWjZJNENMWDk1RnZPdGhZU0tWZ01JUHhfMlFmLVBMYnJCVmpWRGhQM1gwYThZN1h4MTFyY3lhY1U?oc=5",
-    "press": "비즈니스포스트",
-    "date": "2026-04-01",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.businesspost.co.kr/BP?command=article_view&num=434651",
-    "excerpt": "[김재섭의 뒤집어보기] '6.3 지방선거' 두 달 앞인데, 가계통신비 부담 완화 정책이 보이지 않는 이유",
-    "hl": "계통"
-   }
-  ],
-  "M017": [
-   {
-    "title": "[탄소중립 녹색국회]우원식 국회의장,“RE100 국회 첫걸음”…국회 태양광 발전설비 준공",
-    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBPOGFXSDMxWTdqckw5ZVMtY1lmcDd0V0N2MEcwSlMtd0p0WXkxRmdBMU1Pd2J0eG1NSEViQVotd3FMWlh0REFuM3pWTlRMbDVwY3NyX3NPamJlSzVEN0FlblcxOE1TYXlDd3VGUjBheG8?oc=5",
-    "press": "전국뉴스",
-    "date": "2026-05-20",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "[전국뉴스=오명진 기자] 우원식 국회의장이 국회 친환경 태양광 발전설비 준공식을 계기로 ‘RE100 국회’ 실현과 탄소중립 실천 의지를 재차 강조했다. 국회가 사",
-    "hl": "태양광",
-    "url": "https://www.jeonguknews.co.kr/news/articleView.html?idxno=84660"
-   },
-   {
-    "title": "우원식 의장, 국회 태양광 발전설비 준공식 참석",
-    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5nSXJ1MWlmQnRHS1kwalVmT21kYXFZVWM3QThqWW4wLTRQZlNybjdZN0U3Sk5TMFoxX1R5V1ZMeUdhMXY3X3g5bjFPaEF0WFFmVmY4QzduU3FVTGVMYmlFcFV0TjdlMG1zRlBRSTVYTnpoRlNXX1pyeEV3?oc=5",
-    "press": "로이슈",
-    "date": "2026-05-20",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "우원식 국회의장이 20일 오전 국회운동장에서 열린 국회 친환경 태양광 발전설비 준공식에 참석해 재생에너지 전환과 탄소중립 추진 계획을 밝혔다.이번 태양광 설비 구축은 국회의 재생에너지 사용 확대와 저탄소 녹색국회 추진의 일환으로 진행됐다. 국회는 이번 설비를 통해 국회 어린이집 3곳의",
-    "hl": "재생에너지",
-    "url": "https://www.lawissue.co.kr/view.php?ud=202605201651111751f4ab64559d_12"
-   },
-   {
-    "title": "우원식 의장, 국회 친환경 태양광 발전설비가 공공부문 탄소중립 확산의 출발점",
-    "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFAxOFNJNHNLU0NINnhfTHRnOVZnaS00b2FUZXMyLU9rT1g2ZDVuR2RCbU9QcFFNLVFYaGRRMHFkaGdhZFluOFdFZWNqRUZtaVREb0tiRlhIazkzRklabEZ6bUZkbEFLQUXSAWtBVV95cUxQeVI1a0ZmQ1NGbGdTbzBXNVMyRHVhTDBfRXB1em9velNuY1FKbE1NeC1UWDRjR09STG1maXYzQ0NsbGdFa2Q4LXc1Tm1sa3o1Rk5QYk44cDUtRHktLUZJc082UU41UjBfZElHYw?oc=5",
-    "press": "의회신문",
-    "date": "2026-05-20",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "사랑하는 국회 가족 여러분, 오늘은 우리 국회가 RE100 실천을 향해 실질적인 첫걸음을 내딛는 날입니다.국회가 쓰는 에너지부터 바꾸겠다는 약속이 구체적인 행동으로 이어져서 국회 안에 친환경 태양광발전설비가 새로 만들어지고, 여기에서 생산된 친환경 전기로 우리의 미래세대들이 생활하는 국회 어린이집부터 탄소중립을 실천하게 된다고 생각하니 정말 뜻깊습니다.그동안 이 사업을 준비하고 완성하기까지…",
-    "hl": "태양광",
-    "url": "http://www.icouncil.kr/news/articleView.html?idxno=56906"
-   },
-   {
-    "title": "우원식 국회의장, 국회 태양광 발전설비 준공식 참석…“2035 탄소중립 국회 추진”",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBlYzZJZ3pWQzdwZXhlVGw4UUpwT2VCUHdwLTZETS14UW81cUpDQlBKUXpQOTgtdW5zbTRRZzFtNDVlbXduZGpwaE5XVHVGSk1ET2N1RVhlcEpDUQ?oc=5",
-    "press": "여성종합뉴스",
-    "date": "2026-05-20",
-    "labels": [
-     "RE"
-    ],
-    "excerpt": "우원식 의장, 국회 친환경 태양광 발전설비 준공식 참석 [여성종합뉴스/최화운기자]우원..",
-    "hl": "태양광",
-    "url": "https://womannews.net/detail.php?number=446728"
-   },
-   {
-    "title": "우원식 의장, 라트비아 국회의장과 회담… “원전·방산 협력 강화”",
-    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE03TldpdlJxbkJuQ0FoTUg0OTRuZGsxZEZpV2ZEUUY0R3hfOTQzaUR4X0t5RDBQMDdYZVc2X01VQ3p1Zm9ZX3pWRTJFbFJrQW9OV0prZkhpWjNkLTFYNVhjaGRCZGJSbUlzZ1RWUUliQVjSAXRBVV95cUxQcm5WOWdxVGhweXNoX250Vl9aa2E1enE5ZDM2cExjQnk3eUlGOGdHSWNaLUI1RWNRdEVIOGxHSzhBNmQxSGE2MTlYbGxkZDAtcHU0OENFdjJWcm1zLTlwZF9tTE1HTXR6cy14bUFEakU2Ymoyaw?oc=5",
-    "press": "포인트데일리",
-    "date": "2026-04-28",
-    "labels": [
-     "NUCLEAR"
-    ],
-    "url": "https://www.pointdaily.co.kr/news/articleView.html?idxno=303205",
-    "excerpt": "[포인트데일리 최영운 기자] 우원식 국회의장이 다이가 미에리냐(Daiga Mieriņa) 라트비아 국회의장과 만나 수교 35주년을 맞은 양국의 실질적 경제 협력 방안을 논의했다.우 의장은 28일 오전 국회 접견실에서 열린 회담에서 “미에리냐 의장의 방한이 양국 관계를 미래지향적 협력 관계로 발전시키는 계기가 될 것”이라고 환영했다. 양국 의장은 원전, 방산, 농업 등 다양한 분야에서 전략적…",
-    "hl": "원전"
-   }
-  ],
-  "M018": [
-   {
-    "title": "'특허 8000개' 한전기술지주 출범…김성환 \"전력 유니콘 육성 전초기지 될 것\"",
-    "link": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5ORWlua3MtalJPZzYxYW92RFh5VnA3Uy00SWVnY1V1cG9LMEgwd2NxcU9UUmtCTzJ5cTFKVmh3VzFrVVVRTk9tdXljQXc5eHpQY3JLN1p3bnJIZkR4dGxvSg?oc=5",
-    "press": "아시아경제",
-    "date": "2026-08-08",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.asiae.co.kr/article/2026080812524262353",
-    "excerpt": "김성환 기후에너지환경부 장관이 7일 전남광주 나주시 소재 한국전력공사 본사에서 열린 한전기술지주회사 출범식에 참석해 축사를 하고 있다.",
-    "hl": "전력"
-   },
-   {
-    "title": "김성환 장관, 여름철 폭염 대응 전력수급 운영 현황 점검",
-    "link": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1GZTBBX2hvUXp6SzMwUS01VkhaTU9BZVl6R0tfQzF3Z2JuR0RQYXdwckNjaWtJbWRDbnN1NGRzMUlVZEN5VEY2M0RMWXN5WG9FdVc0VWF0c3JFSmxYNzE4d9IBYEFVX3lxTE1GZTBBX2hvUXp6SzMwUS01VkhaTU9BZVl6R0tfQzF3Z2JuR0RQYXdwckNjaWtJbWRDbnN1NGRzMUlVZEN5VEY2M0RMWXN5WG9FdVc0VWF0c3JFSmxYNzE4dw?oc=5",
-    "press": "연합뉴스",
-    "date": "2026-08-07",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.yna.co.kr/amp/view/PYH20260807075500013",
-    "excerpt": "(서울=연합뉴스) 김성환 기후에너지환경부 장관이 7일 전남광주 나주시 한국전력거래소를 방문, 여름철 폭염 대응 전력수급 운영 현황을 점검하고 있...",
-    "hl": "전력"
-   },
-   {
-    "title": "폭염 장기화에 전력수요 '역대 최대' 97.1GW 경신 촉각…김성환 기후장관, 긴급 점검",
-    "link": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE40RmZxZWdGWUdZZ01malNZZzdHTGkwdG1nYjNiOEM2M3AzRXQ4V0YyUzU5MG1uSUxfZjllRkFfZ2dmZ0h4YXBkakFUVjllQQ?oc=5",
-    "press": "전자신문",
-    "date": "2026-08-07",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.etnews.com/20260807000021",
-    "excerpt": "기후에너지환경부가 전국적인 폭염과 열대야 장기화에 따른 전력수급 상황을 직접 점검하며 역대 최대 전력수요 경신 가능성에 대비한 현장 대응에 나선다. 최대전력수요가 기존 최고치(97.1GW)를 넘어설 가능성까지 열어두고 발전·송배전 설비와 추가 예비자원 확보 상황을 집중 점검한다. 기후부는 7일 오전 전남 나주 한국전력거래소에서",
-    "hl": "전력"
-   },
-   {
-    "title": "이어지는 폭염에 전력수요 '역대 최대' 경신 가능성↑…김성환 장관, 집중 점검",
-    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBTaGVYOE9nWHgzV2RzMnlDc0s2RVpyNEZLVGFLUVJRakxnS1RhMllFeVhsN0RyZ05KRFZMR1hicXN0VkxYaFVjZ2ZJSVhlY0hoU2N1b2pfQk11b19Ea1BjeTRuRmRKcUFKcDRjTXF6WXDSAXBBVV95cUxQU2hlWDhPZ1h4M1dkczJ5Q3NLNkVacjRGS1RhS1FSUWpMZ0tUYTJZRXlYbDdEcmdOSkRWTEdYYnFzdFZMWGhVY2dmSUlYZWNIaFNjdW9qX0JNdW9fRGtQY3k0bkZkSnFBSnA0Y01xellw?oc=5",
-    "press": "electimes.com",
-    "date": "2026-08-07",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.electimes.com/news/articleViewAmp.html?idxno=371092",
-    "excerpt": "이어지는 폭염에 전력수요 '역대 최대' 경신 가능성↑…김성환 장관, 집중 점검 | 폭염특보가 내려진 6일 서울 송파구 한 조형물에 현재 온도가 표시돼 있다.[사진=연합뉴스] 폭염과 열대야가 이어지는 상황에서 역대 최대전력수요(97.1GW)를 경신할 가능성이 커지고 있다.",
-    "hl": "전력"
-   },
-   {
-    "title": "김성환 기후부 장관, 폭염 속 전력수급 긴급 점검…\"역대 최대수요에도 안정 공급 총력\"",
-    "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE9LUlVYU25OX0R6NWprbVhQVFJWNmQyd2pGOTZtRnh5WERsY040d1RhSktlMGdGNEdzaEU0QlZyRjN3ZG05R1hzeTVtM1BxZGZiOEduUG12cmFPYm5nRWQ0d2QtZjZDV3ZZNVJqUXdab1AwQQ?oc=5",
-    "press": "에너지데일리",
-    "date": "2026-08-07",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=202065",
-    "excerpt": "[에너지데일리 송병훈 기자] 기록적인 폭염과 열대야가 이어지는 가운데 정부가 역대 최대 전력수요 가능성에 대비해 여름철 전력수급 대응체계를 전면 점검했다. 산업체",
-    "hl": "전력"
-   }
-  ],
-  "M019": [
-   {
-    "title": "박주민 \"전력 자급률 7％ 불과한 서울, 에너지 전환 도시로 바꿀 것\"",
-    "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOd1k1enViOWNpODBQSHRmdm1MLWk4MlFtcFJNNWlYSDVUa1BSZzF2MDV0d1NybmJ6QTZnWGdQY1UxVUdFRzJvUVJZMmtPQXdLRWZfX2dqN0xhQ0xpOG05OFR3MVlzSW9xSmhKRkVxRTBMQXU2SXB1d1ZEcUlyVnFUOHVqLXRqZw?oc=5",
-    "press": "TBS 서울",
-    "date": "2026-04-03",
-    "labels": [
-     "RE",
-     "POWER"
-    ],
-    "strong": 1,
-    "url": "https://tbs.seoul.kr/news/newsView.do?typ_800=&idx_800=3536102&seq_800=20528980",
-    "excerpt": "박주민 더불어민주당 서울시장 경선후보는 서울을 에너지 소비도시에서 스스로 책임지는 에너지 전환도시로 바꾸겠다고 밝혔습니다. 미국-이란 전쟁의 충격 속에서 에너지 위기가 반복되지 않으려면 전력 자급률이 7％대에 불과한 서울의 에너지 체질을 개선해야 한다는 취지입니다.",
-    "hl": "에너지 전환"
-   },
-   {
-    "title": "박주민 “에너지 소비도시에서 에너지 전환도시로…‘탄소중립도시’ 서울 만들겠다”",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5QMUgtSjgxTHE1dHp0U0FPZU9MYXBVYnkyV2pqLWJXYVBFbWFuQUZ0aXJpaUM3S1dneEhCREM3TDhlNDFHWEtsdXkxbmh6d3c?oc=5",
-    "press": "v.daum.net",
-    "date": "2026-04-03",
-    "labels": [
-     "RE"
-    ],
-    "strong": 1,
-    "excerpt": "[헤럴드경제=양대근 기자] 박주민 더불어민주당 서울특별시장 경선후보는 3일 국회 소통관에서 기자회견을 열고 “기후변화에 강한 탄소중립도시 서울, 에너지 전환도시 서울”을 만들기 위한 기후·에너지 종합공약을 발표했다. 박 후보는 “서울은 이제 에너지를 소비만 하는 도시에서, 스스로 책임지는 에너지 전환도시로 바뀌어야 한다”고 밝혔다. 먼저 그는 “미국-이",
-    "hl": "에너지 전환",
-    "url": "https://v.daum.net/v/20260403110344624"
-   },
-   {
-    "title": "박주민 “AI 전력 어떻게?” 정원오 “가정용 태양광”",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE05M3JYZ2drUnJwU3pKa3JWMkpTdHhLZ0p3S3V5TVh4OE1LTlRTV2x5a0FvYWdkdHdac0JqTGRHWFFoSXRPZ0FQSHl4cUVoNGM?oc=5",
-    "press": "v.daum.net",
-    "date": "2026-03-31",
-    "labels": [
-     "RE",
-     "POWER"
-    ],
-    "excerpt": "더불어민주당 서울시장 경선 전현희(왼쪽부터), 박주민, 정원오 후보가 30일 서울 여의도 국회 의원회관에서 열린 현장최고위원회의에서 웃고 있다. 뉴시스 [파이낸셜뉴스] 정원오 더불어민주당 서울시장 예비후보는 31일 서울 행정 등 AI(인공지능) 적용을 위한 전력 수급 방안과 관련해 가정용 전력을 태양광 발전으로 돌리겠다고 밝혔다. 정",
-    "hl": "태양광",
-    "url": "https://v.daum.net/v/20260331212901818"
-   }
-  ],
-  "M021": [
-   {
-    "title": "[2025 국정감사] 김동아 의원 \"국내 핵심 원전 기술 해외 유출 가능성\" 제기",
-    "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EOVVaTW1IM1lxMXNNR1g3R1pjVTAwOWVFSGZoWkdDVFNSNEYtSVYzVlZ0MjFzUklSRDF0WThUd1M1QmZuTFJCb0YteWJUUEtEMDdTRFY4ZmJhWTJjSEdkOS0zLXAzZkQ5TzVGYUhR?oc=5",
-    "press": "투데이에너지",
-    "date": "2025-10-24",
-    "labels": [
-     "NUCLEAR"
-    ],
-    "strong": 1
-   },
-   {
-    "title": "김동아 의원 “첫 수출이라던 이집트 엘다바 원전, 윤 대통령 치적 쌓기였다\"",
-    "link": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE82ZURBdkY3Rm1YQ0VnSjljMTdqanNLeGhid3pPLUQ3ZWhlTk8wV3RaM2d1OWNGNnNMcnpKY0FQd0M3b3g0ZDhGcQ?oc=5",
-    "press": "브레이크뉴스",
-    "date": "2025-10-20",
-    "labels": [
-     "NUCLEAR"
-    ],
-    "strong": 1,
-    "url": "https://www.breaknews.com/1154916",
-    "excerpt": "▲ 김동아 의원은 \"한수원이 ‘대한민국 1호 영업사원'이라는 윤석열의 ‘치적 쌓기’를 위해 무리하게 사업을 추진하면서 이미 실패가 예견됐었다”며, “이집트 엘다바 원전에서 시작해 대왕고래 프로젝트, 체코 두코바니 원전에 이르기까지 모두가 윤석열 때문에 무리하게 진행돼 실패한 사례들”이라고 날 선 비판을 했다.",
-    "hl": "원전"
-   },
-   {
-    "title": "김동아 의원 \"윤석열 정부, 원전 기술 팔아넘긴 매국적 합의…진상조사 촉구\"",
-    "link": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE5zLUM3eFI4UjVYYkRxaFd1MXZNS25EOUVNcE02N1BOQ21OUDZtVFR6YlprVUFQc3VjOHMwN2dBMVFmVnd0NzNwZFZVeEx0MHY3TU1rdDFZUF9zNExqa3hTZXNwZnZCdw?oc=5",
-    "press": "이로운넷",
-    "date": "2025-10-13",
-    "labels": [
-     "NUCLEAR"
-    ],
-    "strong": 1,
-    "excerpt": "이로운넷 = 이정석 기자더불어민주당 김동아 국회의원(산업통상자원중소벤처기업위원회)은 13일 국회 소통관 기자회견을 열고, \"윤석열 정부가 체코 원전 수주를 정치적 치적으로 삼기 위해 한수원과 웨스팅하우스 간 굴욕적 합의를 강행했다\"며 국회 차원의 철저한 진상조사를 촉구했다.김 의원은",
-    "hl": "원전",
-    "url": "https://www.eroun.net/news/articleView.html?idxno=64696"
-   },
-   {
-    "title": "김동아 의원 \"한전-한수원 ‘집안싸움’에 혈세 368억 원 낭비 우려\"",
-    "link": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE9EQTBpU1hYS0R2ajJ2M0tuWkF6WWpaZnJZb2QwWFNfVk5GOWVxQUJoMFNqMHR4bi1fM0dIb2hOQjlqa1VtY3h6Sg?oc=5",
-    "press": "브레이크뉴스",
-    "date": "2025-10-05",
-    "labels": [
-     "NUCLEAR",
-     "POWER"
-    ],
-    "strong": 1,
-    "url": "https://www.breaknews.com/1152548",
-    "excerpt": "김동아 더불어민주당 의원이 14일 오후 전남 나주시 한국전력공사 본사에서 열린 산업통산자원중소벤처기업위원회 국정감사에서 정동희 한국전력거래",
-    "hl": "전력"
-   },
-   {
-    "title": "국민 2명당 1개꼴... 김동아 의원 \"원전 사용후핵연료 , 저장률 '위험 수위'\"",
-    "link": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1hLW9fZHVBcnEycnNlVlk1WHRmdFdWeUVrak8xZ0E1SmFTTWg4bTVGU1BWd1ZuWl9TdmIyb1NiaFVBVUJoVDJxZm5yWXp6elJ3NHFvcGZlSGRDUEFrRjMzNGpsZWVhdw?oc=5",
-    "press": "이로운넷",
-    "date": "2025-09-23",
-    "labels": [
-     "NUCLEAR",
-     "POWER"
-    ],
-    "strong": 1,
-    "excerpt": "이로운넷 = 이정석 기자국내 원자력발전소 내에 보관된 사용후핵연료(폐연료봉)가 2,500만 개를 넘어서며 국민 2명당 1개꼴로 고준위 방사성 폐기물을 떠안고 있다는 지적이 제기됐다. 특히 일부 원전은 사용후핵연료 저장률이 임계치를 넘어 국민 안전을 직접 위협하고 있다는 우려가 커지고",
-    "hl": "원전",
-    "url": "https://www.eroun.net/news/articleView.html?idxno=63647"
-   }
-  ],
-  "M024": [
-   {
-    "title": "‘초접전’ 성적표 받은 정청래·김민석, 승부처 호남 잡기 ‘전력’",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1yRWRIeGE2MTkwRUVhdld6UGpnTTRqRVZBNGZJQmUxT3ZHaHVhQy1EQVJmLWY3TmM1emhfclpNajJuT2VFanlzc2lhazNMekRxdkROaERvLTNFUdIBX0FVX3lxTE9sVFBTYnlsU19RU3JYeFJTQVM0Nk9nNDE1am55akdaU3JNWHFHZzN2MFdpbkJ5YmF2M3Q5eXdBdVBNTG5DU19ocFYtV19mRWx0YV8wMGo3ZVdhNG5GZVpB?oc=5",
-    "press": "경향신문",
-    "date": "2026-08-03",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.khan.co.kr/article/202608032125005",
-    "excerpt": "이날 전북과 전남광주를 찾은 김 의원은 이번주 내내 호남에 머무를 예정이다. 그는 이날 전북 당원집중콘서트에서 “대통령과의 공존 관계가 지속되지 않는다면 정부도, 대통령도, 전북 현대차 유치나 호남 메가프로젝트 모두 흔들릴 수 있다”며 ‘당정 일치’를 강조했다. 정 의원은 이날 페이스북에서 “부·울·경, 충청 노사모들에게 부탁합니다. 호남 지인들에게 ..."
-   },
-   {
-    "title": "송영길, 삼성전자 찾아 \"원전 추가\"..김민석·정청래 이어 반도체행보",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1GbGZrVFNDdW84ekMtS3VoeHl0MEtaT2RwVzFCYUVrZWxPZVllX0tLd0xsXzFWWldVb0RlMGhKY08yTUR3ZFhtUEp0T3hfZmQ0Sk9mcm1HcmhCZw?oc=5",
-    "press": "파이낸셜뉴스",
-    "date": "2026-07-10",
-    "labels": [
-     "NUCLEAR",
-     "POWER"
-    ],
-    "excerpt": "정청래(왼쪽부터), 송영길, 김민석 더불어민주당 의원이 3일 서울 용산 서울드래곤시티호텔에서 열린 더불어민주당 후반기 국회 대비 국회의원 워크숍에 참석해 미소짓고 있다. 뉴시스 [파이낸셜뉴스] 더불어민주당 대표 선거 출사표를 던진 송영길 의원은 10일 삼성전자 광주공장을 찾아 호남에 원자력발전소를 추가로 건설해야 한다고 주장했다. 이재명",
-    "hl": "원자력",
-    "url": "https://v.daum.net/v/20260710154844362"
-   },
-   {
-    "title": "정청래 민주당 대표 27일 영덕행…원전 변수 시험대",
-    "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBIUFduTjVwUHlNcmFFdl80WmpjQXRfOGpFbUozNUZrem5qcE05NFFxYnhRbVo4eXBHelJlbmV2U2wtQzQ4aXlDZWxtSk1PemQ0cjRpMVdYcnJOLWEyNDRRN1Izc3dHWDY0Zk9FZlNIUQ?oc=5",
-    "press": "kyongbuk.co.kr",
-    "date": "2026-03-23",
-    "labels": [
-     "NUCLEAR"
-    ],
-    "strong": 1,
-    "url": "https://www.kyongbuk.co.kr/news/articleView.html?idxno=4067734",
-    "excerpt": "더불어민주당 정청래 대표가 오는 27일 경북 영덕을 방문할 예정인 가운데 지역 주요 현안에 대한 메시지가 나올지 관심이 모이고 있다.정 대표는 이날 영덕 대게축제 현장을 찾아 지역 민심을 청취하고 주민들과 소통할 계획인 것으로 전해졌다.이번 방문은 최근 영덕군이 신규 원전 건설 후보지",
-    "hl": "원전"
-   },
-   {
-    "title": "영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’",
-    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5QQXNjNk5KcjdSLVJLWno4cGdRY2hxUjJvcE9sMkhpT0dLdUhPMjE5RnZmaE9fRkx1c1NMM1Rjdi1YaEtnMlJKSTlVWEFsSTQ?oc=5",
-    "press": "v.daum.net",
-    "date": "2026-03-22",
-    "labels": [
-     "NUCLEAR"
-    ],
-    "excerpt": "영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’ 정치 영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’ 박윤식 기자 2026.",
-    "hl": "원전",
-    "url": "https://v.daum.net/v/20260322100255573"
-   }
-  ],
   "M029": [
    {
     "title": "[물에너지 포럼] 한정애 의원 “물에너지, 재생에너지 시대 전력망 안정 책임질 핵심 자원”",
@@ -5694,6 +5304,389 @@
     ],
     "excerpt": "국회 보건복지위가 여야를 막론하고 정은경 장관이 이끄는 보건복지부의 인력 확충 필요성을 국감 질의해 주목된다. 보건복지부 예산은 올해 125조5000억원, 내년 137조6000억원 수준으로 규모 면에서 정부부처 가운데 월등히 1위인 반면, 조직 보강과 인력 확충 미흡으로 공무원 대다수가 업무량 과부하에 시달리는 실정이라는 게 여야 복지위원들의 지적이다. 정은경 장관은 행안부와…",
     "url": "https://www.dailypharm.com/Users/News/NewsView.html?ID=328228"
+   }
+  ],
+  "M001": [
+   {
+    "title": "“전기요금 인가 기준, 법률에 직접 명시”… 곽상언 의원, 전기사업법 개정안 발의",
+    "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE8wS3NBUkJBSUpVRUg1OFRfaVJ3bTdlc0kyU1lPQmNTUC1rRloxY0txRUlieHdCeVUzeVJJcVpyUlJuRzZPMnJJRjFySEh1cVRNVHhxSjI0cldsb1NFa3REOWo2MmpwcVhPR0tXUkJVXzY4QQ?oc=5",
+    "press": "에너지데일리",
+    "date": "2025-11-26",
+    "labels": [
+     "POWER"
+    ],
+    "strong": 1,
+    "excerpt": "[에너지데일리 송병훈 기자] 전기요금 결정의 핵심 기준이 시행령과 고시에 흩어져 있어 국회의 입법권을 침해하고 있다는 지적이 제기되면서, 해당 기준을 법률에 직접",
+    "hl": "전기요금",
+    "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=162242"
+   }
+  ],
+  "M007": [
+   {
+    "title": "안규백 \"병역자원 감소 대응하려면 인공지능이 필수전력\"",
+    "link": "https://news.google.com/rss/articles/CBMieEFVX3lxTFAwNlM4TmZBU2djSzZvT0tQanJfaklNXzBYS2p4R0ZDRnVEQzRDSktjLTlqNGpOUnA3aGp2OXhJbDFUQlJ5ekw4M3JWcTBZSm5PeHVBZnF3d0EzNmVFaTJMT2t0TmZvaUFYNUhXYzY4YzN4M2h2ckdVbtIBeEFVX3lxTE44RWtSdVdHekYtaHQ3czNGS0ZBd3J0SExfWFJ6YkpMbUx0ci1HSEpVbjJJcFVVRGFMZlR1dmxOWmMtYl9KOGw1V3VsRlFxWXZpVHpPakVKcmlidmg3aU44VE0yYXdmcHh1QzYyRFlKV2gtNlh2Z01pbA?oc=5",
+    "press": "MBC 뉴스",
+    "date": "2025-11-18",
+    "labels": [
+     "POWER"
+    ]
+   }
+  ],
+  "M010": [
+   {
+    "title": "황정아, 박홍근 기획예산처 장관 면담…\"원자력 R&D·출연연 처우 개선\"",
+    "link": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1hMU40LVc1Z1ItZHNMajRFY1VBVUdIVmhOQXotUTMzY1M3LWhRUHBMRGdtd1VSNFJQczNvUUx5Vkxvcndfdk5tUHhreTR1WE1wYUx3WThweHFTZWh2OGFJMQ?oc=5",
+    "press": "news1.kr",
+    "date": "2026-07-30",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "excerpt": "황정아 더불어민주당 국회의원(대전 유성을)은 30일 박홍근 기획예산처 장관을 만나 원자력 연구개발(R&D) 예산 확대와 정부출연연구기관(출연연) 연구자 처우 개선 …",
+    "hl": "원자력",
+    "url": "https://www.news1.kr/local/daejeon-chungnam/6244564"
+   },
+   {
+    "title": "한화큐셀 찾은 기획예산처 박홍근 장관, “기술경쟁력 확보로 태양광 생태계 회복”",
+    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE82ZUpBZ0hnd3l0WjFvNTdwYTdJMllpbWF4RGZKOE9uMlVBZ1VkNG1kMno0S09Zd1lMenBUVzIwdjhKUmpaRFVTUXViZy1GQ2tPbUFLUlhLb1cxMVpLZjhWRFJKVWE3X1BZZTNDWXJsUmQ?oc=5",
+    "press": "솔라투데이",
+    "date": "2026-05-11",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "[인더스트리뉴스 정한교 기자] 기획예산처 박홍근 장관이 지난 8일 한화솔루션 큐셀부문(이하 한화큐셀) 진천공장을 찾았다.박 장관은 태양전지(셀)와 모듈 등 생산",
+    "hl": "태양전지",
+    "url": "https://www.solartodaymag.com/news/articleView.html?idxno=20691"
+   },
+   {
+    "title": "박홍근, 한화솔루션 방문 “신재생에너지 전환 적극 추진”",
+    "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFA4WklNTDBFZGFYbFBNUXdNYmhRSGJ3REdaZVdTMW9CQjdhZk9abERGam9yQ3VNRG02NllzU1hmY2FXbTR3dGNtdmdCQ2VqOXJ4NFhMY3NsZXhmODY1OFpwRTBsNHM5VWZDdl9xS1dtZw?oc=5",
+    "press": "서울신문",
+    "date": "2026-05-08",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "박홍근 기획예산처 장관이 한화솔루션 큐셀을 방문해 신재생에너지 전환을 적극 추진하겠다고 밝혔다. 태양광 보급, R&D, 금융지원으로 국내 생산기업의 경쟁력 회복을 돕고, 추경 사업의 차질 없는 집행도 당부했다.",
+    "hl": "재생에너지",
+    "url": "https://www.seoul.co.kr/news/economy/2026/05/08/20260508500129"
+   },
+   {
+    "title": "진천 찾은 박홍근 장관 \"태양광·햇빛소득마을 속도\"",
+    "link": "https://news.google.com/rss/articles/CBMid0FVX3lxTFBPMUhjQTJIQWJfbVhEdXVnc0xKRkdzMy1BaXpuQ25ES0gyWG0tZFF4S3Z6b0E3YWNHek9wTXVvc3lId09FYUk1WG5CdERrOFloREdmMUtSS3hwcUdTMXZYM2tmcDRQSzdpNy14Z1Z4SlNYV2QwZEV3?oc=5",
+    "press": "OhmyNews",
+    "date": "2026-05-08",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "박홍근 기획예산처 장관이 진천 소재 태양광 셀 제조기업인 한화솔루션 큐셀을 찾아 정부의 에너지 전환 정책 추진 의지를 밝혔다.박 장관은 8일 한화큐셀 진천 공장에서 업계·지방자치단체 관계자들과 간담회를 갖고 \"태양광 패널 등 신",
+    "hl": "태양광",
+    "url": "https://www.ohmynews.com/NWS_Web/View/at_pg.aspx?CNTN_CD=A0003232326"
+   },
+   {
+    "title": "박홍근 장관 태양광산업 생태계 회복 위해 중앙-지방 협력 강화를",
+    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBjUHktWXF4ZlZ6SXc1ZmJsNk5GWkZuUVFVTGtFUE1razNwR1ZBNkh0b1BuU1oxd0ZydmNkbWZibHo4ZzIxYmtMcDBlNFljcGxHVnhody1JaWFHQdIBWEFVX3lxTE9NVHJScDJjdzd1STNaTkE0ZncwM1pQaWlzN1JoTGVydldxZlZGOEQxclBIaWVBbG4wQlI0bHNLT0ZEeVlLMFFzdFBVMkZ4eWFYTHNqTGlQdm0?oc=5",
+    "press": "아주경제",
+    "date": "2026-05-08",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "박홍근 기획예산처 장관은 8일 \"태양광 산업 생태계 회복을 위해 중앙정부와 지방자치단체의 협력을 강화해야 한다\"고 말했다.박 장관은 이날 진천의...",
+    "hl": "태양광",
+    "url": "https://www.ajunews.com/view/20260508135626908"
+   }
+  ],
+  "M015": [
+   {
+    "title": "[김재섭의 뒤집어보기] '6.3 지방선거' 두 달 앞인데, 가계통신비 부담 완화 정책이 보이지 않는 이유",
+    "link": "https://news.google.com/rss/articles/CBMic0FVX3lxTE9DYUVIMkd2NzdncjlzYXNPOVBGb0c0MlRNbFB2aW5kVGVENGFWNUxXYkN4eGtHLU1TSENPWjZJNENMWDk1RnZPdGhZU0tWZ01JUHhfMlFmLVBMYnJCVmpWRGhQM1gwYThZN1h4MTFyY3lhY1U?oc=5",
+    "press": "비즈니스포스트",
+    "date": "2026-04-01",
+    "labels": [
+     "POWER"
+    ],
+    "excerpt": "[김재섭의 뒤집어보기] '6.3 지방선거' 두 달 앞인데, 가계통신비 부담 완화 정책이 보이지 않는 이유",
+    "hl": "계통",
+    "url": "https://www.businesspost.co.kr/BP?command=article_view&num=434651"
+   }
+  ],
+  "M017": [
+   {
+    "title": "[탄소중립 녹색국회]우원식 국회의장,“RE100 국회 첫걸음”…국회 태양광 발전설비 준공",
+    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBPOGFXSDMxWTdqckw5ZVMtY1lmcDd0V0N2MEcwSlMtd0p0WXkxRmdBMU1Pd2J0eG1NSEViQVotd3FMWlh0REFuM3pWTlRMbDVwY3NyX3NPamJlSzVEN0FlblcxOE1TYXlDd3VGUjBheG8?oc=5",
+    "press": "전국뉴스",
+    "date": "2026-05-20",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "[전국뉴스=오명진 기자] 우원식 국회의장이 국회 친환경 태양광 발전설비 준공식을 계기로 ‘RE100 국회’ 실현과 탄소중립 실천 의지를 재차 강조했다. 국회가 사",
+    "hl": "태양광",
+    "url": "https://www.jeonguknews.co.kr/news/articleView.html?idxno=84660"
+   },
+   {
+    "title": "우원식 의장, 국회 태양광 발전설비 준공식 참석",
+    "link": "https://news.google.com/rss/articles/CBMiekFVX3lxTE5nSXJ1MWlmQnRHS1kwalVmT21kYXFZVWM3QThqWW4wLTRQZlNybjdZN0U3Sk5TMFoxX1R5V1ZMeUdhMXY3X3g5bjFPaEF0WFFmVmY4QzduU3FVTGVMYmlFcFV0TjdlMG1zRlBRSTVYTnpoRlNXX1pyeEV3?oc=5",
+    "press": "로이슈",
+    "date": "2026-05-20",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "우원식 국회의장이 20일 오전 국회운동장에서 열린 국회 친환경 태양광 발전설비 준공식에 참석해 재생에너지 전환과 탄소중립 추진 계획을 밝혔다.이번 태양광 설비 구축은 국회의 재생에너지 사용 확대와 저탄소 녹색국회 추진의 일환으로 진행됐다. 국회는 이번 설비를 통해 국회 어린이집 3곳의",
+    "hl": "재생에너지",
+    "url": "https://www.lawissue.co.kr/view.php?ud=202605201651111751f4ab64559d_12"
+   },
+   {
+    "title": "우원식 의장, 국회 친환경 태양광 발전설비가 공공부문 탄소중립 확산의 출발점",
+    "link": "https://news.google.com/rss/articles/CBMiZ0FVX3lxTFAxOFNJNHNLU0NINnhfTHRnOVZnaS00b2FUZXMyLU9rT1g2ZDVuR2RCbU9QcFFNLVFYaGRRMHFkaGdhZFluOFdFZWNqRUZtaVREb0tiRlhIazkzRklabEZ6bUZkbEFLQUXSAWtBVV95cUxQeVI1a0ZmQ1NGbGdTbzBXNVMyRHVhTDBfRXB1em9velNuY1FKbE1NeC1UWDRjR09STG1maXYzQ0NsbGdFa2Q4LXc1Tm1sa3o1Rk5QYk44cDUtRHktLUZJc082UU41UjBfZElHYw?oc=5",
+    "press": "의회신문",
+    "date": "2026-05-20",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "사랑하는 국회 가족 여러분, 오늘은 우리 국회가 RE100 실천을 향해 실질적인 첫걸음을 내딛는 날입니다.국회가 쓰는 에너지부터 바꾸겠다는 약속이 구체적인 행동으로 이어져서 국회 안에 친환경 태양광발전설비가 새로 만들어지고, 여기에서 생산된 친환경 전기로 우리의 미래세대들이 생활하는 국회 어린이집부터 탄소중립을 실천하게 된다고 생각하니 정말 뜻깊습니다.그동안 이 사업을 준비하고 완성하기까지…",
+    "hl": "태양광",
+    "url": "http://www.icouncil.kr/news/articleView.html?idxno=56906"
+   },
+   {
+    "title": "우원식 국회의장, 국회 태양광 발전설비 준공식 참석…“2035 탄소중립 국회 추진”",
+    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTFBlYzZJZ3pWQzdwZXhlVGw4UUpwT2VCUHdwLTZETS14UW81cUpDQlBKUXpQOTgtdW5zbTRRZzFtNDVlbXduZGpwaE5XVHVGSk1ET2N1RVhlcEpDUQ?oc=5",
+    "press": "여성종합뉴스",
+    "date": "2026-05-20",
+    "labels": [
+     "RE"
+    ],
+    "excerpt": "우원식 의장, 국회 친환경 태양광 발전설비 준공식 참석 [여성종합뉴스/최화운기자]우원..",
+    "hl": "태양광",
+    "url": "https://womannews.net/detail.php?number=446728"
+   },
+   {
+    "title": "우원식 의장, 라트비아 국회의장과 회담… “원전·방산 협력 강화”",
+    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTE03TldpdlJxbkJuQ0FoTUg0OTRuZGsxZEZpV2ZEUUY0R3hfOTQzaUR4X0t5RDBQMDdYZVc2X01VQ3p1Zm9ZX3pWRTJFbFJrQW9OV0prZkhpWjNkLTFYNVhjaGRCZGJSbUlzZ1RWUUliQVjSAXRBVV95cUxQcm5WOWdxVGhweXNoX250Vl9aa2E1enE5ZDM2cExjQnk3eUlGOGdHSWNaLUI1RWNRdEVIOGxHSzhBNmQxSGE2MTlYbGxkZDAtcHU0OENFdjJWcm1zLTlwZF9tTE1HTXR6cy14bUFEakU2Ymoyaw?oc=5",
+    "press": "포인트데일리",
+    "date": "2026-04-28",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "excerpt": "[포인트데일리 최영운 기자] 우원식 국회의장이 다이가 미에리냐(Daiga Mieriņa) 라트비아 국회의장과 만나 수교 35주년을 맞은 양국의 실질적 경제 협력 방안을 논의했다.우 의장은 28일 오전 국회 접견실에서 열린 회담에서 “미에리냐 의장의 방한이 양국 관계를 미래지향적 협력 관계로 발전시키는 계기가 될 것”이라고 환영했다. 양국 의장은 원전, 방산, 농업 등 다양한 분야에서 전략적…",
+    "hl": "원전",
+    "url": "https://www.pointdaily.co.kr/news/articleView.html?idxno=303205"
+   }
+  ],
+  "M018": [
+   {
+    "title": "'특허 8000개' 한전기술지주 출범…김성환 \"전력 유니콘 육성 전초기지 될 것\"",
+    "link": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE5ORWlua3MtalJPZzYxYW92RFh5VnA3Uy00SWVnY1V1cG9LMEgwd2NxcU9UUmtCTzJ5cTFKVmh3VzFrVVVRTk9tdXljQXc5eHpQY3JLN1p3bnJIZkR4dGxvSg?oc=5",
+    "press": "아시아경제",
+    "date": "2026-08-08",
+    "labels": [
+     "POWER"
+    ],
+    "excerpt": "김성환 기후에너지환경부 장관이 7일 전남광주 나주시 소재 한국전력공사 본사에서 열린 한전기술지주회사 출범식에 참석해 축사를 하고 있다.",
+    "hl": "전력",
+    "url": "https://www.asiae.co.kr/article/2026080812524262353"
+   },
+   {
+    "title": "김성환 장관, 여름철 폭염 대응 전력수급 운영 현황 점검",
+    "link": "https://news.google.com/rss/articles/CBMiYEFVX3lxTE1GZTBBX2hvUXp6SzMwUS01VkhaTU9BZVl6R0tfQzF3Z2JuR0RQYXdwckNjaWtJbWRDbnN1NGRzMUlVZEN5VEY2M0RMWXN5WG9FdVc0VWF0c3JFSmxYNzE4d9IBYEFVX3lxTE1GZTBBX2hvUXp6SzMwUS01VkhaTU9BZVl6R0tfQzF3Z2JuR0RQYXdwckNjaWtJbWRDbnN1NGRzMUlVZEN5VEY2M0RMWXN5WG9FdVc0VWF0c3JFSmxYNzE4dw?oc=5",
+    "press": "연합뉴스",
+    "date": "2026-08-07",
+    "labels": [
+     "POWER"
+    ],
+    "excerpt": "(서울=연합뉴스) 김성환 기후에너지환경부 장관이 7일 전남광주 나주시 한국전력거래소를 방문, 여름철 폭염 대응 전력수급 운영 현황을 점검하고 있...",
+    "hl": "전력",
+    "url": "https://www.yna.co.kr/amp/view/PYH20260807075500013"
+   },
+   {
+    "title": "폭염 장기화에 전력수요 '역대 최대' 97.1GW 경신 촉각…김성환 기후장관, 긴급 점검",
+    "link": "https://news.google.com/rss/articles/CBMiTkFVX3lxTE40RmZxZWdGWUdZZ01malNZZzdHTGkwdG1nYjNiOEM2M3AzRXQ4V0YyUzU5MG1uSUxfZjllRkFfZ2dmZ0h4YXBkakFUVjllQQ?oc=5",
+    "press": "전자신문",
+    "date": "2026-08-07",
+    "labels": [
+     "POWER"
+    ],
+    "excerpt": "기후에너지환경부가 전국적인 폭염과 열대야 장기화에 따른 전력수급 상황을 직접 점검하며 역대 최대 전력수요 경신 가능성에 대비한 현장 대응에 나선다. 최대전력수요가 기존 최고치(97.1GW)를 넘어설 가능성까지 열어두고 발전·송배전 설비와 추가 예비자원 확보 상황을 집중 점검한다. 기후부는 7일 오전 전남 나주 한국전력거래소에서",
+    "hl": "전력",
+    "url": "https://www.etnews.com/20260807000021"
+   },
+   {
+    "title": "이어지는 폭염에 전력수요 '역대 최대' 경신 가능성↑…김성환 장관, 집중 점검",
+    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFBTaGVYOE9nWHgzV2RzMnlDc0s2RVpyNEZLVGFLUVJRakxnS1RhMllFeVhsN0RyZ05KRFZMR1hicXN0VkxYaFVjZ2ZJSVhlY0hoU2N1b2pfQk11b19Ea1BjeTRuRmRKcUFKcDRjTXF6WXDSAXBBVV95cUxQU2hlWDhPZ1h4M1dkczJ5Q3NLNkVacjRGS1RhS1FSUWpMZ0tUYTJZRXlYbDdEcmdOSkRWTEdYYnFzdFZMWGhVY2dmSUlYZWNIaFNjdW9qX0JNdW9fRGtQY3k0bkZkSnFBSnA0Y01xellw?oc=5",
+    "press": "electimes.com",
+    "date": "2026-08-07",
+    "labels": [
+     "POWER"
+    ],
+    "excerpt": "이어지는 폭염에 전력수요 '역대 최대' 경신 가능성↑…김성환 장관, 집중 점검 | 폭염특보가 내려진 6일 서울 송파구 한 조형물에 현재 온도가 표시돼 있다.[사진=연합뉴스] 폭염과 열대야가 이어지는 상황에서 역대 최대전력수요(97.1GW)를 경신할 가능성이 커지고 있다.",
+    "hl": "전력",
+    "url": "https://www.electimes.com/news/articleViewAmp.html?idxno=371092"
+   },
+   {
+    "title": "김성환 기후부 장관, 폭염 속 전력수급 긴급 점검…\"역대 최대수요에도 안정 공급 총력\"",
+    "link": "https://news.google.com/rss/articles/CBMickFVX3lxTE9LUlVYU25OX0R6NWprbVhQVFJWNmQyd2pGOTZtRnh5WERsY040d1RhSktlMGdGNEdzaEU0QlZyRjN3ZG05R1hzeTVtM1BxZGZiOEduUG12cmFPYm5nRWQ0d2QtZjZDV3ZZNVJqUXdab1AwQQ?oc=5",
+    "press": "에너지데일리",
+    "date": "2026-08-07",
+    "labels": [
+     "POWER"
+    ],
+    "excerpt": "[에너지데일리 송병훈 기자] 기록적인 폭염과 열대야가 이어지는 가운데 정부가 역대 최대 전력수요 가능성에 대비해 여름철 전력수급 대응체계를 전면 점검했다. 산업체",
+    "hl": "전력",
+    "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=202065"
+   }
+  ],
+  "M019": [
+   {
+    "title": "박주민 \"전력 자급률 7％ 불과한 서울, 에너지 전환 도시로 바꿀 것\"",
+    "link": "https://news.google.com/rss/articles/CBMihgFBVV95cUxOd1k1enViOWNpODBQSHRmdm1MLWk4MlFtcFJNNWlYSDVUa1BSZzF2MDV0d1NybmJ6QTZnWGdQY1UxVUdFRzJvUVJZMmtPQXdLRWZfX2dqN0xhQ0xpOG05OFR3MVlzSW9xSmhKRkVxRTBMQXU2SXB1d1ZEcUlyVnFUOHVqLXRqZw?oc=5",
+    "press": "TBS 서울",
+    "date": "2026-04-03",
+    "labels": [
+     "RE",
+     "POWER"
+    ],
+    "strong": 1,
+    "excerpt": "박주민 더불어민주당 서울시장 경선후보는 서울을 에너지 소비도시에서 스스로 책임지는 에너지 전환도시로 바꾸겠다고 밝혔습니다. 미국-이란 전쟁의 충격 속에서 에너지 위기가 반복되지 않으려면 전력 자급률이 7％대에 불과한 서울의 에너지 체질을 개선해야 한다는 취지입니다.",
+    "hl": "에너지 전환",
+    "url": "https://tbs.seoul.kr/news/newsView.do?typ_800=&idx_800=3536102&seq_800=20528980"
+   },
+   {
+    "title": "박주민 “에너지 소비도시에서 에너지 전환도시로…‘탄소중립도시’ 서울 만들겠다”",
+    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5QMUgtSjgxTHE1dHp0U0FPZU9MYXBVYnkyV2pqLWJXYVBFbWFuQUZ0aXJpaUM3S1dneEhCREM3TDhlNDFHWEtsdXkxbmh6d3c?oc=5",
+    "press": "v.daum.net",
+    "date": "2026-04-03",
+    "labels": [
+     "RE"
+    ],
+    "strong": 1,
+    "excerpt": "[헤럴드경제=양대근 기자] 박주민 더불어민주당 서울특별시장 경선후보는 3일 국회 소통관에서 기자회견을 열고 “기후변화에 강한 탄소중립도시 서울, 에너지 전환도시 서울”을 만들기 위한 기후·에너지 종합공약을 발표했다. 박 후보는 “서울은 이제 에너지를 소비만 하는 도시에서, 스스로 책임지는 에너지 전환도시로 바뀌어야 한다”고 밝혔다. 먼저 그는 “미국-이",
+    "hl": "에너지 전환",
+    "url": "https://v.daum.net/v/20260403110344624"
+   },
+   {
+    "title": "박주민 “AI 전력 어떻게?” 정원오 “가정용 태양광”",
+    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE05M3JYZ2drUnJwU3pKa3JWMkpTdHhLZ0p3S3V5TVh4OE1LTlRTV2x5a0FvYWdkdHdac0JqTGRHWFFoSXRPZ0FQSHl4cUVoNGM?oc=5",
+    "press": "v.daum.net",
+    "date": "2026-03-31",
+    "labels": [
+     "RE",
+     "POWER"
+    ],
+    "excerpt": "더불어민주당 서울시장 경선 전현희(왼쪽부터), 박주민, 정원오 후보가 30일 서울 여의도 국회 의원회관에서 열린 현장최고위원회의에서 웃고 있다. 뉴시스 [파이낸셜뉴스] 정원오 더불어민주당 서울시장 예비후보는 31일 서울 행정 등 AI(인공지능) 적용을 위한 전력 수급 방안과 관련해 가정용 전력을 태양광 발전으로 돌리겠다고 밝혔다. 정",
+    "hl": "태양광",
+    "url": "https://v.daum.net/v/20260331212901818"
+   }
+  ],
+  "M021": [
+   {
+    "title": "[2025 국정감사] 김동아 의원 \"국내 핵심 원전 기술 해외 유출 가능성\" 제기",
+    "link": "https://news.google.com/rss/articles/CBMibkFVX3lxTE9EOVVaTW1IM1lxMXNNR1g3R1pjVTAwOWVFSGZoWkdDVFNSNEYtSVYzVlZ0MjFzUklSRDF0WThUd1M1QmZuTFJCb0YteWJUUEtEMDdTRFY4ZmJhWTJjSEdkOS0zLXAzZkQ5TzVGYUhR?oc=5",
+    "press": "투데이에너지",
+    "date": "2025-10-24",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "strong": 1
+   },
+   {
+    "title": "김동아 의원 “첫 수출이라던 이집트 엘다바 원전, 윤 대통령 치적 쌓기였다\"",
+    "link": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE82ZURBdkY3Rm1YQ0VnSjljMTdqanNLeGhid3pPLUQ3ZWhlTk8wV3RaM2d1OWNGNnNMcnpKY0FQd0M3b3g0ZDhGcQ?oc=5",
+    "press": "브레이크뉴스",
+    "date": "2025-10-20",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "strong": 1,
+    "excerpt": "▲ 김동아 의원은 \"한수원이 ‘대한민국 1호 영업사원'이라는 윤석열의 ‘치적 쌓기’를 위해 무리하게 사업을 추진하면서 이미 실패가 예견됐었다”며, “이집트 엘다바 원전에서 시작해 대왕고래 프로젝트, 체코 두코바니 원전에 이르기까지 모두가 윤석열 때문에 무리하게 진행돼 실패한 사례들”이라고 날 선 비판을 했다.",
+    "hl": "원전",
+    "url": "https://www.breaknews.com/1154916"
+   },
+   {
+    "title": "김동아 의원 \"윤석열 정부, 원전 기술 팔아넘긴 매국적 합의…진상조사 촉구\"",
+    "link": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE5zLUM3eFI4UjVYYkRxaFd1MXZNS25EOUVNcE02N1BOQ21OUDZtVFR6YlprVUFQc3VjOHMwN2dBMVFmVnd0NzNwZFZVeEx0MHY3TU1rdDFZUF9zNExqa3hTZXNwZnZCdw?oc=5",
+    "press": "이로운넷",
+    "date": "2025-10-13",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "strong": 1,
+    "excerpt": "이로운넷 = 이정석 기자더불어민주당 김동아 국회의원(산업통상자원중소벤처기업위원회)은 13일 국회 소통관 기자회견을 열고, \"윤석열 정부가 체코 원전 수주를 정치적 치적으로 삼기 위해 한수원과 웨스팅하우스 간 굴욕적 합의를 강행했다\"며 국회 차원의 철저한 진상조사를 촉구했다.김 의원은",
+    "hl": "원전",
+    "url": "https://www.eroun.net/news/articleView.html?idxno=64696"
+   },
+   {
+    "title": "김동아 의원 \"한전-한수원 ‘집안싸움’에 혈세 368억 원 낭비 우려\"",
+    "link": "https://news.google.com/rss/articles/CBMiSEFVX3lxTE9EQTBpU1hYS0R2ajJ2M0tuWkF6WWpaZnJZb2QwWFNfVk5GOWVxQUJoMFNqMHR4bi1fM0dIb2hOQjlqa1VtY3h6Sg?oc=5",
+    "press": "브레이크뉴스",
+    "date": "2025-10-05",
+    "labels": [
+     "NUCLEAR",
+     "POWER"
+    ],
+    "strong": 1,
+    "excerpt": "김동아 더불어민주당 의원이 14일 오후 전남 나주시 한국전력공사 본사에서 열린 산업통산자원중소벤처기업위원회 국정감사에서 정동희 한국전력거래",
+    "hl": "전력",
+    "url": "https://www.breaknews.com/1152548"
+   },
+   {
+    "title": "국민 2명당 1개꼴... 김동아 의원 \"원전 사용후핵연료 , 저장률 '위험 수위'\"",
+    "link": "https://news.google.com/rss/articles/CBMiZkFVX3lxTE1hLW9fZHVBcnEycnNlVlk1WHRmdFdWeUVrak8xZ0E1SmFTTWg4bTVGU1BWd1ZuWl9TdmIyb1NiaFVBVUJoVDJxZm5yWXp6elJ3NHFvcGZlSGRDUEFrRjMzNGpsZWVhdw?oc=5",
+    "press": "이로운넷",
+    "date": "2025-09-23",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "strong": 1,
+    "excerpt": "이로운넷 = 이정석 기자국내 원자력발전소 내에 보관된 사용후핵연료(폐연료봉)가 2,500만 개를 넘어서며 국민 2명당 1개꼴로 고준위 방사성 폐기물을 떠안고 있다는 지적이 제기됐다. 특히 일부 원전은 사용후핵연료 저장률이 임계치를 넘어 국민 안전을 직접 위협하고 있다는 우려가 커지고",
+    "hl": "원전",
+    "url": "https://www.eroun.net/news/articleView.html?idxno=63647"
+   }
+  ],
+  "M024": [
+   {
+    "title": "‘초접전’ 성적표 받은 정청래·김민석, 승부처 호남 잡기 ‘전력’",
+    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1yRWRIeGE2MTkwRUVhdld6UGpnTTRqRVZBNGZJQmUxT3ZHaHVhQy1EQVJmLWY3TmM1emhfclpNajJuT2VFanlzc2lhazNMekRxdkROaERvLTNFUdIBX0FVX3lxTE9sVFBTYnlsU19RU3JYeFJTQVM0Nk9nNDE1am55akdaU3JNWHFHZzN2MFdpbkJ5YmF2M3Q5eXdBdVBNTG5DU19ocFYtV19mRWx0YV8wMGo3ZVdhNG5GZVpB?oc=5",
+    "press": "경향신문",
+    "date": "2026-08-03",
+    "labels": [
+     "POWER"
+    ],
+    "excerpt": "이날 전북과 전남광주를 찾은 김 의원은 이번주 내내 호남에 머무를 예정이다. 그는 이날 전북 당원집중콘서트에서 “대통령과의 공존 관계가 지속되지 않는다면 정부도, 대통령도, 전북 현대차 유치나 호남 메가프로젝트 모두 흔들릴 수 있다”며 ‘당정 일치’를 강조했다. 정 의원은 이날 페이스북에서 “부·울·경, 충청 노사모들에게 부탁합니다. 호남 지인들에게 ...",
+    "url": "https://www.khan.co.kr/article/202608032125005"
+   },
+   {
+    "title": "송영길, 삼성전자 찾아 \"원전 추가\"..김민석·정청래 이어 반도체행보",
+    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE1GbGZrVFNDdW84ekMtS3VoeHl0MEtaT2RwVzFCYUVrZWxPZVllX0tLd0xsXzFWWldVb0RlMGhKY08yTUR3ZFhtUEp0T3hfZmQ0Sk9mcm1HcmhCZw?oc=5",
+    "press": "파이낸셜뉴스",
+    "date": "2026-07-10",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "excerpt": "정청래(왼쪽부터), 송영길, 김민석 더불어민주당 의원이 3일 서울 용산 서울드래곤시티호텔에서 열린 더불어민주당 후반기 국회 대비 국회의원 워크숍에 참석해 미소짓고 있다. 뉴시스 [파이낸셜뉴스] 더불어민주당 대표 선거 출사표를 던진 송영길 의원은 10일 삼성전자 광주공장을 찾아 호남에 원자력발전소를 추가로 건설해야 한다고 주장했다. 이재명",
+    "hl": "원자력",
+    "url": "https://v.daum.net/v/20260710154844362"
+   },
+   {
+    "title": "정청래 민주당 대표 27일 영덕행…원전 변수 시험대",
+    "link": "https://news.google.com/rss/articles/CBMib0FVX3lxTFBIUFduTjVwUHlNcmFFdl80WmpjQXRfOGpFbUozNUZrem5qcE05NFFxYnhRbVo4eXBHelJlbmV2U2wtQzQ4aXlDZWxtSk1PemQ0cjRpMVdYcnJOLWEyNDRRN1Izc3dHWDY0Zk9FZlNIUQ?oc=5",
+    "press": "kyongbuk.co.kr",
+    "date": "2026-03-23",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "strong": 1,
+    "excerpt": "더불어민주당 정청래 대표가 오는 27일 경북 영덕을 방문할 예정인 가운데 지역 주요 현안에 대한 메시지가 나올지 관심이 모이고 있다.정 대표는 이날 영덕 대게축제 현장을 찾아 지역 민심을 청취하고 주민들과 소통할 계획인 것으로 전해졌다.이번 방문은 최근 영덕군이 신규 원전 건설 후보지",
+    "hl": "원전",
+    "url": "https://www.kyongbuk.co.kr/news/articleView.html?idxno=4067734"
+   },
+   {
+    "title": "영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’",
+    "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5QQXNjNk5KcjdSLVJLWno4cGdRY2hxUjJvcE9sMkhpT0dLdUhPMjE5RnZmaE9fRkx1c1NMM1Rjdi1YaEtnMlJKSTlVWEFsSTQ?oc=5",
+    "press": "v.daum.net",
+    "date": "2026-03-22",
+    "labels": [
+     "NUCLEAR"
+    ],
+    "excerpt": "영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’ 정치 영덕대게 축제장 찾는 정청래…원전·소멸 위기 속 ‘여당 프리미엄’ 정책 대안 주목… 지역 정가 지형 변화 ‘촉각’ 박윤식 기자 2026.",
+    "hl": "원전",
+    "url": "https://v.daum.net/v/20260322100255573"
    }
   ]
  }

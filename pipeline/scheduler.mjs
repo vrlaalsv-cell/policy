@@ -2,7 +2,7 @@
 //
 //   사용: node pipeline/scheduler.mjs        (docker compose 의 scheduler 서비스가 이걸 실행)
 //   환경변수:
-//     NEWS_AT        수집 시각(KST, "HH:MM", 기본 "04:30")
+//     NEWS_AT        수집 시각(KST). 쉼표로 여러 번 가능 — 기본 "07:00,13:00,19:00"
 //     NEWS_ON_START  컨테이너 시작 시 데이터가 낡았으면 즉시 1회 수집 (기본 "1")
 //     NEWS_MAX_AGE_H 낡음 판정 기준 시간 (기본 20시간)
 //
@@ -16,7 +16,13 @@ import { readFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
 
-const AT = (process.env.NEWS_AT || "04:30").trim();
+// "07:00,13:00,19:00" 처럼 여러 시각 지원. 한 번만 돌리려면 "04:30" 하나만 적으면 된다.
+// 재수집은 증분(새 기사만 본문을 받아옴)이라 회당 4~5분이고 외부 유료 API 를 쓰지 않는다.
+const AT_LIST = (process.env.NEWS_AT || "07:00,13:00,19:00")
+  .split(",").map((s) => s.trim()).filter((s) => /^\d{1,2}:\d{2}$/.test(s))
+  .sort();
+if (!AT_LIST.length) AT_LIST.push("07:00");
+const AT = AT_LIST.join(", ");
 const ON_START = (process.env.NEWS_ON_START ?? "1") !== "0";
 const MAX_AGE_H = Number(process.env.NEWS_MAX_AGE_H || 20);
 
@@ -57,14 +63,18 @@ function dataAgeHours() {
   } catch { return Infinity; }
 }
 
-/** 다음 실행까지 남은 ms */
-function msUntilNext() {
-  const [h, m] = AT.split(":").map(Number);
+/** 다음 실행 예정 시각과 남은 ms (여러 시각 중 가장 가까운 것) */
+function nextRun() {
   const now = new Date();
-  const next = new Date(now);
-  next.setHours(h, m, 0, 0);
-  if (next <= now) next.setDate(next.getDate() + 1);
-  return next - now;
+  let best = null;
+  for (const t of AT_LIST) {
+    const [h, m] = t.split(":").map(Number);
+    const at = new Date(now);
+    at.setHours(h, m, 0, 0);
+    if (at <= now) at.setDate(at.getDate() + 1);
+    if (!best || at < best.at) best = { at, label: t };
+  }
+  return { ms: best.at - now, label: best.label };
 }
 
 log(`가동 — 매일 ${AT} (KST) 수집 · 시작 시 검사 ${ON_START ? "on" : "off"} · 낡음 기준 ${MAX_AGE_H}시간`);
@@ -81,9 +91,9 @@ if (ON_START) {
 
 // 무한 루프: 다음 예정 시각까지 자고 일어나서 수집
 for (;;) {
-  const wait = msUntilNext();
-  log(`다음 수집까지 ${Math.round(wait / 60000)}분 대기 (${AT} KST)`);
-  await new Promise((r) => setTimeout(r, wait));
-  await runOnce("정기 실행");
+  const { ms, label } = nextRun();
+  log(`다음 수집까지 ${Math.round(ms / 60000)}분 대기 (${label} KST)`);
+  await new Promise((r) => setTimeout(r, ms));
+  await runOnce(`정기 실행 ${label}`);
   await new Promise((r) => setTimeout(r, 60000)); // 같은 분에 두 번 도는 것 방지
 }

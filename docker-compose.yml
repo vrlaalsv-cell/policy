@@ -25,7 +25,8 @@ services:
     volumes:
       - ./runtime:/app/data
 
-  # 기사 자동 재수집 — 매일 04:30(KST). 시작할 때 데이터가 낡았으면 즉시 1회.
+  # 기사 자동 재수집 — 하루 3번(07/13/19시 KST). 시작할 때 데이터가 낡았으면 즉시 1회.
+  # 회당 4~5분, 무료 소스(Google 뉴스 RSS)만 사용. 시각은 NEWS_AT 에서 조정.
   # 결과는 /app/data(=./runtime)에 쌓이고 app 컨테이너가 그 news.js 를 우선 서빙한다.
   scheduler:
     build:
@@ -38,8 +39,9 @@ services:
       - .env
     environment:
       - TZ=Asia/Seoul
-      - NEWS_AT=04:30
+      - NEWS_AT=07:00,13:00,19:00
       - NEWS_ON_START=1
+      - NEWS_MAX_AGE_H=8
     volumes:
       - ./runtime:/app/data
     depends_on:
