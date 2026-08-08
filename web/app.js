@@ -258,15 +258,20 @@
     return out.slice(0, i) + "<b>" + k + "</b>" + out.slice(i + k.length);
   }
   // 사업 필터가 켜져 있으면 그 에너지원 기사를 위로. (원전은 사업 목록에 없어 필터 대상 아님)
+  function newsDate(a) { var d = new Date(a.date || 0).getTime(); return isNaN(d) ? 0 : d; }
   function newsSorted(m) {
     var list = newsOf(m).slice();
-    if (state.business !== "all") {
-      list.sort(function (a, b) {
-        var am = (a.labels || []).indexOf(state.business) >= 0 ? 1 : 0;
-        var bm = (b.labels || []).indexOf(state.business) >= 0 ? 1 : 0;
-        return bm - am;
-      });
-    }
+    // 기본은 최신순(수집기는 '정치인 확인' 우선이라 오래된 기사가 위로 오던 문제).
+    // 사업 필터가 켜져 있으면 해당 에너지원 기사를 먼저, 그 안에서 최신순.
+    var biz = state.business;
+    list.sort(function (a, b) {
+      if (biz !== "all") {
+        var am = (a.labels || []).indexOf(biz) >= 0 ? 1 : 0;
+        var bm = (b.labels || []).indexOf(biz) >= 0 ? 1 : 0;
+        if (am !== bm) return bm - am;
+      }
+      return newsDate(b) - newsDate(a);
+    });
     return list;
   }
   function newsHTML(m) {

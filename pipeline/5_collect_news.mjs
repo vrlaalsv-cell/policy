@@ -169,7 +169,10 @@ for (let i = 0; i < targets.length; i++) {
       const strong = hintsOf(m).some((k) => text.includes(k));
       keep.push({ title: a.title, link: a.link, press: a.press, date: a.date, labels, strong });
     }
-    keep.sort((a, b) => (b.strong - a.strong) || (a.date < b.date ? 1 : -1));
+    // 최신순으로 담는다(같은 날짜면 정치인 확인된 기사 우선). 이전엔 strong 우선이라
+    // 최근 기사가 있어도 오래된 '확인 기사'로 슬롯이 채워져 화면이 낡아 보였다.
+    // 동명이인·무관 기사는 이미 위(NOISE/군사/동명이인/이름·에너지)에서 걸러졌으므로 최신 우선이 안전.
+    keep.sort((a, b) => (a.date < b.date ? 1 : a.date > b.date ? -1 : (b.strong - a.strong)));
     const list = keep.slice(0, PER).map(({ strong, ...rest }) => (strong ? { ...rest, strong: 1 } : rest));
     if (list.length) { byMember[m.id] = list; artCount += list.length; }
     okCount++;
