@@ -28,11 +28,13 @@ APP.members.forEach((m) => {
   asm.push({ key: m.id, kind: "asm", name: m.name, party: m.party, district: m.district, stances: stanceLine(m.stance), quotes, news });
 });
 
-// 청와대
+// 청와대 — 발언은 최신 회의부터 8건 (뒤에 붙은 최근 발언이 잘려나가지 않도록)
+const mDate = (q) => ((q && q.meeting) || "").match(/(\d{4}-\d{2}-\d{2})/)?.[1] || "";
 const cab = CAB.speakers.map((sp) => ({
   key: "cab:" + sp.name, kind: "cab", name: sp.name, role: sp.role || "",
   stances: stanceLine(sp.stance),
-  quotes: (sp.quotes || []).slice(0, 8).map((q) => ({ biz: (q.businesses || []).map((b) => BIZLABEL[b] || b).join("/"), text: cap(q.quote, 170), note: cap(q.note, 120) })),
+  quotes: (sp.quotes || []).slice().sort((a, b) => mDate(b).localeCompare(mDate(a))).slice(0, 8)
+    .map((q) => ({ biz: (q.businesses || []).map((b) => BIZLABEL[b] || b).join("/"), text: cap(q.quote, 170), note: cap(q.note, 120), meeting: q.meeting })),
   news: newsItems(nameToNews[sp.name]),
 }));
 

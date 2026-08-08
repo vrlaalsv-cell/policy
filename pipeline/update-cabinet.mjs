@@ -1,153 +1,133 @@
+// 국무·차관회의 회의록 수집 → data/cabinet_minutes/
+//
+//   출처: 행정안전부 정보공개 > 사전정보공개 > 국무·차관회의 회의록 (로그인·API키 불필요)
+//   https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardList.do?bbsId=BBSMSTR_000000000430
+//   ※ 코드 주석에 '정부24'로 적혀 있었으나 실제 출처는 행정안전부다.
+//
+//   사용:
+//     node pipeline/update-cabinet.mjs                 # 아직 안 받은 것만 (증분)
+//     node pipeline/update-cabinet.mjs --since=2026-06-01   # 회의일 기준으로 받기
+//     node pipeline/update-cabinet.mjs --pages=3       # 목록 3페이지까지 훑기
+//     node pipeline/update-cabinet.mjs --all           # 인덱스 무시하고 전부 다시
+//
+//   ⚠ 등록일 ≠ 회의일. 회의 후 약 6주 뒤 공개된다.
+//     예) 제27회 국무회의는 회의일 2026-06-23, 등록일 2026-08-06.
+//     그래서 제목 끝의 (YYMMDD) 를 파싱해 회의일로 쓴다.
+//
+//   GOOGLE_CREDENTIALS / GOOGLE_FOLDER_ID 가 있으면 구글 드라이브에도 올린다(선택).
 import axios from "axios";
 import { load } from "cheerio";
 import { writeFileSync, readFileSync, mkdirSync, existsSync } from "node:fs";
-import { join, basename } from "node:path";
+import { join } from "node:path";
 import { uploadFile } from "./lib/google-drive.mjs";
 
-// 환경 변수 확인
 const GOOGLE_CREDENTIALS = process.env.GOOGLE_CREDENTIALS;
 const GOOGLE_FOLDER_ID = process.env.GOOGLE_FOLDER_ID;
 
+const arg = (k, d) => {
+  const hit = process.argv.find((a) => a.startsWith(`--${k}=`));
+  return hit ? hit.split("=").slice(1).join("=") : d;
+};
+const SINCE = arg("since", "");
+const PAGES = Number(arg("pages", 2));
+const ALL = process.argv.includes("--all");
+
+const BASE = "https://www.mois.go.kr";
+const BBS = "BBSMSTR_000000000430";
+const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36";
+
 const DATA_DIR = join(process.cwd(), "data");
-const CABINET_MINUTES_DIR = join(DATA_DIR, "cabinet_minutes");
-const CABINET_INDEX_FILE = join(DATA_DIR, "cabinet_minutes_index.json");
+const MINUTES_DIR = join(DATA_DIR, "cabinet_minutes");
+const INDEX_FILE = join(DATA_DIR, "cabinet_minutes_index.json");
+if (!existsSync(MINUTES_DIR)) mkdirSync(MINUTES_DIR, { recursive: true });
 
-// 디렉토리 생성
-if (!existsSync(CABINET_MINUTES_DIR)) mkdirSync(CABINET_MINUTES_DIR, { recursive: true });
+const get = (url, opt = {}) => axios.get(url, { headers: { "User-Agent": UA }, timeout: 60000, ...opt });
+const clean = (s) => String(s || "").replace(/\s+/g, " ").trim();
 
-console.log("🔄 정부24 청와대 회의록 업데이트 중…");
+/** 제목 끝의 (YYMMDD) → 실제 회의일 "YYYY-MM-DD" */
+function meetingDate(title) {
+  const m = title.match(/\((\d{2})(\d{2})(\d{2})\)\s*$/);
+  return m ? `20${m[1]}-${m[2]}-${m[3]}` : null;
+}
 
-try {
-  // 기존 인덱스 읽기
-  let existingIndex = {};
+console.log("🔄 국무·차관회의 회의록 수집 (행정안전부)");
+
+// ---------- 기존 인덱스 ----------
+let index = {};
+if (!ALL && existsSync(INDEX_FILE)) {
   try {
-    const existing = readFileSync(CABINET_INDEX_FILE, "utf8");
-    existingIndex = JSON.parse(existing);
-  } catch {
-    console.log("  (기존 인덱스 없음)");
-  }
+    const j = JSON.parse(readFileSync(INDEX_FILE, "utf8"));
+    index = Array.isArray(j) ? {} : (j.posts || {});   // 구버전(배열)은 무시하고 새로 만든다
+  } catch { index = {}; }
+}
+console.log(`  기존 인덱스: ${Object.keys(index).length}건`);
 
-  // 정부24 게시판 크롤링
-  console.log("  정부24 게시판 크롤링 중…");
-  const boardUrl = "https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardList.do?bbsId=BBSMSTR_000000000430";
-  const response = await axios.get(boardUrl, {
-    headers: {
-      "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-    },
-    timeout: 30000,
+// ---------- 목록 수집 ----------
+const posts = [];
+for (let p = 1; p <= PAGES; p++) {
+  const url = `${BASE}/frt/bbs/type001/commonSelectBoardList.do?bbsId=${BBS}&pageIndex=${p}`;
+  const $ = load((await get(url)).data);
+  const rows = $("table tbody tr");
+  if (!rows.length) break;
+  rows.each((i, el) => {
+    const a = $(el).find("td.l a").first();
+    const href = a.attr("href") || "";
+    const nttId = (href.match(/nttId=(\d+)/) || [])[1];
+    const title = clean(a.text());
+    if (!nttId || !title) return;
+    const tds = $(el).find("td").map((j, td) => clean($(td).text())).get();
+    posts.push({ nttId, title, postedAt: tds.find((t) => /^\d{4}\.\d{2}\.\d{2}\.$/.test(t)) || "", meetingAt: meetingDate(title) });
   });
+}
+console.log(`  목록 ${posts.length}건 (${PAGES}페이지)`);
+if (!posts.length) { console.error("✗ 게시글을 찾지 못했습니다 — 페이지 구조가 바뀌었을 수 있습니다."); process.exit(1); }
 
-  const $ = load(response.data);
-  const posts = [];
+// ---------- 받을 대상 고르기 ----------
+const targets = posts.filter((p) => {
+  if (SINCE && p.meetingAt && p.meetingAt < SINCE) return false;
+  if (!ALL && index[p.nttId]) return false;     // 이미 받음
+  return true;
+});
+console.log(`  받을 대상: ${targets.length}건${SINCE ? ` (회의일 ${SINCE} 이후)` : ""}`);
 
-  // 게시글 목록 파싱
-  $("table tbody tr").each((idx, el) => {
-    const titleEl = $(el).find("a.bbs-title");
-    const dateEl = $(el).find("td:nth-child(3)");
-    const fileEl = $(el).find("a[href*='file']").first();
+// ---------- 첨부 다운로드 ----------
+let ok = 0, fail = 0;
+for (const post of targets) {
+  try {
+    const durl = `${BASE}/frt/bbs/type001/commonSelectBoardArticle.do?bbsId=${BBS}&nttId=${post.nttId}`;
+    const $ = load((await get(durl)).data);
 
-    if (titleEl.length && dateEl.length) {
-      const title = titleEl.text().trim();
-      const dateText = dateEl.text().trim();
-      const href = titleEl.attr("href");
+    // 첨부는 /cmm/fms/FileDown.do?atchFileId=...&fileSn=N . 같은 회의록이 hwpx·pdf 로 함께 올라온다 → pdf 우선.
+    const files = [];
+    $('a[href*="/cmm/fms/FileDown.do"]').each((i, el) => {
+      const href = $(el).attr("href");
+      const label = clean($(el).text());
+      const name = (label.match(/^(.*?\.(?:pdf|hwpx?|zip))/i) || [])[1];
+      if (href && name) files.push({ href, name });
+    });
+    const pdf = files.find((f) => /\.pdf$/i.test(f.name));
+    const pick = pdf || files[0];
+    if (!pick) { console.log(`    - 첨부 없음: ${post.title}`); continue; }
 
-      posts.push({
-        title,
-        date: dateText,
-        href,
-        hasFile: fileEl.length > 0,
-      });
+    const res = await get(BASE + pick.href, { responseType: "arraybuffer" });
+    const safe = pick.name.replace(/[\/\\:*?"<>|]/g, "_");
+    writeFileSync(join(MINUTES_DIR, safe), res.data);
+    index[post.nttId] = { title: post.title, meetingAt: post.meetingAt, postedAt: post.postedAt, file: safe, bytes: res.data.length };
+    ok++;
+    console.log(`    ✓ ${post.meetingAt || post.postedAt}  ${safe} (${(res.data.length / 1024).toFixed(0)}KB)`);
+
+    if (GOOGLE_CREDENTIALS && GOOGLE_FOLDER_ID) {
+      try { await uploadFile(GOOGLE_FOLDER_ID, join(MINUTES_DIR, safe), safe, GOOGLE_CREDENTIALS); }
+      catch (e) { console.log(`      (드라이브 업로드 실패: ${e.message})`); }
     }
-  });
-
-  if (posts.length === 0) {
-    console.log("  ⚠ 게시글을 찾을 수 없습니다.");
-    process.exit(0);
+  } catch (e) {
+    fail++;
+    console.log(`    ✗ ${post.title}: ${e.message}`);
   }
-
-  console.log(`  총 ${posts.length}개의 게시글 발견`);
-
-  // 7/6 이후의 게시글만 필터링
-  const targetDate = new Date(2026, 6, 6); // 2026-07-06
-  const newPosts = posts.filter((post) => {
-    const postDate = parseDate(post.date);
-    return postDate && postDate >= targetDate;
-  });
-
-  console.log(`  ${newPosts.length}개의 신규 게시글 발견 (7/6 이후)`);
-
-  // 다운로드할 파일 목록
-  let filesDownloaded = [];
-  for (const post of newPosts) {
-    try {
-      console.log(`  다운로드 중: ${post.title}`);
-
-      // 게시글 상세 페이지 접속
-      const detailResponse = await axios.get(`https://www.mois.go.kr${post.href}`, {
-        headers: {
-          "User-Agent": "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36",
-        },
-        timeout: 30000,
-      });
-
-      const detail$ = load(detailResponse.data);
-      const fileLinks = detail$("a[href*='download']");
-
-      // 각 첨부파일 다운로드
-      for (let i = 0; i < fileLinks.length; i++) {
-        const fileHref = detail$(fileLinks[i]).attr("href");
-        if (!fileHref) continue;
-
-        const fileUrl = fileHref.startsWith("http") ? fileHref : `https://www.mois.go.kr${fileHref}`;
-        const fileName = `${post.title.replace(/[\/\\:*?"<>|]/g, "_")}_${post.date.replace(/\./g, "-")}_${i + 1}.pdf`;
-
-        const fileResponse = await axios.get(fileUrl, {
-          responseType: "arraybuffer",
-          timeout: 60000,
-        });
-
-        const filePath = join(CABINET_MINUTES_DIR, fileName);
-        writeFileSync(filePath, fileResponse.data);
-        filesDownloaded.push({ fileName, date: post.date, size: fileResponse.data.length });
-        console.log(`    ✓ ${fileName} (${(fileResponse.data.length / 1024).toFixed(1)}KB)`);
-      }
-    } catch (err) {
-      console.log(`    ✗ ${post.title} 다운로드 실패: ${err.message}`);
-    }
-  }
-
-  // 변경사항 확인
-  const hasChanges = filesDownloaded.length > 0 && JSON.stringify(existingIndex) !== JSON.stringify(filesDownloaded);
-
-  if (hasChanges && GOOGLE_CREDENTIALS && GOOGLE_FOLDER_ID) {
-    console.log("  구글 드라이브 업로드 중…");
-
-    // 모든 다운로드 파일을 하나의 ZIP으로 압축하거나 폴더로 업로드
-    // 현재는 각 파일을 개별 업로드 (간단함)
-    for (const file of filesDownloaded) {
-      try {
-        const filePath = join(CABINET_MINUTES_DIR, file.fileName);
-        const fileId = await uploadFile(GOOGLE_FOLDER_ID, filePath, file.fileName, GOOGLE_CREDENTIALS);
-        console.log(`    ✓ ${file.fileName} 업로드 완료`);
-      } catch (err) {
-        console.log(`    ✗ ${file.fileName} 업로드 실패: ${err.message}`);
-      }
-    }
-  }
-
-  // 인덱스 저장
-  writeFileSync(CABINET_INDEX_FILE, JSON.stringify(filesDownloaded, null, 2));
-
-  console.log(`✔ 청와대 회의록 업데이트 완료 (${filesDownloaded.length}개 파일)`);
-  process.exit(0);
-} catch (error) {
-  console.error(`✗ 오류: ${error.message}`);
-  process.exit(1);
 }
 
-// 날짜 문자열 파싱 (YYYY.MM.DD 형식)
-function parseDate(dateStr) {
-  const match = dateStr.match(/(\d{4})\.(\d{1,2})\.(\d{1,2})/);
-  if (!match) return null;
-  return new Date(parseInt(match[1]), parseInt(match[2]) - 1, parseInt(match[3]));
-}
+writeFileSync(INDEX_FILE, JSON.stringify({ updatedAt: new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 19), posts: index }, null, 1), "utf8");
+
+const dates = Object.values(index).map((v) => v.meetingAt).filter(Boolean).sort();
+console.log(`✔ 신규 ${ok}건 · 실패 ${fail}건 · 보유 ${Object.keys(index).length}건`);
+if (dates.length) console.log(`  회의일 범위: ${dates[0]} ~ ${dates[dates.length - 1]}`);

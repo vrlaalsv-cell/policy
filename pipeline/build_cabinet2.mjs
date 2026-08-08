@@ -40,7 +40,10 @@ const stanceCount = { favor: 0, neutral: 0, oppose: 0 };
 uniq.forEach((s) => { stanceCount[s.stance] = (stanceCount[s.stance] || 0) + 1; });
 const bizCount = {}; BIZ.forEach((b) => bizCount[b] = byBusiness[b].length);
 
-const out = { updatedAt: new Date().toISOString().slice(0, 10), source: "이재명 정부 국무회의·차관회의 회의록(94건) 발췌 분석 · 6사업(원전 포함)", totalStatements: uniq.length, stanceCount, bizCount, speakers, byBusiness };
+const meetings = new Set(uniq.map((s) => s.meeting).filter(Boolean));
+const months = [...meetings].map((m) => (m.match(/\((\d{4}-\d{2})/) || [])[1]).filter(Boolean).sort();
+const span = months.length ? ` ${months[0]}~${months[months.length - 1]}` : "";
+const out = { updatedAt: new Date().toISOString().slice(0, 10), source: `이재명 정부 국무회의·차관회의 회의록(${meetings.size}회${span}) 발췌 분석 · 6사업(원전 포함)`, totalStatements: uniq.length, stanceCount, bizCount, speakers, byBusiness };
 writeFileSync(join(paths.data, "cabinet.json"), JSON.stringify(out, null, 2), "utf8");
 writeFileSync(join(paths.web, "cabinet.js"), "/* 자동생성 build_cabinet2.mjs */\nwindow.CABINET_DATA = " + JSON.stringify(out) + ";\n", "utf8");
 console.log(`✔ cabinet.json / cabinet.js · 발언자 ${speakers.length}명 · 사업별 ${JSON.stringify(bizCount)} · 성향 ${JSON.stringify(stanceCount)}`);
