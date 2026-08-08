@@ -68,3 +68,6 @@ __pycache__/
 
 # 발언 원본 xlsx (용량 큼) — collect_assembly_speeches.mjs 로 언제든 재수집 가능
 data/raw_speeches/
+
+# AI 태깅 입력 배치 — build_tag_batches.mjs 가 매번 다시 만드는 중간 산출물
+data/_tag/

@@ -13,6 +13,29 @@
 | `build_web_data.mjs` | data/*.json | `web/data.js` | — |
 | `serve.mjs` | web/ | (HTTP 서버) | — |
 
+### 국회(상임위 발언) 갱신
+
+| 스크립트 | 입력 | 출력 |
+|---|---|---|
+| `collect_assembly_speeches.mjs` | 국회도서관 발언 빅데이터 (**인증키 불필요**) | `data/raw_speeches/*.xlsx`(원본) + `data/assembly_speeches.json` |
+| `build_tag_batches.mjs` | 위 산출물 | `data/_tag/b*.json` (AI 태깅 입력) |
+| *(AI 태깅)* | 위 배치 | 판정 JSON — Claude Code 워크플로, [AUTOMATION_TODO.md](../AUTOMATION_TODO.md) 참고 |
+| `build_assembly_speeches.mjs` | 판정 JSON | `web/data.js` 의 `members[].quotes` / `stance` 갱신 |
+
+```bash
+node pipeline/collect_assembly_speeches.mjs            # ① 기노위·산업위 22대 전체 (증분)
+node pipeline/build_tag_batches.mjs --only-new         # ② 아직 태깅 안 된 것만 배치로
+                                                       # ③ AI 태깅 (Claude Code)
+node pipeline/build_assembly_speeches.mjs <판정.json> --dry   # ④ --dry 로 먼저 확인
+node pipeline/build_ai_input.mjs && node pipeline/build_ai.mjs  # ⑤ AI 종합분석 갱신
+```
+
+- **원본 xlsx 는 PC 에만** (`data/raw_speeches/`, gitignore). 정규화·판정 결과는 커밋해서 NAS 로.
+- ①은 이미 받은 배치를 건너뛴다. 주기적으로 다시 돌리면 새 회의분만 받는다.
+- ④는 인용문이 원문에 실제로 있는지, 기존 발언과 겹치지 않는지 검사해 걸러낸다.
+  **기존 발언(다른 상임위·국정감사분)은 보존**한다 — 이번 수집은 두 위원회만이라 덮으면 나머지가 사라진다.
+- 함정(한 자리 월·일, 필리버스터 컬럼 밀림, 발언내용1~7 분할 등)은 `node pipeline/findings.mjs 발언` 참고.
+
 ### 청와대(국무·차관회의) 갱신
 
 | 스크립트 | 입력 | 출력 |
