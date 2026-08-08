@@ -1,8 +1,11 @@
-# NAS(Synology) 배포 — 대시보드(Node) + Cloudflare 터널 2컨테이너
+# NAS(Synology) 배포 — 대시보드(Node) + 기사 자동수집 스케줄러 + Cloudflare 터널
 #   사용: sudo docker compose up -d --build
 #   .env 필요: CLOUDFLARE_TUNNEL_TOKEN=eyJ...  (git 에 올리지 말 것)
 #   업데이트 버튼(POST /api/update)까지 쓰려면 .env 에
 #   ASSEMBLY_API_KEY / GOOGLE_CREDENTIALS / GOOGLE_FOLDER_ID 도 넣는다.
+#
+#   ⚠ 런타임 데이터는 ./runtime 에 쌓인다(=컨테이너의 /app/data).
+#     git 작업트리(data/)를 건드리지 않으므로 자동배포의 `git pull` 과 충돌하지 않는다.
 services:
   app:
     build:
@@ -12,14 +15,35 @@ services:
     restart: unless-stopped
     env_file:
       - .env
+    environment:
+      - TZ=Asia/Seoul
     # Tailscale 로 직접 볼 때: http://ys:8007
     ports:
       - "8007:8137"
     expose:
       - "8137"
-    # 업데이트 버튼이 만든 data/members.json·xlsx 가 재배포 후에도 남도록
     volumes:
-      - ./data:/app/data
+      - ./runtime:/app/data
+
+  # 기사 자동 재수집 — 매일 04:30(KST). 시작할 때 데이터가 낡았으면 즉시 1회.
+  # 결과는 /app/data(=./runtime)에 쌓이고 app 컨테이너가 그 news.js 를 우선 서빙한다.
+  scheduler:
+    build:
+      context: .
+      dockerfile: deploy/Dockerfile
+    container_name: policy-scheduler
+    restart: unless-stopped
+    command: node pipeline/scheduler.mjs
+    env_file:
+      - .env
+    environment:
+      - TZ=Asia/Seoul
+      - NEWS_AT=04:30
+      - NEWS_ON_START=1
+    volumes:
+      - ./runtime:/app/data
+    depends_on:
+      - app
 
   tunnel:
     image: cloudflare/cloudflared:latest

@@ -284,17 +284,9 @@
   function newsDate(a) { var d = new Date(a.date || 0).getTime(); return isNaN(d) ? 0 : d; }
   function newsSorted(m) {
     var list = newsOf(m).slice();
-    // 기본은 최신순(수집기는 '정치인 확인' 우선이라 오래된 기사가 위로 오던 문제).
-    // 사업 필터가 켜져 있으면 해당 에너지원 기사를 먼저, 그 안에서 최신순.
-    var biz = state.business;
-    list.sort(function (a, b) {
-      if (biz !== "all") {
-        var am = (a.labels || []).indexOf(biz) >= 0 ? 1 : 0;
-        var bm = (b.labels || []).indexOf(biz) >= 0 ? 1 : 0;
-        if (am !== bm) return bm - am;
-      }
-      return newsDate(b) - newsDate(a);
-    });
+    // 항상 최신순. 사업 필터가 켜져 있어도 순서를 바꾸지 않고, 해당 기사에 강조 테두리만 준다
+    // (오래된 기사가 위로 올라오면 "최신 소식"으로 안 읽히기 때문).
+    list.sort(function (a, b) { return newsDate(b) - newsDate(a); });
     return list;
   }
   function newsHTML(m) {

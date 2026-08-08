@@ -17,6 +17,9 @@ export function buildNewsWeb() {
     "/* 자동 생성 — build_news_web.mjs. 직접 수정 금지 */\n" +
     "window.NEWS_DATA = " + JSON.stringify({ meta, labels: labelMeta(), byMember }) + ";\n";
   writeFileSync(join(paths.web, "news.js"), out, "utf8");
+  // 배포용 사본: data/ 는 컨테이너에서 볼륨으로 마운트되므로, 여기 쓴 파일은 재빌드해도 살아남는다.
+  // serve.mjs 가 이 사본이 있으면 우선 서빙한다 → 스케줄러가 모은 최신 기사가 바로 화면에 반영.
+  try { writeFileSync(join(paths.data, "news.js"), out, "utf8"); } catch { /* 데이터 폴더 없으면 무시 */ }
 
   const n = Object.values(byMember).reduce((a, v) => a + v.length, 0);
   console.log(`✔ web/news.js 생성 (의원 ${Object.keys(byMember).length}명 · 기사 ${n}건)`);

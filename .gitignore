@@ -49,3 +49,8 @@ yarn-error.log*
 # typescript
 *.tsbuildinfo
 next-env.d.ts
+
+# NAS 런타임 데이터 (컨테이너의 /app/data) — 스케줄러가 모은 기사·로그가 여기 쌓인다.
+# git 작업트리를 건드리지 않아야 자동배포의 git pull 과 충돌하지 않는다.
+/runtime/
+data/news.js

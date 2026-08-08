@@ -8,6 +8,7 @@ import { spawn } from "node:child_process";
 import { networkInterfaces } from "node:os";
 
 const WEB = join(dirname(fileURLToPath(import.meta.url)), "..", "web");
+const DATA = join(dirname(fileURLToPath(import.meta.url)), "..", "data");
 const PORT = process.env.PORT || 8137;
 const TYPES = {
   ".html": "text/html; charset=utf-8", ".css": "text/css; charset=utf-8",
@@ -104,6 +105,16 @@ createServer(async (req, res) => {
     if (p === "/") p = "/index.html";
     const file = normalize(join(WEB, p));
     if (!file.startsWith(WEB)) { res.writeHead(403).end("forbidden"); return; }
+    // 스케줄러가 새로 만든 기사 데이터(data/news.js)가 있으면 그것을 우선 서빙한다.
+    // data/ 는 볼륨 마운트라 이미지 재빌드와 무관하게 최신 수집분이 유지된다.
+    if (p === "/news.js") {
+      try {
+        const fresh = await readFile(join(DATA, "news.js"));
+        res.writeHead(200, { "Content-Type": TYPES[".js"], "Cache-Control": "no-store" });
+        res.end(fresh);
+        return;
+      } catch { /* 없으면 이미지에 포함된 web/news.js 사용 */ }
+    }
     const buf = await readFile(file);
     res.writeHead(200, { "Content-Type": TYPES[extname(file).toLowerCase()] || "application/octet-stream", "Cache-Control": "no-store" });
     res.end(buf);

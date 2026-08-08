@@ -106,6 +106,56 @@ sudo docker compose logs --tail=30 tunnel
 - 터널 로그에 `Registered tunnel connection` 이 보이면 연결 성공.
 - 브라우저: `https://7.yes-i-can.kr` · Tailscale: `http://ys:8007`
 
+## D-2. 자동화 (기사 자동수집 + 자동배포)
+
+두 가지가 따로 돈다. **①은 컨테이너가 알아서** 하고, **②는 DSM 스케줄러에 한 번만 등록**하면 된다.
+
+### ① 기사 자동 재수집 — 등록할 것 없음
+
+`docker compose up -d` 하면 `policy-scheduler` 컨테이너가 같이 뜬다.
+
+- **매일 04:30(KST)** 에 `collect:news → fetch:excerpts` 를 자동 실행
+- 컨테이너가 **시작될 때** 데이터가 20시간 넘게 낡았으면 즉시 1회 수집 (재빌드 직후 공백 방지)
+- 결과는 `./runtime/` 에 쌓이고, 웹 컨테이너가 `runtime/news.js` 를 **우선 서빙** → 재빌드와 무관하게 최신 유지
+- 수집이 실패하면 기존 데이터를 **덮어쓰지 않고** 그대로 둔다 (안전장치 내장)
+
+시각을 바꾸려면 `docker-compose.yml` 의 `NEWS_AT=04:30` 를 고치면 된다.
+
+확인:
+
+```bash
+cd /volume2/docker/policy
+sudo docker compose logs --tail=20 scheduler
+```
+
+`가동 — 매일 04:30 (KST) 수집` 이 보이면 정상. 수집이 돌면 `수집 시작/완료` 가 찍힌다.
+
+### ② 자동배포 — DSM 작업 스케줄러에 1회 등록 (사용자 작업)
+
+`main` 에 push 되면 NAS 가 10분 안에 `git pull` + 재빌드한다.
+
+**DSM → 제어판 → 작업 스케줄러 → 생성 → 트리거된 작업 → 사용자 정의 스크립트**
+
+| 항목 | 값 |
+|---|---|
+| 작업 이름 | `policy-autodeploy` |
+| 사용자 | **root** |
+| 이벤트 | **부팅 시** |
+| 명령 | `sh /volume2/docker/policy/scripts/autodeploy-loop.sh` |
+
+만든 뒤 **목록에서 그 작업을 선택 → 실행** 을 눌러 지금 바로 켠다(재부팅 기다릴 필요 없음).
+
+> ⭐ DSM 스케줄러는 최소 주기가 1시간이지만, 여기서는 스케줄러를 **점화플러그로만** 쓰고
+> 실제 주기는 스크립트 안의 `sleep 600`(10분)이 만든다. 주기를 바꾸려면 `autodeploy-loop.sh` 의 `INTERVAL` 을 고친다.
+
+동작 확인:
+
+```bash
+tail -20 /volume2/docker/policy/runtime/autodeploy.log
+```
+
+변경이 없으면 아무것도 안 찍히는 게 정상이고, 새 커밋이 있을 때만 `새 커밋 감지 → 배포 완료` 가 남는다.
+
 ## E. 갱신 (평상시 배포)
 
 코드·데이터를 바꾼 뒤 PC 에서 push → NAS 에서:
@@ -116,7 +166,9 @@ git pull
 sudo docker compose up -d --build
 ```
 
-**기사 데이터 갱신은 PC 에서** 한다 (수집기는 이미지에 안 들어 있다):
+> 자동화(D-2)를 켰다면 **아무것도 안 해도 된다** — push 하면 10분 안에 NAS 가 알아서 따라온다.
+
+**기사 데이터는 이제 NAS 스케줄러가 매일 자동 수집한다.** PC 에서 직접 돌려 커밋하고 싶을 때만:
 
 ```bash
 cd C:\AI\policy; npm run collect:news; git add data/news.json web/news.js; git commit -m "기사 데이터 갱신"; git push origin main
