@@ -13,6 +13,34 @@
 | `build_web_data.mjs` | data/*.json | `web/data.js` | — |
 | `serve.mjs` | web/ | (HTTP 서버) | — |
 
+### 청와대(국무·차관회의) 갱신
+
+| 스크립트 | 입력 | 출력 |
+|---|---|---|
+| `update-cabinet.mjs` | 행정안전부 게시판 | `data/cabinet_minutes/*.pdf` + `data/cabinet_minutes_index.json` |
+| `extract_minutes.py` | 위 PDF | `data/_cab_minutes_raw.json` (발언 원문) |
+| *(AI 판정)* | 위 원문 | 판정 JSON — 지금은 Claude Code 워크플로, [AUTOMATION_TODO.md](../AUTOMATION_TODO.md) 참고 |
+| `merge_cabinet_judged.mjs` | 판정 JSON + 원문 | `data/_cab_results.json` (기존 보존·중복 차단) |
+| `build_cabinet2.mjs` | `_cab_results.json` | `data/cabinet.json` + `web/cabinet.js` |
+
+```bash
+node pipeline/update-cabinet.mjs                 # ① 아직 안 받은 회의록 PDF 받기
+python pipeline/extract_minutes.py               # ② PDF → 발언 원문
+                                                 # ③ AI 판정 (Claude Code)
+node pipeline/merge_cabinet_judged.mjs <판정.json> data/_cab_minutes_raw.json --dry   # ④ 먼저 --dry 로 확인
+node pipeline/build_cabinet2.mjs && node pipeline/build_ai.mjs                        # ⑤ 빌드
+```
+
+- **PDF 원본은 PC에만 둔다**(`.gitignore`). 추출·판정 결과는 전부 커밋해서 NAS 로 보낸다 —
+  PDF 없이도 재판정·재빌드가 되게.
+- ④는 인용문이 원문에 실제로 있는지, 목차 찌꺼기가 섞이지 않았는지, 기존 발언과 겹치지 않는지를
+  검사해 걸러낸다. **`--dry` 로 먼저 확인**하고 실행할 것.
+- ⑤에서 `build_cabinet2` 는 `ai` 필드를 지우므로 **반드시 `build_ai.mjs` 를 이어서** 돌린다.
+
+> ⚠ `extract_minutes.py` 는 pdfplumber 가 필요하다(`pip install pdfplumber`). 회의록 PDF 의 함정
+> — 2단 조판, 불릿 문자 불일치(U+110B vs U+3147), 차관회의의 의안심의 형식 — 은 스크립트 주석과
+> [AUTOMATION_TODO.md](../AUTOMATION_TODO.md) 에 정리돼 있다.
+
 ## 최근 기사 수집 (모달 최하단 · 에너지원 라벨)
 
 ```bash

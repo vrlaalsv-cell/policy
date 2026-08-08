@@ -19,75 +19,55 @@ const TYPES = {
   ".ico": "image/x-icon",
 };
 
-function runUpdate(res) {
+/**
+ * pipeline 스크립트를 자식 프로세스로 돌리고 결과를 JSON 으로 응답한다.
+ *
+ * ⚠ 예전 구현은 자식이 정상 종료해도 5분 타이머를 지우지 않았다. 정상 종료한 자식의
+ *   child.killed 는 false 라서 300초 뒤 타임아웃 분기가 그대로 실행됐고, 이미 끝난 응답에
+ *   res.writeHead 를 다시 불러 ERR_HTTP_HEADERS_SENT 가 났다. 그 예외는 요청 핸들러의
+ *   try/catch 밖(setTimeout 콜백)이라 uncaughtException 이 되어 **웹서버가 죽었다**.
+ *   → 종료 시 clearTimeout + headersSent 가드 두 겹으로 막는다.
+ */
+function runScript(res, script, timeoutMs = 300000) {
   return new Promise((resolve) => {
-    const child = spawn("node", [join(dirname(fileURLToPath(import.meta.url)), "update-assembly.mjs")], {
+    const child = spawn("node", [join(dirname(fileURLToPath(import.meta.url)), script)], {
       env: { ...process.env },
       stdio: ["ignore", "pipe", "pipe"],
     });
 
     let output = "";
     let error = "";
+    let done = false;
 
-    child.stdout?.on("data", (data) => {
-      output += data.toString();
-    });
+    child.stdout?.on("data", (d) => { output += d.toString(); });
+    child.stderr?.on("data", (d) => { error += d.toString(); });
 
-    child.stderr?.on("data", (data) => {
-      error += data.toString();
-    });
+    const finish = (status, body) => {
+      if (done || res.headersSent || res.writableEnded) return;
+      done = true;
+      res.writeHead(status, { "Content-Type": "application/json; charset=utf-8" });
+      res.end(JSON.stringify(body));
+      resolve();
+    };
+
+    const timer = setTimeout(() => {
+      child.kill();
+      finish(504, { success: false, error: "업데이트 시간 초과" });
+    }, timeoutMs);
 
     child.on("close", (code) => {
-      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-      res.end(JSON.stringify({ success: code === 0, output, error, code }));
-      resolve();
+      clearTimeout(timer);
+      finish(200, { success: code === 0, output, error, code });
     });
-
-    setTimeout(() => {
-      if (!child.killed) {
-        child.kill();
-        res.writeHead(504, { "Content-Type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify({ success: false, error: "업데이트 시간 초과" }));
-        resolve();
-      }
-    }, 300000); // 5분 타임아웃
+    child.on("error", (e) => {
+      clearTimeout(timer);
+      finish(500, { success: false, error: e.message });
+    });
   });
 }
 
-function runUpdateCabinet(res) {
-  return new Promise((resolve) => {
-    const child = spawn("node", [join(dirname(fileURLToPath(import.meta.url)), "update-cabinet.mjs")], {
-      env: { ...process.env },
-      stdio: ["ignore", "pipe", "pipe"],
-    });
-
-    let output = "";
-    let error = "";
-
-    child.stdout?.on("data", (data) => {
-      output += data.toString();
-    });
-
-    child.stderr?.on("data", (data) => {
-      error += data.toString();
-    });
-
-    child.on("close", (code) => {
-      res.writeHead(200, { "Content-Type": "application/json; charset=utf-8" });
-      res.end(JSON.stringify({ success: code === 0, output, error, code }));
-      resolve();
-    });
-
-    setTimeout(() => {
-      if (!child.killed) {
-        child.kill();
-        res.writeHead(504, { "Content-Type": "application/json; charset=utf-8" });
-        res.end(JSON.stringify({ success: false, error: "업데이트 시간 초과" }));
-        resolve();
-      }
-    }, 300000); // 5분 타임아웃
-  });
-}
+const runUpdate = (res) => runScript(res, "update-assembly.mjs");
+const runUpdateCabinet = (res) => runScript(res, "update-cabinet.mjs");
 
 createServer(async (req, res) => {
   try {

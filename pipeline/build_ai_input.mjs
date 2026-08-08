@@ -35,7 +35,10 @@ const cab = CAB.speakers.map((sp) => ({
   stances: stanceLine(sp.stance),
   quotes: (sp.quotes || []).slice().sort((a, b) => mDate(b).localeCompare(mDate(a))).slice(0, 8)
     .map((q) => ({ biz: (q.businesses || []).map((b) => BIZLABEL[b] || b).join("/"), text: cap(q.quote, 170), note: cap(q.note, 120), meeting: q.meeting })),
-  news: newsItems(nameToNews[sp.name]),
+  // 국무위원 기사는 5_collect_news.mjs 가 "CAB:<이름>" 키로 모은다(:65). 이름 매칭(nameToNews)은
+  // 국회의원 명단을 거치는 경로라 국회의원이 아닌 국무위원은 하나도 안 걸렸다 —
+  // 그 결과 대통령을 포함한 13명 53건의 기사가 AI 종합분석 입력에서 통째로 빠져 있었다(2026-08-08).
+  news: newsItems(nameToNews[sp.name] || byMemberNews["CAB:" + sp.name]),
 }));
 
 const dir = join(paths.data, "_ai");

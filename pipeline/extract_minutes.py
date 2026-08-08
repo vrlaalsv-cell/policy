@@ -25,13 +25,27 @@ KW = re.compile(
     r"석유|유가|탄소|기후|온실가스|전기요금|한전|RE100|무탄소|CFE|전력망|배출권"
 )
 
-# 발언자 줄: 불릿 + 직위 + 이름. 직위가 반드시 직위어로 끝나야 본문 불릿을 오탐하지 않는다.
+# ⚠ 불릿 문자가 문서마다 다르다. 특히 차관회의록은 'ᄋ'(U+110B 첫가끝 초성 이응)을 쓰는데
+#   호환 자모 'ㅇ'(U+3147)과 **다른 문자**다. 전체 20개 PDF 실측 — 줄 첫 글자 빈도:
+#   '•' 1334 · 'ᄋ'(U+110B) 1044 · '▸' 490 · 'ㅇ'(U+3147) 264.
+#   U+110B 를 빼면 차관회의 발언이 통째로 유실된다(2026-08-08 실제로 겪음).
+BUL = "ㅇoO○●•ᄋ▸"
+
+# 발언자 줄 ① 국무회의형: 불릿 + 직위 + 이름. 직위가 직위어로 끝나야 본문 불릿을 오탐하지 않는다.
 TITLE = r"(?:대통령|국무총리|총리|부총리|장관|차관|실장|위원장|처장|청장|본부장|사무총장|차장|부위원장|시장|지사|원장|총장)"
-SPEAKER = re.compile(rf"^[ㅇoO○●•]\s*(?P<role>[가-힣A-Za-z0-9\s·겸제]{{2,28}}{TITLE})\s+(?P<name>[가-힣]{{2,4}})\s*$")
-BULLET = re.compile(r"^[ㅇoO○●•]")
+SPEAKER = re.compile(rf"^[{BUL}]\s*(?P<role>[가-힣A-Za-z0-9\s·겸제]{{2,28}}{TITLE})\s+(?P<name>[가-힣]{{2,4}})\s*$")
+
+# 발언자 줄 ② 차관회의·의안심의형: 'ᄋ 제안설명 : 산업통상부기획조정실장 오승철'
+#   차관회의록은 육성 발언록이 아니라 의안 심의표라, 발언 대신 '제안이유' 본문이 실린다.
+PROPOSER = re.compile(rf"^[{BUL}]\s*제\s*안\s*설\s*명\s*[:：]\s*(?P<role>[가-힣A-Za-z0-9\s·겸제]{{2,28}})\s+(?P<name>[가-힣]{{2,4}})\s*$")
+REASON = re.compile(rf"^[{BUL}]\s*제\s*안\s*이\s*유")           # 이 뒤부터가 본문
+CLOSE = re.compile(rf"^[{BUL}]\s*(토\s*의|의\s*결|보고사항|참고사항)")   # 의안 블록 종료
+
+BULLET = re.compile(rf"^[{BUL}]")
 SECTION = re.compile(r"^▢")
 PRES = re.compile(r"^▢\s*(모두\s*말씀|마무리\s*말씀|당부\s*말씀)")
 PAGENO = re.compile(r"-\s*\d+\s*-")
+AGENDA = re.compile(r"^\d{1,2}\.\s+.+\[의안\s*제\d+호")           # '6. ○○법 시행령안 [의안 제1012호, 산업통상부]'
 
 GUTTER_MIN = 0.03
 
@@ -110,6 +124,9 @@ def extract(src, out_path, since=None):
                 return
             records.append({"meeting": meeting, "date": date, "speaker": sp, "role": role or "", "text": text[:2200]})
 
+        # armed=False 면 화자는 정해졌지만 아직 본문 시작 전(의안심의형의 '제안이유' 대기)
+        state["armed"] = True
+
         for ln in lines:
             s = ln.strip()
             if not s:
@@ -118,18 +135,39 @@ def extract(src, out_path, since=None):
                 flush()
                 # 대통령 말씀 섹션엔 발언자 줄이 따로 없다
                 state["speaker"], state["role"] = ("이재명", "대통령") if PRES.match(s) else (None, None)
+                state["armed"] = True
                 continue
-            m = SPEAKER.match(s)
+
+            m = PROPOSER.match(s)          # 차관회의·의안심의형
             if m:
                 flush()
                 state["speaker"] = m.group("name")
                 state["role"] = re.sub(r"\s+", " ", m.group("role")).strip()
+                state["armed"] = False     # '제안이유' 가 나와야 본문 수집 시작
                 continue
+            if REASON.match(s):
+                state["armed"] = True
+                continue
+            if CLOSE.match(s) or AGENDA.match(s):   # 토의·의결·다음 의안 → 블록 종료
+                flush()
+                state["speaker"], state["role"] = None, None
+                state["armed"] = True
+                continue
+
+            m = SPEAKER.match(s)           # 국무회의형
+            if m:
+                flush()
+                state["speaker"] = m.group("name")
+                state["role"] = re.sub(r"\s+", " ", m.group("role")).strip()
+                state["armed"] = True
+                continue
+
             if BULLET.match(s) and state["role"] != "대통령":
                 flush()  # 발언자가 아닌 일반 불릿 → 현재 화자 블록 종료
                 state["speaker"], state["role"] = None, None
+                state["armed"] = True
                 continue
-            if state["speaker"]:
+            if state["speaker"] and state["armed"]:
                 state["buf"].append(s)
         flush()
 
