@@ -26,24 +26,35 @@ fi
 git config --file /root/.gitconfig --get-all safe.directory | grep -qx "$DIR" 2>/dev/null \
   || git config --file /root/.gitconfig --add safe.directory "$DIR"
 
+# 마지막으로 '재빌드까지 성공한' 커밋. git 의 HEAD 만 보면 안 되는 이유:
+#   pull 은 됐는데 재빌드가 실패하면(예: 권한 오류) HEAD == origin/main 이 되어버려
+#   다음 실행부터 "변경 없음"으로 조용히 넘어가고 컨테이너는 영영 옛 이미지로 남는다. (실제로 겪음)
+STATE="$DIR/runtime/deployed.sha"
+DEPLOYED=$(cat "$STATE" 2>/dev/null || echo "")
+
 BEFORE=$(git rev-parse HEAD 2>/dev/null)
 git fetch origin main >/dev/null 2>&1 || { log "fetch 실패(네트워크?)"; exit 1; }
-
 REMOTE=$(git rev-parse origin/main 2>/dev/null)
-if [ "$BEFORE" = "$REMOTE" ]; then
-  exit 0                      # 변경 없음 — 조용히 종료
+
+if [ "$BEFORE" != "$REMOTE" ]; then
+  log "새 커밋 감지: $(echo "$BEFORE" | cut -c1-7) -> $(echo "$REMOTE" | cut -c1-7)"
+  if ! git pull --ff-only origin main >>"$LOG" 2>&1; then
+    log "pull 실패 — 로컬 변경이 있는지 확인 필요 (runtime/ 외 파일을 컨테이너가 건드리면 안 됨)"
+    exit 1
+  fi
 fi
 
-log "새 커밋 감지: ${BEFORE%${BEFORE#???????}} -> ${REMOTE%${REMOTE#???????}}"
-if ! git pull --ff-only origin main >>"$LOG" 2>&1; then
-  log "pull 실패 — 로컬 변경이 있는지 확인 필요 (runtime/ 외 파일을 컨테이너가 건드리면 안 됨)"
-  exit 1
+HEAD=$(git rev-parse HEAD 2>/dev/null)
+if [ "$DEPLOYED" = "$HEAD" ]; then
+  exit 0                      # 이 커밋으로 이미 배포 완료 — 조용히 종료
 fi
+[ -n "$DEPLOYED" ] || log "배포 기록 없음 — 현재 커밋으로 재빌드한다"
 
 log "재빌드 시작"
 if docker compose up -d --build >>"$LOG" 2>&1; then
+  echo "$HEAD" > "$STATE"
   log "배포 완료: $(git rev-parse --short HEAD) $(git log -1 --pretty=%s)"
 else
-  log "재빌드 실패 — docker compose 로그 확인 필요"
+  log "재빌드 실패 — 다음 실행 때 다시 시도한다 (docker 권한/디스크 확인)"
   exit 1
 fi
