@@ -54,3 +54,7 @@ next-env.d.ts
 # git 작업트리를 건드리지 않아야 자동배포의 git pull 과 충돌하지 않는다.
 /runtime/
 data/news.js
+
+# AI 분석 입력 배치 — build_ai_input.mjs 가 매번 지우고 다시 만드는 중간 산출물
+# (원본은 web/data.js + data/news.json, 결과는 data/_ai_results.json)
+data/_ai/

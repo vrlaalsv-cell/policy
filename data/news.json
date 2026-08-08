@@ -4,8 +4,9 @@
   "days": 365,
   "perMember": 5,
   "collectedAt": "2026-08-08 17:49:06",
-  "members": 137,
-  "articles": 428
+  "members": 134,
+  "articles": 420,
+  "excerpts": 414
  },
  "byMember": {
   "M029": [
@@ -1117,73 +1118,6 @@
     "url": "https://v.daum.net/v/20260518175312033",
     "excerpt": "우선, 김두겸 후보는 이날 울산시의회 프레스센터에서 공약 발표 기자회견을 열고 \"에너지는 곧 국가 경쟁력이자 산업의 근간\"이라며 \"울산을 대한민국 에너지 전환의 중심이자 세계를 선도하는 에너지 도시로 만들겠다\"고 밝혔다.",
     "hl": "에너지 전환"
-   }
-  ],
-  "M114": [
-   {
-    "title": "한전기술, 김종민·장병용 신임 상임이사 취임",
-    "link": "https://news.google.com/rss/articles/CBMiakFVX3lxTE12Z2dRc3Y3YUNEcEN3VXRqTUszUHJZSUFZNk4xQkhwd0lFQVZYMGpyWXN5dklnekpnOHJ1VW9PMXdENjVHSHpXM3o1bEdxWm9LajM5c1hpSW1hMTB0dDB1U0FiODFhakZTX3c?oc=5",
-    "press": "epnews.co.kr",
-    "date": "2026-05-22",
-    "labels": [
-     "NUCLEAR",
-     "RE",
-     "POWER"
-    ],
-    "excerpt": "한전기술(사장 김태균)은 19일 주주총회를 열고 김종민 기획관리본부장과 장병용 에너지신사업본부장을 각각 상임이사로 선임했다. 두 신임상임이사는 이날 취임식을 갖고 공식 업무에 착수했다.한전기술은 최근 원전 수출과 재생에너지 확대를 중심으로 사업 포트폴리오를 확장하는 가운데, 인공지능(AI) 기반 엔지니어링 체계 고도화에도 속도를 내고 있다. 이번 인사는 이러한 경영환경 변화에 부응하여 조직…",
-    "hl": "원전",
-    "url": "https://www.epnews.co.kr/news/articleView.html?idxno=65654"
-   },
-   {
-    "title": "한국전력기술, 김종민·장병용 신임 상임이사 취임",
-    "link": "https://news.google.com/rss/articles/CBMiZEFVX3lxTFBFbnItdjN4djRnbHJvWmw3UDBBNGRXdzl4bTBsR0pmNFJ0em4tNURSN3VpQnFxblJicGJJYzY2V0VIU0REUzFQeEgzN21YbjBvdFFiWlNMZmZtRzdqUlQzVTE2akU?oc=5",
-    "press": "esnews.kr",
-    "date": "2026-05-20",
-    "labels": [
-     "NUCLEAR",
-     "POWER"
-    ],
-    "url": "https://www.esnews.kr/news/articleView.html?idxno=4036",
-    "excerpt": "한국전력기술(이하 한전기술)이 새로운 상임이사 선임을 통해 본격적인 조직 체질 개선과 미래 사업 속도전에 나섰다. 최근 글로벌 에너지 시장은 SMR(소형모듈원전)",
-    "hl": "원전"
-   },
-   {
-    "title": "한전기술, 김종민·장병용 신임 상임이사 선임",
-    "link": "https://news.google.com/rss/articles/CBMicEFVX3lxTFB5bk1jODJwOWliS1JLdUxaSGZfQ2JybnpBWG02OVU1VzR5RE4zcEp6dzNtWHFrakxfV3NCRlg5ZU5nYWpHVUwxMl9CVlY0ZVdmaU5fbWg1aUtoaFJMWl9WSFNNR0dQU2ZqbFpGeEFxTG7SAXRBVV95cUxQUHY0eXh0Uk1ha2ozTTdrV2JrQ0YwSGFUb0hEQlo3TDRVUmtfTGdmYllCUTZpcDhuWXk1Umh4YkVISmZLTV94YWlpbmkzb053SnRjR3RjVnp6SXVrTWpGMnZzZkN5bEd1MTQxYy0zMGxaejB3dg?oc=5",
-    "press": "이뉴스투데이",
-    "date": "2026-05-20",
-    "labels": [
-     "NUCLEAR",
-     "POWER"
-    ],
-    "url": "http://www.enewstoday.co.kr/news/articleView.html?idxno=2431076",
-    "excerpt": "[이뉴스투데이 노태하 기자] 한국전력기술이 원전과 미래 에너지 사업 확대에 대응하기 위해 김종민 기획관리본부장과 장병용 에너지신사업본부장을 신임 상임이사로 선임했다.한국전력기술은 19일 주주총회를 열고 김종민 기획관리본부장과 장병용 에너지신사업본부장을 각각 상임이사로 선임했다고 밝혔다",
-    "hl": "원전"
-   },
-   {
-    "title": "한국전력기술, 김종민·장병용 신임 상임이사(부사장) 취임",
-    "link": "https://news.google.com/rss/articles/CBMickFVX3lxTFB2M2k2b1JpWVhKTENDVkRpTUdLMGpRRXZIMm5FRGlLUk51U1gxX0ZSNERDQjZ4dzdWeDJySWlmOEUzTWZoWEY4S2hJZ1Jtb1FjcTlKTXdyNU9VRTRaU09iMGxTVEVGT0xidTdBTlNwWDFHZw?oc=5",
-    "press": "에너지데일리",
-    "date": "2026-05-19",
-    "labels": [
-     "POWER"
-    ],
-    "url": "https://www.energydaily.co.kr/news/articleView.html?idxno=167397",
-    "excerpt": "[에너지데일리 송병훈 기자] 한국전력기술(사장 김태균)은 19일 주주총회를 열고, 김종민 기획관리본부장과 장병용 에너지신사업본부장을 각각 상임이사로 선임했다고 밝",
-    "hl": "전력"
-   },
-   {
-    "title": "K-원전·AI 엔지니어링 투톱 나란히…한전기술, 김종민·장병용 상임이사 선임",
-    "link": "https://news.google.com/rss/articles/CBMiWkFVX3lxTE9DOFVzLVoyMjlhMm4zSVdhSmw1ZDhyb2dzQkhjY3hyd0lKalFnRGlmSG9vM1VreVF2cjQ4Q3RtRnBRZHdzdUhLd0tfeFhCWlJ1QWs3ZmFEei1Sd9IBWEFVX3lxTFBERWlITWxtVUpkMnJZZmMzdXQwcW1nS2VvbFNfZF9BM1BzODl5bHRKa2plQmwtTUZzdkpPZ3hudFhmbGxiT1ZjOWhlRVFTUHk5RTVRQm9HZmw?oc=5",
-    "press": "아주경제",
-    "date": "2026-05-19",
-    "labels": [
-     "NUCLEAR",
-     "POWER"
-    ],
-    "url": "https://www.ajunews.com/view/20260519191404269",
-    "excerpt": "한국전력기술이 주주총회를 통해 검증된 최고 전문가들을 경영 전면에 배치하며 미래 성장 동력 확보를 위한 승부수를 던졌다.한전기술은 19일 주주총회를 열고 김종민 ...",
-    "hl": "전력"
    }
   ],
   "M124": [
@@ -4091,20 +4025,6 @@
     "hl": "원전"
    }
   ],
-  "M281": [
-   {
-    "title": "[파워인터뷰 예고] 김준환 스트라드비젼 대표 \"저전력·저연산 인식 SW로 ADAS 시장 공략\"",
-    "link": "https://news.google.com/rss/articles/CBMiaEFVX3lxTE9UNHJxZTlvaDdRNzJUZFFNV0ExTVlaRDBLSVZVazRvVVpub2YzREZyR2FsNW9tOXdNQm9tVzJfT196dC1NSlo3M2owQzJ0VFJZemNsY09Dd2MyeVU1bDVRNkkwUTFwVW1l?oc=5",
-    "press": "팍스경제TV",
-    "date": "2026-04-07",
-    "labels": [
-     "POWER"
-    ],
-    "excerpt": "또 저전력&middot;저연산 특성을 바탕으로 낮은 사양의 반도체에서도 효율적으로 작동할 수 있어, 완성차 업체 입장에서는 전체 시스템 원가를 낮출 수 있는 장점이 있다고 강조했다.",
-    "hl": "전력",
-    "url": "https://www.paxetv.com/news/articleView.html?idxno=268675"
-   }
-  ],
   "M282": [
    {
     "title": "정혜경 의원, 공공재생에너지 확대 및 발전5사 통합 위한 ‘한국발전공사법’ 발의",
@@ -4228,33 +4148,7 @@
     "url": "https://www.jeonguknews.co.kr/news/articleView.html?idxno=81488"
    }
   ],
-  "M290": [
-   {
-    "title": "전하진 SDX재단 이사장(오른쪽)이 김선민 그람 회장과 지난달 27일 경기도 성남시 판교스타트업캠퍼스에서 '기후테크 기반 탄소감축 생태계 조성 및 신재생에너지 산업 확산'을 위한 업무협약서(MOU)를 교환하며 기념촬영했다. 사진 출처 : SDX재단",
-    "link": "https://news.google.com/rss/articles/CBMi1g5BVV95cUxOMkNVaXh2T0E5aDdlaG5heGppRHB1MHJLbjBKMTFYZ0ZPS1QyRVdFM0JlUFZNMzhvZW9DTU1hNy1wQlVaRlo0NmprMVZleDhjazBManp6ZDgwTl8xSFFtZXFhNGRHOTFuaG9fclV1Z2c2ZkRoejlSMExDd0R5OVA1a2toQjVyc0lTU2Q3LXdyRjlscWNuZ0lGM09maFVSbXhMbVl3MnZKbHgtOUFxaHp1azZFRkFlNlBkbmY0X0l2QUlwNVhmZUNKYkxWeHRCR09zcFZnZF84aENIbU5JbUtWd2hvcDV2WVdCa1NCWDdoZnNFTTJRel8wWkFJeURXbThXLVhRVDc3UnRna2M2MXpIb21zZ29SNVJ0YTk1RGJySUJWN09Fc1M1dUV3LUdPVzdxUjJ3YXVteWlYVDA0aEhtM3BtUlEzTVNmOTdMdDlYTWprMUVFUXZKTVNyenpMMmR6Qm5Xd1lYNVV5VWUzQWNKQW5qUmswVTVXWi1uSGNsVU9vRm52UFlnaHlpSDd2REh5ZmxSbTh6WFRyUWNsMXJWVk1wbWF1bzE3UlZGSnMxT1FvZ1R1UXFCX1Y0UFRLX25YZmpGTGhENm5PMFBwWkhSZ1loUm5mdWprenlsbUNKdFg0dndkVm1tYVVaU095YUdGcUN5ZXk3RjBFTzk3NzF2QWh0OHk3VnJYVXBtUEdWMl9PWWdVeE1sWXhwdlNad0hlNnU0UUgzY3hyZ3o0TFRVR0h1TVVQYmZyNW5Sdld3VHdfejZWV3Z5blljYk4xX1lwTHlnWWU0NGNPTTRPU0R6amUxTzVsRE5hSHNKQm1vYkVEVkdkeldMMWRrTnhQWHZheGZhcEhnTC1PTWZrR09FS3NlNWZGUEd1QlE3TXlsRDhJZVVhV3FUd3ltNXlrVmRCZXBjVVI3OGNaV3QybUxZQk9vMW5jb212dkMxNGFzcEJURUJXUVVtd05fOTBCcWszTm85Rm5MX2pRb29PMF9UVG02Ull0bVZxZXB1dno4TGxxdTNoZHkxRDNLcDdlbTdUVFZLWWlIUEcwZ1NPVi1PQWFwNG9JbGgydUpGWU1HRXQxdktpRXhZSktBd0hUejlsdUxwNXBFNWFhTkRua19pd3I1Vl9nU0NmakYwMEc1MVdzZXc5T004LUFXNVlHOXFXUVFFZ2U5TTdOamt1T2lzREVKUEdRRTI4ZmpHZExmS19iZFlfaF9fand0SmE0c1VhUXZSOTZySGx3N2ZEazlqejRkdTBsTEo2LVlrd3VkYjFsWEMwZngtc254TWNTZjlxRkwya3BVTlpJMG13WnJOQjNVNVZpakE5R3N2Zk5FTE1qTEtLWGp4VzZCa0VISW9PdFdZSm5LWFFZempTVzdFNlNvcl9KM0htXzF1b2tseTMtY3YxMUptS3lqa2l2SFRGcGlnbk9OQ1dZR3BkQ2NaaXdRaU9OdlJ2MHJOV1g3MXYzLU43M2MwbzlsbHJOTzVZbE5LV21VTFhkME5ucTJ0U3VfNFFMUjlNWG9ERmk4MU9KR2JHMy14OV9pb0RYRm9LVjdtQWlfbGhwOHJwUVdaQjQ1bF9UbmRJR0Rob3pkUmhBLWpaSXZ6SjhYSFRTaWZKbl9HQUw3STZubWlxbXFIVWZPZ25rV2ZTSjZJMHo4bTg3NFFrY2lYWkxxTDdKeUljb0lHREpCU24xdE14YXdWNUFtVzJRUlJQb0VOWEkyM2s2cHdueFpuZFJXdW5IaFlLMU9RbUJyNm5RU19CRTRjcmtFTm5PbWZzWEJjcWJTTU10d2swam9id1h2QlJNYkRmOW9nVENGd2FySWFxVjFwdFB4NlpZdUpfd2EzdjBlMHJtb3gzMUZoMmxqS3k4VVNBR3E1SVkwcnhnTFIzRzRtTElsZGM3WVZNeUx2S0U5bUxfRG5KZ3RSN09ZMG1IQnE3QmdkdmhxTy1HSDBhdnVIUXBrd0x1MTNDdlBsV0RUMkllYktWZ1lhUEx4RkdjbGxnZ0tBVEdtdXhKempvby1fb0g3dWIyR2RmeVdhelJrZHdzRE9DaXRlUEE0eFl1eXZTLVN0UDRHbTY2R3VqMkwxX3RvTS1ZaUxXMGlFRFBOME4xT2l6QW41akw1LVAybU5OVEdLSWJoZ2dTUFEzNTRhQjFwTHpYTTdrSmhuNzdneUR0ZU8yWUcwSk8xblZUM2tjLVpZTy1QdDl5YURkWHREWGpVLXgxV0JmTkNjTG52dUJHOGM2X0hScDBNeEwwOVpiUnJCXy0tVlZ4ZnEyVHJYd3J6TWJxaGtWYzAyYUZ3WjBrVkgxRGlCTmpGNm8weWJXZ3hDNFN3bkxfcU0ybm5SaUE0alR3LVlPSVNnSkJxeTR2dmpWQ0FpbkxvOFJ3YWE4WHBLeGhGT2VGdWZBeGtBV21yRF9mdlh0QWh5NFV0YWhSZll1b281OUtycTVUMFNRa3g4YjdCVjNZUk5ub0NJaFVqanZ0dnBvTThaM2kxWVd1ODU4U1E?oc=5",
-    "press": "전자신문",
-    "date": "2026-08-03",
-    "labels": [
-     "RE"
-    ],
-    "url": "https://www.etnews.com/tools/image_popup.html?v=bjQ5VkNYY2dLZTZMZFBUbmNzandvWmpGcjBTK1pHYm1CUVRXR0pTMldlYVZkdE5JeGJVUFVVNURJN04rbmhKTWdkaUJub01Db0VBTjJiNFRyamRtY2Z6OFR3OVltUjg3N2dDeGVXSWpUZjRTR1E1YmZSd0RFR1NHUFZPWnNDTHNyMDd6cWNjNzM2dEE1dEVvNzBNK0ZQTW9vMlRDM2RIWkp6L0tXU0NaeGk0Y3A5VGZuQ3ZiQXBLTVRVN3pPTGRVZzg3bmlGOU9XYXEwaDN4bUJMY0NQSE1HbWY3VTdLdFptYWM1dmVaeC9STlh6MUc4endteC9ZR0o5U2pWMGY0Mml0ZTNOMXJYbklqOVkwZE5iRHhUSGxySDN5a2E3TkdvNS9UV0VVOHpGSjlqT2lxTjYrRUR4bGVwQ29PK1JqY04rSjg0NVlRd2dmU01mWTZHaVZoK3dTcGZuUU9oc254eGdGdm8wd2xkRStGTFFNdVRudEdKaEVlTEVpVWo4bDlMK1hEeGducjBlUStURkZlVEhnOHcrRTBEaURvRHFnZnFtSWJybDdGOGI5YlhKL25DWWY0T3lTUWNLTVdvQlRkY3ZyZ3RLZTM5STB6a3dySTlQWjIvVUFiU2xFelNXU1JjbTJhN1FKUVVmMWR5UUFSbE1ONzd0akRhUWE3NlMzdHhzT1d1ek5WU3BXMkhNUlExaGd4dVJHbXRWYVBkcTdYUnM3OGRGdUt4VFpSSlhtZTFwcjd1NFNpMGhjRHZ3Z3hNdStSL2dXbkdmZnpac2hvNXBNT2hOV28vRllNY3EyZ01yaWhaRDJPNWswdzQ1NVhMbGZtRFRsU3dpYWRXSFNGaU5yU3NjR3dDOTdUVXloY0pPU1dYcTRQOEdDczAvR3hjaFRLb2JpYy9FZXpReEo1ZW1DYzdKREorQWJkbUNWaldiQ0FvU0psa3JVTkVaR2wyUDFPTjlZZE1LbnprR2tFcTZDOG56bHdJUXFTU2JuT2Fsekt3aUNPdTY3U3BmQUxVR2dFV3BOYVY5aTJLWDB2UFpBMjA3ekFKeFBkWE5EL1dZNElRaEdPZEtrQUl5d0tTMmVYQTQ4V0JtTWNxZ0RhL1FRWHNlaC9VSnUwOTBNZEhtVG5IVk5zZ29Vazg2UjY5MWErOVZ1YmFiYk1LMnZ5akVaUThzN2ZZMHFRSjF1VWxGYWNIZHZybjhGeFFyV1NzMXBhY3c4dWtCYks5YXVYWWgwZGNaMk9JeUxzRTBLeCtENVpmcloxUnZIa0ZqdGlTcFNIQnA2RU9PSHhZVkNRMlJwZkd3ekduMzVweGwvb2lBWnViTDYxSFFERT0",
-    "excerpt": "전하진 SDX재단 이사장(오른쪽)이 김선민 그람 회장과 지난달 27일 경기도 성남시 판교스타트업캠퍼스에서 '기후테크 기반 탄소감축 생태계 조성 및 신재생에너지 산업 확산'을 위한 업무협약서(MOU)를 교환하며 기념촬영했다.",
-    "hl": "재생에너지"
-   }
-  ],
   "M292": [
-   {
-    "title": "[현장] 김재원 엘리스그룹 대표 \"모듈형 DC로 GPU 1만장 클러스터…전력 효율 2배\"",
-    "link": "https://news.google.com/rss/articles/CBMiRkFVX3lxTE1NdENvcE02M1dpRkR4a3VMMGNCbGtHRGt0dFBpOGFmOFctbHlIUTJkZ05ab2pOdHRnOE5nQW9sSUFVNHMxeEE?oc=5",
-    "press": "v.daum.net",
-    "date": "2026-04-15",
-    "labels": [
-     "POWER"
-    ],
-    "excerpt": "[아이뉴스24 윤소진 기자] 엘리스그룹이 모듈형 데이터센터(PMDC)와 이더넷 기반 클러스터링 기술로 가성비 AI 인프라 시장 공략에 나선다. 3개월 안에 세울 수 있는 빠른 구축 속도와 일반 데이터센터 대비 2배 높은 전력 효율이 무기다. 엘리스그룹은 AI 교육 실습 플랫폼 엘리스LXP를 6200여개 기업·기관에 공급하며 성장해온 에듀테크 기업으로, 최근",
-    "hl": "전력",
-    "url": "https://v.daum.net/v/92xCzGJ6lI?f=p"
-   },
    {
     "title": "김재원 경북지사 예비후보, 포스코 수소환원제철사업 인허가 환영",
     "link": "https://news.google.com/rss/articles/CBMiT0FVX3lxTE5tdW1aYU1DejJNMHNnd2V3R1NMelQ1MW1vNVV0cUJDdEI4T2g3VHhLZC1pYzFkYjFMb2lqbGJvNkRMd1l1VHh1U2t4TXc3RkE?oc=5",
@@ -5631,7 +5525,8 @@
     "press": "이로운넷",
     "date": "2025-09-23",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "strong": 1,
     "excerpt": "이로운넷 = 이정석 기자국내 원자력발전소 내에 보관된 사용후핵연료(폐연료봉)가 2,500만 개를 넘어서며 국민 2명당 1개꼴로 고준위 방사성 폐기물을 떠안고 있다는 지적이 제기됐다. 특히 일부 원전은 사용후핵연료 저장률이 임계치를 넘어 국민 안전을 직접 위협하고 있다는 우려가 커지고",
@@ -5657,7 +5552,8 @@
     "press": "파이낸셜뉴스",
     "date": "2026-07-10",
     "labels": [
-     "NUCLEAR"
+     "NUCLEAR",
+     "POWER"
     ],
     "excerpt": "정청래(왼쪽부터), 송영길, 김민석 더불어민주당 의원이 3일 서울 용산 서울드래곤시티호텔에서 열린 더불어민주당 후반기 국회 대비 국회의원 워크숍에 참석해 미소짓고 있다. 뉴시스 [파이낸셜뉴스] 더불어민주당 대표 선거 출사표를 던진 송영길 의원은 10일 삼성전자 광주공장을 찾아 호남에 원자력발전소를 추가로 건설해야 한다고 주장했다. 이재명",
     "hl": "원자력",
