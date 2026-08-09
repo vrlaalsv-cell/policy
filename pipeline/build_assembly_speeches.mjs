@@ -18,6 +18,9 @@ import { paths } from "./lib/env.mjs";
 
 const [tagPath] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const DRY = process.argv.includes("--dry");
+// ⚠ build_tag_batches.mjs 에 준 필터와 **똑같이** 줘야 id 가 맞는다. 다르면 엉뚱한 발언에 태깅이 붙는다.
+const commArg = process.argv.find((a) => a.startsWith("--committees="));
+const COMM = commArg ? commArg.split("=").slice(1).join("=").split(",").map((s) => s.trim()).filter(Boolean) : [];
 if (!tagPath) { console.error("사용: node pipeline/build_assembly_speeches.mjs <tagged.json> [--dry]"); process.exit(1); }
 
 const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR"];
@@ -37,8 +40,10 @@ const unesc = (s) => String(s || "")
   .replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 const norm = (s) => String(s || "").replace(/\s+/g, "").slice(0, 40);
 const seenPrior = new Set(app.members.flatMap((m) => (m.quotes || []).flatMap((q) => [norm(q.core), norm(q.pre)])).filter(Boolean));
-const items = src.filter((s) => !seenPrior.has(norm(s.text)));
-console.log(`태깅 대상 재현: ${src.length} → ${items.length}건 (태깅 결과 ${tagged.length}건)`);
+let items = src;
+if (COMM.length) items = items.filter((s) => COMM.some((c) => String(s.committee).startsWith(c)));
+items = items.filter((s) => !seenPrior.has(norm(s.text)));
+console.log(`태깅 대상 재현: ${src.length} → ${items.length}건 (태깅 결과 ${tagged.length}건)${COMM.length ? ` · 위원회 ${COMM.join(",")}` : ""}`);
 if (items.length !== tagged.length) console.warn(`⚠ 건수가 다르다 — id 정렬이 어긋났을 수 있으니 결과를 확인할 것`);
 
 const byName = new Map(app.members.map((m) => [m.name, m]));

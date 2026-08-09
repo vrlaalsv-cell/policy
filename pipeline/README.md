@@ -36,6 +36,33 @@ node pipeline/build_ai_input.mjs && node pipeline/build_ai.mjs  # ⑤ AI 종합�
   **기존 발언(다른 상임위·국정감사분)은 보존**한다 — 이번 수집은 두 위원회만이라 덮으면 나머지가 사라진다.
 - 함정(한 자리 월·일, 필리버스터 컬럼 밀림, 발언내용1~7 분할 등)은 `node pipeline/findings.mjs 발언` 참고.
 
+### 발전원별 주요인사 보드 갱신
+
+`web/bizboard.js`(조직도 하단 "사업별 우호도" 카드)는 국회 발언 DB(`web/data.js`)에서 사업×성향(6×3=18그룹)별로
+가장 임팩트 있는 의원을 AI로 골라 3줄 요약한 것이다.
+
+| 스크립트 | 입력 | 출력 |
+|---|---|---|
+| `build_board_input2.mjs` | `web/data.js` | `data/_board_input.json` (그룹별 후보 + 발언 표본) |
+| *(AI 선정·요약)* | 위 입력 | `pipeline/wf_board.js` 워크플로 결과 |
+| `build_board.mjs` | `data/_board_results.json` | `web/bizboard.js` |
+
+```bash
+node pipeline/build_board_input2.mjs                 # ① 현재 발언 DB에서 후보 재계산
+                                                       # ② AI 선정·요약 (Claude Code, wf_board.js 18그룹)
+                                                       #    결과를 data/_board_results.json 형식({results:[{biz,stance,picks}]})으로 저장
+node pipeline/build_board.mjs                         # ③ 빌드
+```
+
+- `build_board_input2.mjs`는 `web/data.js`의 `members[].quotes`(이미 사업 태깅됨)를 직접 읽는다 — 국회 발언을
+  갱신한 뒤에는 반드시 이걸 먼저 돌려 후보를 다시 계산해야 보드가 최신 발언과 일치한다.
+  ⚠ 구버전 `build_board_input.mjs`는 `data/utt_ctx.json`(저장소에 없음)을 읽어 재생성이 막혀 있었다 — 쓰지 말 것.
+- AI 응답에서 `biz`/`stance`가 `NUCLEAR`/`원전`, `neutral`/`중립`처럼 다른 표기로 섞여 나오거나 같은 그룹이
+  중복될 수 있다. 병합할 때 정규화하고 중복은 picks가 더 많은 쪽을 채택할 것(빈 그룹은 후보 부족이면 정상).
+- `build_board.mjs`는 실린 인물의 발언 수(count)를 AI 응답이 아니라 `data/_board_input.json`(②의 입력,
+  ①이 `web/data.js`에서 직접 센 값)에서 가져와 채운다 — AI가 숫자를 안 써도(또는 틀려도) 화면엔 ①이 계산한
+  실제 값이 나간다. 다만 그 값이 최신이려면 ①을 먼저 최신 발언 DB로 다시 돌려야 한다.
+
 ### 청와대(국무·차관회의) 갱신
 
 | 스크립트 | 입력 | 출력 |

@@ -30,6 +30,8 @@ const arg = (k, d) => {
 const SINCE = arg("since", "2024-05-30");   // 제22대 국회 임기 개시일
 const UNTIL = arg("until", "2030-12-31");
 const DRY = process.argv.includes("--dry");
+// 에너지가 주업이 아닌 위원회(기재위·과방위·국토위 등)는 전량이 수십만 건이라 키워드 모드로 받는다
+const BY_KEYWORD = process.argv.includes("--by-keyword");
 const COMMITTEES = arg("committees", "기후에너지환경노동위원회,산업통상자원중소벤처기업위원회").split(",").map((s) => s.trim()).filter(Boolean);
 
 const RAW = join(paths.data, "raw_speeches");
@@ -60,14 +62,21 @@ function parseList(html) {
   return out;
 }
 
-/** 위원회 하나를 기간으로 훑어 발언 메타 전량 수집 */
-async function listCommittee(comm) {
+/** 위원회 하나를 기간으로 훑어 발언 메타 수집.
+ *  word 를 주면 서버에서 그 키워드로 먼저 걸러 받는다.
+ *
+ *  ⚠ 위원회 전량(word 없음)은 에너지가 주업인 위원회에서만 쓸 것.
+ *    기재위·과방위·국토위는 22대 전량이 28만 건이라(실측) 다 받으면 몇 시간·수백 MB 다.
+ *    어차피 같은 ENERGY_KEYWORDS 로 로컬 필터를 걸므로, 서버에서 미리 걸러도 결과가 같다.
+ */
+async function listCommittee(comm, word) {
   const found = new Map();
   const PER = 1000;
+  const q = word ? `&searchWord=${encodeURIComponent(word)}&srchDisp=${encodeURIComponent(word)}&phraseField=content&phraseSearch=Y` : "";
   for (let page = 1; page <= 200; page++) {
     const url = `${BASE}/content?searchType=content&srchIdx=content&tabGb=content&srchGb=total&orgId=NAM`
       + `&sort=date:desc&pageNo=${page}&recordCountPerPage=${PER}&facetDaeNum=${DAE}`
-      + `&facetCommName=${encodeURIComponent(comm)}&isDetail=Y`
+      + `&facetCommName=${encodeURIComponent(comm)}&isDetail=Y${q}`
       + `&dtl_startMeetingDate=${ymd(SINCE)}&dtl_endMeetingDate=${ymd(UNTIL)}`;
     const res = await get(url);
     const html = await res.text();
@@ -75,11 +84,9 @@ async function listCommittee(comm) {
     if (html.length < 2000) throw new Error(`${comm} p${page}: 응답이 비정상(${html.length}b) — 파라미터/사이트 변경 의심`);
     const rows = parseList(html);
     rows.forEach((r) => found.set(r.contentId, { ...r, committee: comm }));
-    process.stdout.write(`\r  ${comm} p${page} → 누적 ${found.size}건   `);
     if (rows.length < PER) break;
     await sleep(700);
   }
-  process.stdout.write("\n");
   return [...found.values()];
 }
 
@@ -150,7 +157,26 @@ const PROCEDURAL = /의석을 정돈|성원이 되었으므로|개회하겠습�
   console.log(`   출처: 국회도서관 발언 빅데이터 (인증키 불필요)`);
 
   let metas = [];
-  for (const c of COMMITTEES) metas = metas.concat(await listCommittee(c));
+  if (BY_KEYWORD) {
+    console.log(`   키워드 모드: ENERGY_KEYWORDS ${ENERGY_KEYWORDS.length}개로 서버에서 먼저 걸러 받는다`);
+    for (const c of COMMITTEES) {
+      const seen = new Map();
+      for (let i = 0; i < ENERGY_KEYWORDS.length; i++) {
+        const rows = await listCommittee(c, ENERGY_KEYWORDS[i]);
+        rows.forEach((r) => seen.set(r.contentId, r));
+        process.stdout.write(`\r  ${c} [${i + 1}/${ENERGY_KEYWORDS.length}] ${ENERGY_KEYWORDS[i]} → 누적 ${seen.size}건        `);
+        await sleep(400);
+      }
+      process.stdout.write("\n");
+      metas = metas.concat([...seen.values()]);
+    }
+  } else {
+    for (const c of COMMITTEES) {
+      const rows = await listCommittee(c);
+      console.log(`  ${c} → ${rows.length}건`);
+      metas = metas.concat(rows);
+    }
+  }
   const uniq = [...new Map(metas.map((m) => [m.contentId, m])).values()];
   console.log(`  발언 메타 ${uniq.length}건 (중복 제거 후)`);
   if (!uniq.length) { console.error("✗ 수집된 발언이 없습니다 — 파라미터나 사이트 구조 변경 의심"); process.exit(1); }
@@ -161,7 +187,10 @@ const PROCEDURAL = /의석을 정돈|성원이 되었으므로|개회하겠습�
   const files = [];
   for (let i = 0; i < uniq.length; i += BATCH) {
     const chunk = uniq.slice(i, i + BATCH);
-    const name = `nanet_${ymd(SINCE)}_${String(i / BATCH + 1).padStart(3, "0")}`;
+    // ⚠ 파일명에 위원회를 넣어야 한다. 예전엔 `nanet_<since>_<n>` 이라 위원회를 나눠 돌리면
+    //   파일명이 겹쳐 "이미 받음"으로 건너뛰고 **다른 위원회 파일을 다시 파싱**했다(신규 0건).
+    const tag = COMMITTEES.map((c) => c.slice(0, 2)).join("");
+    const name = `nanet_${tag}_${ymd(SINCE)}_${String(i / BATCH + 1).padStart(3, "0")}`;
     process.stdout.write(`\r  다운로드 ${i + chunk.length}/${uniq.length} (${name})   `);
     files.push(await downloadBatch(chunk.map((x) => x.contentId), name));
     await sleep(800);
@@ -182,26 +211,39 @@ const PROCEDURAL = /의석을 정돈|성원이 되었으므로|개회하겠습�
   const clean = energy.filter((r) => !PROCEDURAL.test(r.text) && r.text.length >= 30);
   console.log(`  파싱 ${recs.length}건 → 의원 발언 ${mine.length}건 → 에너지 ${energy.length}건 → 의사진행·초단문 제외 후 ${clean.length}건`);
 
-  // ── 대량 실패 가드 (뉴스 수집기와 같은 장치) ──
+  // ── 기존 결과와 병합 ──
+  //   ⚠ 덮어쓰면 안 된다. 위원회를 나눠 돌리는 게 정상 사용법이라(--committees),
+  //     3개 위원회만 수집했다고 이전 위원회 결과가 사라지면 안 된다.
   const prev = existsSync(OUT) ? JSON.parse(readFileSync(OUT, "utf8")) : null;
-  if (prev && prev.speeches && prev.speeches.length > 0 && clean.length < prev.speeches.length * 0.6) {
-    console.error(`\n🛑 중단: 기존 ${prev.speeches.length}건 → 이번 ${clean.length}건 으로 급감. 덮어쓰지 않습니다.`);
+  const key = (r) => `${r.conferNum}|${r.seq}|${r.speaker}|${r.text.slice(0, 30)}`;
+  const merged = new Map((prev?.speeches || []).map((r) => [key(r), r]));
+  const beforeN = merged.size;
+  clean.forEach((r) => merged.set(key(r), r));
+  const all = [...merged.values()];
+  console.log(`  병합: 기존 ${beforeN}건 + 이번 ${clean.length}건 → ${all.length}건 (신규 ${all.length - beforeN})`);
+
+  // ── 대량 실패 가드 (뉴스 수집기와 같은 장치) ──
+  //   이번 수집분이 이 위원회들의 기존 보유분보다 크게 줄면 파서·사이트 변경을 의심한다.
+  const prevSameComm = (prev?.speeches || []).filter((r) => COMMITTEES.some((c) => r.committee.startsWith(c)));
+  if (prevSameComm.length > 0 && clean.length < prevSameComm.length * 0.6) {
+    console.error(`\n🛑 중단: 같은 위원회 기존 ${prevSameComm.length}건 → 이번 ${clean.length}건 으로 급감. 저장하지 않습니다.`);
     console.error(`   원본은 ${RAW} 에 남아 있으니 파서만 고쳐 다시 돌리면 됩니다.`);
     process.exit(1);
   }
 
-  const dates = clean.map((r) => r.date).filter(Boolean).sort();
+  const dates = all.map((r) => r.date).filter(Boolean).sort();
   writeFileSync(OUT, JSON.stringify({
     updatedAt: new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 19),
     source: "국회도서관 발언 빅데이터(dataset.nanet.go.kr) · 인증키 불필요",
     range: { since: SINCE, until: UNTIL, first: dates[0] || null, last: dates[dates.length - 1] || null },
-    committees: COMMITTEES, rawFiles: files.map((f) => f.split(/[\\/]/).pop()),
+    committees: [...new Set([...(prev?.committees || []), ...COMMITTEES])],
+    lastRun: { committees: COMMITTEES, at: new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 19), added: all.length - beforeN },
     totalParsed: recs.length, memberSpeeches: mine.length, energyMatched: energy.length,
-    speeches: clean,
+    speeches: all,
   }, null, 1), "utf8");
 
-  const byC = {}; clean.forEach((r) => (byC[r.committee] = (byC[r.committee] || 0) + 1));
-  const byM = {}; clean.forEach((r) => { const k = r.date.slice(0, 7); byM[k] = (byM[k] || 0) + 1; });
+  const byC = {}; all.forEach((r) => (byC[r.committee.replace(/-.*/, "")] = (byC[r.committee.replace(/-.*/, "")] || 0) + 1));
+  const byM = {}; all.forEach((r) => { const k = r.date.slice(0, 7); byM[k] = (byM[k] || 0) + 1; });
   console.log(`✔ ${OUT}`);
   console.log(`  위원회별 ${JSON.stringify(byC)}`);
   console.log(`  월별 ${Object.entries(byM).sort().map(([k, v]) => `${k}:${v}`).join(" ")}`);
