@@ -23,18 +23,29 @@
 | `build_assembly_speeches.mjs` | 판정 JSON | `web/data.js` 의 `members[].quotes` / `stance` 갱신 |
 
 ```bash
-node pipeline/collect_assembly_speeches.mjs            # ① 기노위·산업위 22대 전체 (증분)
-node pipeline/build_tag_batches.mjs --only-new         # ② 아직 태깅 안 된 것만 배치로
+node pipeline/collect_assembly_speeches.mjs             # ① 기본 위원회(기후에너지환경노동위·산업통상자원중소벤처기업위) 22대 전체 (증분)
+node pipeline/collect_assembly_speeches.mjs --committees=<위원회명,...> --by-keyword   # ①' 그 외 위원회
+node pipeline/build_tag_batches.mjs --only-new [--committees=<위원회명,...>]   # ② 아직 태깅 안 된 것만 배치로
                                                        # ③ AI 태깅 (Claude Code)
-node pipeline/build_assembly_speeches.mjs <판정.json> --dry   # ④ --dry 로 먼저 확인
+node pipeline/build_assembly_speeches.mjs <판정.json> [--committees=<위원회명,...>] --dry   # ④ --dry 로 먼저 확인
 node pipeline/build_ai_input.mjs && node pipeline/build_ai.mjs  # ⑤ AI 종합분석 갱신
 ```
 
 - **원본 xlsx 는 PC 에만** (`data/raw_speeches/`, gitignore). 정규화·판정 결과는 커밋해서 NAS 로.
 - ①은 이미 받은 배치를 건너뛴다. 주기적으로 다시 돌리면 새 회의분만 받는다.
+- ②·④에 `--committees=`를 줬으면 **①'과 정확히 같은 목록**을 줄 것 — 다르면 배치 id 가 어긋나 엉뚱한
+  발언에 태깅이 붙는다.
 - ④는 인용문이 원문에 실제로 있는지, 기존 발언과 겹치지 않는지 검사해 걸러낸다.
-  **기존 발언(다른 상임위·국정감사분)은 보존**한다 — 이번 수집은 두 위원회만이라 덮으면 나머지가 사라진다.
+  **기존 발언(다른 상임위·국정감사분)은 보존**한다 — 위원회 단위로 덧붙이는 구조라 한 번에 다 갱신할 필요 없다.
 - 함정(한 자리 월·일, 필리버스터 컬럼 밀림, 발언내용1~7 분할 등)은 `node pipeline/findings.mjs 발언` 참고.
+
+**위원회별 수집 방식이 다르다 (실측 2026-08-09):**
+
+| 위원회 | 방식 | 원본(raw_speeches) 범위 |
+|---|---|---|
+| 기후에너지환경노동위원회 · 산업통상자원중소벤처기업위원회 | 무필터 전량(`--by-keyword` 없이) | 위원회 전체 발언 — 나중에 `ENERGY_KEYWORDS` 를 넓혀도 **로컬 재처리만**으로 끝난다 |
+| 기획재정위원회 · 과학기술정보방송통신위원회 · 국토교통위원회 | `--by-keyword`(검색 요청에 키워드를 실어 서버에서 먼저 거름) | **키워드 매칭된 서브셋뿐**이다. 에너지가 본업이 아닌 위원회라 전량(28만여 건)을 받는 게 비현실적이라 이렇게 했다. 키워드 목록을 넓히면 이 위원회들만 **서버 재요청**이 필요하다. |
+| 그 외(국방위·농림축산식품해양수산위·행정안전위·외교통일위·법제사법위·교육위 등) | 아직 안 함 | 2025-10 이전 수동 수집분(국정감사 위주)만 보존돼 있다. 필요해지면 위 표의 두 방식 중 하나로 `--committees=` 붙여 돌리면 된다. |
 
 ### 발전원별 주요인사 보드 갱신
 

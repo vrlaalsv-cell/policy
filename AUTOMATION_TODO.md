@@ -16,8 +16,8 @@
 | 코드 배포 | `scripts/autodeploy.sh` | ✅ **자동** — DSM 작업 스케줄러 |
 | `web/cabinet.js` (청와대 발언·성향) | `update-cabinet` → `extract_minutes.py` → **AI 판정** → `merge_cabinet_judged` → `build_cabinet2` | ⚠️ 1단계만 자동, **판정은 사람** |
 | `members.ai` / `speakers.ai` (AI 종합분석) | `build_ai_input` → **AI 분석** → `build_ai` | ❌ **전부 사람** |
-| `web/data.js` (국회 성향) | `build_assembly2` | ❌ 동결 — 입력(`data/utt_ctx.json`·`data/_ab2_results.json`)이 저장소에 없어 재생성 불가 |
-| `web/bizboard.js` (사업별 보드) | `build_board` | ❌ 자동 트리거 없음 (입력이 커밋돼 있어 재실행은 가능) |
+| `web/data.js` (국회 발언·성향) | `collect_assembly_speeches` → `build_tag_batches` → **AI 태깅** → `build_assembly_speeches` | ⚠️ 1단계만 자동, **태깅은 사람** — 2026-08-09 이후 갱신 경로 확보(아래 E 참고). 옛 `build_assembly2`(입력 `utt_ctx.json` 없어 동결)는 폐기, 안 씀. |
+| `web/bizboard.js` (사업별 보드) | `build_board_input2` → **AI 선정·요약** → `build_board` | ⚠️ 자동 트리거 없음. `build_board_input2`(2026-08-09 신설)가 `web/data.js` 를 직접 읽어 후보를 재계산 — 국회 발언을 갱신한 뒤 반드시 먼저 돌릴 것. 옛 `build_board_input`(입력 `utt_ctx.json` 없어 동결)는 폐기, 안 씀. |
 
 **원본과 DB의 위치 규칙** (2026-08-08 확정)
 - **회의록 PDF 원본 = 내 PC에만.** `data/cabinet_minutes/*` 는 `.gitignore` 대상 — 용량이 크고 공개 자료라 굳이 안 올린다.
@@ -170,6 +170,14 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
 - [ ] `wf_cabinet.js`·`wf_ai.js` → Anthropic SDK 스크립트로 재작성 (위 A·B)
 - [ ] 대량 실패 가드를 회의록·AI 쪽에 이식 (`5_collect_news.mjs` 패턴)
 - [ ] Dockerfile 파이썬/베이스 결정, `scheduler.mjs` 다중 작업화
-- [ ] `web/data.js` 재생성 입력 복구 (`utt_ctx.json`·`_ab2_results.json` 없음) — 없으면 국회 성향은 계속 동결
+- [x] `web/data.js` 재생성 입력 복구 — ~~`utt_ctx.json`·`_ab2_results.json` 복구~~ 대신 새 경로로 해결(2026-08-09):
+      `collect_assembly_speeches.mjs`(국회도서관 발언 빅데이터, 인증키 불필요) → `build_tag_batches` → AI 태깅 →
+      `build_assembly_speeches`. 지금은 기후에너지환경노동위·산업통상자원중소벤처기업위(전량) +
+      기획재정위·과학기술정보방송통신위·국토교통위(`--by-keyword` 서버 필터 서브셋) 5개 위원회가 최신(~2026-05)이다.
+      그 외 위원회(국방위·농해수위·행안위·외통위·법사위·교육위 등)는 여전히 2025-10 이전 수동수집분에 머물러
+      있다 — 필요해지면 `--committees=` 로 같은 경로를 반복하면 된다. 자세한 절차·함정은 `pipeline/README.md`
+      "국회(상임위 발언) 갱신" 절과 `node pipeline/findings.mjs 발언` 참고.
+- [x] `web/bizboard.js` 재생성 입력 복구 — `build_board_input2.mjs`(2026-08-09 신설)가 `web/data.js` 를
+      직접 읽어 해결. 옛 `build_board_input.mjs`(입력 없어 동결)는 폐기.
 - [ ] `data/cabinet.json` 은 아무도 안 읽는 산출물 — 정리할지 결정
 - [ ] Next.js 랜딩 앱(`app/`)은 배포 경로 밖이다 (`.dockerignore` 제외, `serve.mjs` 만 뜬다). 쓸지 말지 정리

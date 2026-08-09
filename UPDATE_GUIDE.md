@@ -10,12 +10,12 @@
 
 ### 1. `ASSEMBLY_API_KEY` (국회 API 키)
 ```
-ASSEMBLY_API_KEY=785a898e8c674fa2883460654223154e
+ASSEMBLY_API_KEY=<열린국회정보 발급 키>
 ```
 
 ### 2. `GOOGLE_FOLDER_ID` (Google Drive 폴더 ID)
 ```
-GOOGLE_FOLDER_ID=1FbC3BrfAlgWTActBQLQFSn_BP6PR0lOh
+GOOGLE_FOLDER_ID=<대상 폴더 ID>
 ```
 
 폴더 ID는 Google Drive 폴더 링크에서 추출합니다:
@@ -37,10 +37,13 @@ export GOOGLE_CREDENTIALS='{"type":"service_account",...}'
 **옵션 B: .env 파일 사용 (권장)**
 ```bash
 # .env 파일 생성
-ASSEMBLY_API_KEY=785a898e8c674fa2883460654223154e
-GOOGLE_FOLDER_ID=1FbC3BrfAlgWTActBQLQFSn_BP6PR0lOh
-GOOGLE_CREDENTIALS={"type":"service_account","project_id":"seventh-terrain-449806-t5",...}
+ASSEMBLY_API_KEY=<열린국회정보 발급 키>
+GOOGLE_FOLDER_ID=<대상 폴더 ID>
+GOOGLE_CREDENTIALS={"type":"service_account","project_id":"<프로젝트 ID>",...}
 ```
+
+> ⚠ `.env` 는 `.gitignore` 대상이라 커밋되지 않는다. 실제 키·자격증명은 **여기(문서)에 원문으로 적지 말고**
+> 각자 로컬 `.env` 또는 NAS `.env` 에만 넣을 것 — 문서는 형식만 보여주는 예시로 유지한다.
 
 ## 사용 방법
 
