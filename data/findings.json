@@ -27,7 +27,9 @@
      "what": "xlsx 생성 (POST form-urlencoded, 1회 1000건)",
      "url": "POST https://dataset.nanet.go.kr/content/down/ajax",
      "body": "viewType=CONTENT_LIST & dataInfo=<contentId 콤마구분> & downFileType=xlsx & downFileName=<이름> & dataDownKeyId=<매번 새 uuid> & dataCount=<n> & downContentType= & orgId=NAM",
-     "notes": ["응답 {\"resultCode\":\"ERR-0000\", \"fid\":\"<uuid>\"} · 검색 파라미터 재전달 불필요(contentId 만으로 동작)"]
+     "notes": [
+      "응답 {\"resultCode\":\"ERR-0000\", \"fid\":\"<uuid>\"} · 검색 파라미터 재전달 불필요(contentId 만으로 동작)"
+     ]
     },
     {
      "step": 3,
@@ -57,11 +59,34 @@
    "verifiedAt": "2026-08-08",
    "summary": "키워드에 안 걸린 발언까지 회의 통째로 필요할 때 쓰는 보완 경로. 인증 불필요. 2025-03-31 개편으로 likms.assembly.go.kr/record → record.assembly.go.kr 로 이전됐고 XML 뷰어는 제20대 국회 이후 제공.",
    "steps": [
-    { "step": 1, "what": "목록(대수·회의종류 트리)", "url": "GET https://record.assembly.go.kr/assembly/mnts/total/22.do?class_id_sch={1본회의|2상임위|5국정감사}&cmit_chk=all" },
-    { "step": 2, "what": "드릴다운(회의 id 획득)", "url": "POST /assembly/mnts/async/cmit.do (상임위·국정감사) 또는 /sess.do (본회의)", "notes": ["⚠ 헤더 X-Requested-With: XMLHttpRequest 없으면 404"] },
-    { "step": 3, "what": "회의록 전문(발언자별 div)", "url": "GET /assembly/viewer/minutes/xml.do?id=<mnts_id>&type=view" },
-    { "step": 4, "what": "발언자 단위 엑셀(실체는 HTML table)", "url": "GET /assembly/viewer/minutes/ajax/speakdownload.do?mnts_id=<id>&speaker=<mem_id>&chk_con=c&subject=<제목>" },
-    { "step": 5, "what": "원본 PDF", "url": "GET /assembly/viewer/minutes/download/pdf.do?id=<mnts_id>" }
+    {
+     "step": 1,
+     "what": "목록(대수·회의종류 트리)",
+     "url": "GET https://record.assembly.go.kr/assembly/mnts/total/22.do?class_id_sch={1본회의|2상임위|5국정감사}&cmit_chk=all"
+    },
+    {
+     "step": 2,
+     "what": "드릴다운(회의 id 획득)",
+     "url": "POST /assembly/mnts/async/cmit.do (상임위·국정감사) 또는 /sess.do (본회의)",
+     "notes": [
+      "⚠ 헤더 X-Requested-With: XMLHttpRequest 없으면 404"
+     ]
+    },
+    {
+     "step": 3,
+     "what": "회의록 전문(발언자별 div)",
+     "url": "GET /assembly/viewer/minutes/xml.do?id=<mnts_id>&type=view"
+    },
+    {
+     "step": 4,
+     "what": "발언자 단위 엑셀(실체는 HTML table)",
+     "url": "GET /assembly/viewer/minutes/ajax/speakdownload.do?mnts_id=<id>&speaker=<mem_id>&chk_con=c&subject=<제목>"
+    },
+    {
+     "step": 5,
+     "what": "원본 PDF",
+     "url": "GET /assembly/viewer/minutes/download/pdf.do?id=<mnts_id>"
+    }
    ],
    "gotchas": [
     "🔴 xml.do?id= 가 엉뚱한 회의를 조용히 반환한 사례 2회 관측(HTTP 200 + 정상 HTML 이라 눈치채기 어려움). → 응답의 print.do?mnts_id= 값과 회의록 헤더를 요청 id 와 대조하고 불일치면 재요청.",
@@ -108,6 +133,12 @@
    "what": "/assembly/mnts/async/sessCmit.do",
    "verdict": "실브라우저에서도 404(죽은 JS 코드). 상임위 드릴다운은 cmit.do 로.",
    "verifiedAt": "2026-08-08"
+  },
+  {
+   "what": "update-cabinet.mjs --all --pages=8 로 2025-09-16 이전(2025-07~2025-09 초) 국무회의·차관회의 PDF 재다운로드 시도",
+   "verdict": "목록(행안부 게시판)엔 뜨는데 다운로드 요청 자체가 전부 HTTP 400 — 34건 전량 실패, 재시도해도 동일(일시적 레이트리밋 아님). 2026-01-23 이후분(46건)은 정상 다운로드됨. 원인 미규명(첨부파일 ID 만료/재정리 추정) — 서버 응답 바디까지는 안 봤음, 필요해지면 다음 조사에서 확인.",
+   "evidence": "node pipeline/update-cabinet.mjs --all --pages=8 2회 실행, 둘 다 동일하게 2025년도 제35~57회 국무회의·제34~48회 차관회의(2025-09-16~2025-12-31 구간) 전부 \"Request failed with status code 400\", 2026-01-23 이후 46건은 100% 성공.",
+   "verifiedAt": "2026-08-09"
   }
  ]
 }

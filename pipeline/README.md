@@ -2,6 +2,21 @@
 
 외부 패키지 없이 Node 내장 기능만 사용합니다 (`global fetch`, node ≥ 18). 모든 스크립트는 루트 `.env` 를 읽습니다.
 
+## 📡 데이터 출처 (전부 무료·무인증 — 다른 사람이 자기 크레딧으로 수집해도 됨)
+
+이 표에 없는 새 출처를 찾으면 **여기 먼저 한 줄 추가**할 것(재조사 방지 원칙, 상위 `C:\AI\CLAUDE.md` 참고).
+
+| 데이터 | 출처(기관/사이트) | URL | 인증 | 수집 스크립트 |
+|---|---|---|---|---|
+| 국회 상임위 회의록 발언 | 국회도서관 발언 빅데이터 | `https://dataset.nanet.go.kr/content?...&orgId=NAM&facetDaeNum=22`(목록, 서버렌더 HTML) → `/content/down/ajax`(POST, xlsx 생성) → `/content/down/file?fid=...`(GET, 다운로드) | **불필요** | `collect_assembly_speeches.mjs` — 정확한 쿼리 파라미터·함정은 `data/findings.json`(`id: nanet-speech-bigdata`) |
+| 국무회의·차관회의 회의록 PDF | 행정안전부(행안부) 국무회의록 게시판 | `https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardList.do?bbsId=BBSMSTR_000000000430` | **불필요** | `update-cabinet.mjs` (`--pages=N`으로 더 과거까지, `--all`로 인덱스 무시 전량) |
+| 국회의원 명단·기본정보 | 열린국회정보 Open API | `https://open.assembly.go.kr` | **API 키 필요**(`ASSEMBLY_API_KEY`) | `1_collect_members.mjs` |
+| 의원별 최근 기사 | Google 뉴스 RSS(기본) 또는 네이버 뉴스 검색(키 있으면 우선) | Google: `https://news.google.com/rss/search` / 네이버: `https://openapi.naver.com/v1/search/news.json` | Google=불필요, 네이버=`NAVER_CLIENT_ID/SECRET` | `5_collect_news.mjs` |
+
+⚠ **행안부 다운로드는 최근분만 된다(실측 2026-08-09)** — 2026-01-23 이전(2025-07~2026-01-20) 회의록은
+목록엔 뜨지만 다운로드 요청이 전부 `HTTP 400`. 원인 미규명, `data/findings.json`(dead_ends)에 기록됨.
+그 구간 PDF를 이미 받아 둔 적이 있다면(이 PC에 없어도) **지우지 말고 보관**해서 팀과 공유하면 재수집이 준다.
+
 | 스크립트 | 입력 | 출력 | 필요 키 |
 |---|---|---|---|
 | `1_collect_members.mjs` | 열린국회 API | `data/members.json` | `ASSEMBLY_API_KEY` |
