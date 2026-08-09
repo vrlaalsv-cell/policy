@@ -421,7 +421,7 @@
 
   // ── 청와대 회의록 분석 (window.CABINET_DATA) ──
   var CAB = window.CABINET_DATA || null;
-  function bizLabelC(id) { var m = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CITYGAS: "도시가스", NUCLEAR: "원전" }; return m[id] || id; }
+  function bizLabelC(id) { return bizLabel(id); } // META.businesses 기반(bizLabel)과 동일 — 하드코딩 중복 제거
   function stmtHTML(q) {
     var s = stanceInfo(q.stance);
     var biz = (q.businesses || []).map(bizLabelC).join(", ");

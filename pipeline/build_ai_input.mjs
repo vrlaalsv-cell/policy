@@ -11,7 +11,7 @@ const NEWS = (function () { try { return JSON.parse(readFileSync(join(paths.data
 const byMemberNews = NEWS.byMember || {};
 
 const SLABEL = { favor: "우호", oppose: "비우호", neutral: "중립", unknown: "자료없음" };
-const BIZLABEL = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CITYGAS: "도시가스", NUCLEAR: "원전" };
+const BIZLABEL = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CITYGAS: "도시가스", NUCLEAR: "원전", ESOL: "에너지솔루션", DISTE: "분산에너지" };
 const BIZ = Object.keys(BIZLABEL);
 function stanceLine(st) { return BIZ.map((b) => BIZLABEL[b] + ":" + SLABEL[(st && st[b]) || "unknown"]).join(" · "); }
 function cap(s, n) { s = s || ""; return s.length > n ? s.slice(0, n) + "…" : s; }

@@ -5,7 +5,7 @@ import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
 
-const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR"];
+const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR", "ESOL", "DISTE"];
 function loadRes(f) { try { return JSON.parse(readFileSync(f, "utf8")).results || []; } catch { return []; } }
 const results = [
   ...loadRes(join(paths.data, "_board_results.json")),

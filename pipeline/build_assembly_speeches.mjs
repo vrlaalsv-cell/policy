@@ -23,14 +23,15 @@ const commArg = process.argv.find((a) => a.startsWith("--committees="));
 const COMM = commArg ? commArg.split("=").slice(1).join("=").split(",").map((s) => s.trim()).filter(Boolean) : [];
 if (!tagPath) { console.error("사용: node pipeline/build_assembly_speeches.mjs <tagged.json> [--dry]"); process.exit(1); }
 
-const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR"];
+const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR", "ESOL", "DISTE"];
 const tagged = JSON.parse(readFileSync(tagPath, "utf8"));
 const src = JSON.parse(readFileSync(join(paths.data, "assembly_speeches.json"), "utf8")).speeches;
 
 // build_tag_batches.mjs 가 --only-new 로 걸러낸 순서와 같아야 한다 → 같은 방식으로 재현
 const DJ = join(paths.web, "data.js");
 const dj = readFileSync(DJ, "utf8");
-const head = dj.slice(0, dj.indexOf("{"));
+// ⚠ head 를 원본 그대로 보존하면 옛 스크립트 이름·사업 개수가 영영 안 바뀐다 — 매번 새로 생성한다.
+const head = `/* 자동 생성 — build_assembly_speeches.mjs. 22대 국회의원 명단+프로필+${BIZ.length}사업(원전 포함) 성향(회의록 맥락 발췌·회의명 표기). */\n`;
 const tail = dj.slice(dj.lastIndexOf("}") + 1);
 const app = JSON.parse(dj.slice(dj.indexOf("{"), dj.lastIndexOf("}") + 1));
 
@@ -141,7 +142,10 @@ if (fixed) console.log(`HTML 엔티티 정리 ${fixed}건`);
 copyFileSync(DJ, DJ + ".bak");
 app.meta = app.meta || {};
 app.meta.updatedAt = new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 10);
-app.meta.analysisNote = `22대 국회 회의록 발언 ${total}건 발췌 기반 SK E&S 사업별 성향 (기후에너지환경노동위·산업통상자원중소벤처기업위 전수 + 기존 국정감사분)`;
+app.meta.analysisNote = `22대 국회 회의록 발언 ${total}건 발췌 기반 SK E&S ${BIZ.length}개 사업별 성향 (상임위 17개 전 위원회 + 기존 국정감사분)`;
+if (app.meta.source && app.meta.source.includes("성향은 회의록 분석 전")) {
+  app.meta.source = app.meta.source.replace(/\s*성향은 회의록 분석 전\.?/, "");
+}
 writeFileSync(DJ, head + JSON.stringify(app) + tail, "utf8");
 console.log(`✔ ${DJ} (백업: data.js.bak)`);
 console.log(`  다음: node pipeline/build_ai_input.mjs → AI 종합분석 재생성 → node pipeline/build_ai.mjs`);

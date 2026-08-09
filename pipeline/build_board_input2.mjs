@@ -15,8 +15,8 @@ const arg = (k, d) => { const h = process.argv.find((a) => a.startsWith(`--${k}=
 const TOP = arg("top", 8);        // 그룹당 LLM 에 넘길 후보 수
 const STMTS = arg("stmts", 5);    // 후보당 발언 표본 수
 
-const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR"];
-const BIZLABEL = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CITYGAS: "도시가스", NUCLEAR: "원전" };
+const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR", "ESOL", "DISTE"];
+const BIZLABEL = { POWER: "전력", LNG: "LNG", RE: "재생E", H2: "수소", CITYGAS: "도시가스", NUCLEAR: "원전", ESOL: "에너지솔루션", DISTE: "분산에너지" };
 const SLABEL = { favor: "우호", neutral: "중립", oppose: "비우호" };
 
 const dj = readFileSync(join(paths.web, "data.js"), "utf8");

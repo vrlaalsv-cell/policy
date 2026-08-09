@@ -1,10 +1,10 @@
 // 청와대 재분석 결과(data/_cab_results.json) → data/cabinet.json + web/cabinet.js
-//  · 6사업(POWER,LNG,RE,H2,CITYGAS,NUCLEAR) · 발언에 앞뒤 맥락 포함 · 회의명·날짜(meeting) 유지
+//  · 8사업(POWER,LNG,RE,H2,CITYGAS,NUCLEAR,ESOL,DISTE) · 발언에 앞뒤 맥락 포함 · 회의명·날짜(meeting) 유지
 import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
 
-const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR"];
+const BIZ = ["POWER", "LNG", "RE", "H2", "CITYGAS", "NUCLEAR", "ESOL", "DISTE"];
 const res = JSON.parse(readFileSync(join(paths.data, "_cab_results.json"), "utf8"));
 let stmts = res.statements || res || [];
 console.log(`발췌 발언 ${stmts.length}건 로드`);
@@ -47,7 +47,7 @@ const bizCount = {}; BIZ.forEach((b) => bizCount[b] = byBusiness[b].length);
 const meetings = new Set(uniq.map((s) => s.meeting).filter(Boolean));
 const months = [...meetings].map((m) => (m.match(/\((\d{4}-\d{2})/) || [])[1]).filter(Boolean).sort();
 const span = months.length ? ` ${months[0]}~${months[months.length - 1]}` : "";
-const out = { updatedAt: new Date().toISOString().slice(0, 10), source: `이재명 정부 국무회의·차관회의 회의록(${meetings.size}회${span}) 발췌 분석 · 6사업(원전 포함)`, totalStatements: uniq.length, stanceCount, bizCount, speakers, byBusiness };
+const out = { updatedAt: new Date().toISOString().slice(0, 10), source: `이재명 정부 국무회의·차관회의 회의록(${meetings.size}회${span}) 발췌 분석 · 8사업(원전·에너지솔루션·분산에너지 포함)`, totalStatements: uniq.length, stanceCount, bizCount, speakers, byBusiness };
 writeFileSync(join(paths.data, "cabinet.json"), JSON.stringify(out, null, 2), "utf8");
 writeFileSync(join(paths.web, "cabinet.js"), "/* 자동생성 build_cabinet2.mjs */\nwindow.CABINET_DATA = " + JSON.stringify(out) + ";\n", "utf8");
 console.log(`✔ cabinet.json / cabinet.js · 발언자 ${speakers.length}명 · 사업별 ${JSON.stringify(bizCount)} · 성향 ${JSON.stringify(stanceCount)}`);

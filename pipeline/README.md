@@ -64,8 +64,8 @@ node pipeline/build_ai_input.mjs && node pipeline/build_ai.mjs  # ⑤ AI 종합�
 
 ### 발전원별 주요인사 보드 갱신
 
-`web/bizboard.js`(조직도 하단 "사업별 우호도" 카드)는 국회 발언 DB(`web/data.js`)에서 사업×성향(6×3=18그룹)별로
-가장 임팩트 있는 의원을 AI로 골라 3줄 요약한 것이다.
+`web/bizboard.js`(조직도 하단 "사업별 우호도" 카드)는 국회 발언 DB(`web/data.js`)에서 사업×성향(8×3=24그룹, 2026-08-09
+에너지솔루션·분산에너지 추가로 6×3→8×3)별로 가장 임팩트 있는 의원을 AI로 골라 3줄 요약한 것이다.
 
 | 스크립트 | 입력 | 출력 |
 |---|---|---|
@@ -75,7 +75,7 @@ node pipeline/build_ai_input.mjs && node pipeline/build_ai.mjs  # ⑤ AI 종합�
 
 ```bash
 node pipeline/build_board_input2.mjs                 # ① 현재 발언 DB에서 후보 재계산
-                                                       # ② AI 선정·요약 (Claude Code, wf_board.js 18그룹)
+                                                       # ② AI 선정·요약 (Claude Code, wf_board.js 24그룹)
                                                        #    결과를 data/_board_results.json 형식({results:[{biz,stance,picks}]})으로 저장
 node pipeline/build_board.mjs                         # ③ 빌드
 ```
@@ -130,7 +130,7 @@ npm run build:news                                    # 재수집 없이 web/new
 
 - **소스**: `.env` 에 `NAVER_CLIENT_ID/SECRET` 이 있으면 네이버 검색 API, 없으면 **Google 뉴스 RSS**(키 불필요).
   ⚠ Google RSS 는 이용약관상 *개인용 피드 리더* 용도로 제한 — 사내/상업 배포본은 `--source=naver` 를 쓰세요.
-- **라벨**: `lib/news_labels.mjs` 의 키워드로 제목에서 `원전·수소·재생E·LNG·도시가스·전력` 을 태깅.
+- **라벨**: `lib/news_labels.mjs` 의 키워드로 제목에서 `원전·수소·재생E·LNG·도시가스·분산에너지·에너지솔루션·전력` (8종, 2026-08-09 분산에너지·에너지솔루션 추가) 을 태깅.
   키워드가 하나도 없으면 "에너지 기사 아님"으로 버립니다(정밀도 우선). 라벨 색도 이 파일에서 나옵니다.
 - **한계**: 동명이인을 구분할 수 없습니다. `의원/정당/지역구` 단서가 있는 기사를 위로 정렬(`strong`)하고,
   나머지에는 화면에 "동명이인 확인" 표시를 답니다.

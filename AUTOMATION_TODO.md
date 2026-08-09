@@ -175,9 +175,11 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
       `build_assembly_speeches`. 22대 상임위 17개 **전 위원회 수집 완료**(2026-08-09) — 기후에너지환경노동위·
       산업통상자원중소벤처기업위(전량) + 나머지 15개(`--by-keyword` 서버 필터 서브셋: 기획재정·과방·국토교통 +
       국회운영·법제사법·정무·교육·외교통일·국방·행정안전·문화체육관광·농림축산식품해양수산·보건복지·정보·
-      여성가족). 발언 근거 4,295건(의원 227명) · AI 종합분석 248명. 새 위원회는 더 없고, 이후로는 같은 경로로
-      **주기적 증분**(신규 회의분만)만 반복하면 된다. 자세한 절차·함정은 `pipeline/README.md`
-      "국회(상임위 발언) 갱신" 절과 `node pipeline/findings.mjs 발언` 참고.
+      여성가족). 새 위원회는 더 없고, 이후로는 같은 경로로 **주기적 증분**(신규 회의분만)만 반복하면 된다.
+      자세한 절차·함정은 `pipeline/README.md` "국회(상임위 발언) 갱신" 절과 `node pipeline/findings.mjs 발언` 참고.
+      2026-08-09 사업 카테고리를 6개→8개(에너지솔루션·분산에너지 추가)로 확장하며 12,887건 전량을 8개 기준으로
+      재태깅(발언 근거 4,711건·의원 203명, AI 종합분석 국회 224명+청와대 34명) — 정확한 수치는 커밋마다
+      바뀌니 여기 박아두지 말고 `data/_assembly_tagged.json`(count 필드)·`web/data.js` 실물을 확인할 것.
 - [x] `web/bizboard.js` 재생성 입력 복구 — `build_board_input2.mjs`(2026-08-09 신설)가 `web/data.js` 를
       직접 읽어 해결. 옛 `build_board_input.mjs`(입력 없어 동결)는 폐기.
 - [ ] `data/cabinet.json` 은 아무도 안 읽는 산출물 — 정리할지 결정
