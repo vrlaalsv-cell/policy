@@ -31,7 +31,9 @@ const src = JSON.parse(readFileSync(join(paths.data, "assembly_speeches.json"), 
 const DJ = join(paths.web, "data.js");
 const dj = readFileSync(DJ, "utf8");
 // ⚠ head 를 원본 그대로 보존하면 옛 스크립트 이름·사업 개수가 영영 안 바뀐다 — 매번 새로 생성한다.
-const head = `/* 자동 생성 — build_assembly_speeches.mjs. 22대 국회의원 명단+프로필+${BIZ.length}사업(원전 포함) 성향(회의록 맥락 발췌·회의명 표기). */\n`;
+//   🔴 `window.APP_DATA = ` 대입문을 빠뜨리면 브라우저가 "데이터를 불러오지 못했습니다"만 띄운다
+//   (파일은 200 OK 로 멀쩡히 내려가고 JSON 도 정상이라 원인이 안 보인다 — 2026-08-10 실사고).
+const head = `/* 자동 생성 — build_assembly_speeches.mjs. 22대 국회의원 명단+프로필+${BIZ.length}사업(원전 포함) 성향(회의록 맥락 발췌·회의명 표기). */\nwindow.APP_DATA = `;
 const tail = dj.slice(dj.lastIndexOf("}") + 1);
 const app = JSON.parse(dj.slice(dj.indexOf("{"), dj.lastIndexOf("}") + 1));
 
