@@ -96,7 +96,13 @@ createServer(async (req, res) => {
       } catch { /* 없으면 이미지에 포함된 web/news.js 사용 */ }
     }
     const buf = await readFile(file);
-    res.writeHead(200, { "Content-Type": TYPES[extname(file).toLowerCase()] || "application/octet-stream", "Cache-Control": "no-store" });
+    // 이미지는 재배포해도 파일명이 안 바뀌니 짧게(1일)만 캐시 — 매 새로고침마다 로고·사진을
+    // 통째로 재다운로드하던 문제(no-store 전면 적용) 해소. JS/HTML은 그대로 no-store 유지
+    // — 안 그러면 "재배포됐는데 화면이 옛날 그대로"인 클라 캐시 혼동이 재발한다.
+    const ext = extname(file).toLowerCase();
+    const isImage = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".svg"].includes(ext);
+    const cacheControl = isImage ? "public, max-age=86400" : "no-store";
+    res.writeHead(200, { "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": cacheControl });
     res.end(buf);
   } catch {
     res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("404 Not Found");
