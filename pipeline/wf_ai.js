@@ -23,7 +23,7 @@ const SCHEMA = {
   required: ['results'],
 }
 
-const A = args // { dir, asm, cab }
+const A = typeof args === 'string' ? JSON.parse(args) : args // { dir, asm, cab }
 const files = []
 for (let i = 0; i < A.asm; i++) files.push(A.dir + '\\asm_b' + i + '.json')
 for (let i = 0; i < A.cab; i++) files.push(A.dir + '\\cab_b' + i + '.json')

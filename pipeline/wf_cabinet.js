@@ -28,7 +28,7 @@ const SCHEMA = {
   required: ['statements'],
 }
 
-const items = args // [{file, meeting}]
+const items = typeof args === 'string' ? JSON.parse(args) : args // [{file, meeting}]
 
 function prompt(file) {
   return `너는 SK E&S(LNG·전력·재생에너지·수소·도시가스·원전 관련 에너지 기업)의 정책 애널리스트다.

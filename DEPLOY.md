@@ -1,7 +1,8 @@
 # NAS 배포 (Synology + Cloudflare Tunnel)
 
 대시보드를 `pipeline/serve.mjs`(Node) 이미지로 굽고, Cloudflare 터널로 외부에 공개한다.
-컨테이너는 **2개**: `policy-web`(Node) + `policy-tunnel`(cloudflared). 포트포워딩·공인IP 불필요.
+컨테이너는 **3개**: `policy-web`(Node) + `policy-scheduler`(기사 자동 재수집) + `policy-tunnel`(cloudflared).
+포트포워딩·공인IP 불필요.
 
 > nginx 가 아니라 Node 로 띄우는 이유: 화면의 **🔄 업데이트 버튼이 `POST /api/update` 를 호출**하기 때문에
 > 정적 서버로만 올리면 그 기능이 404 로 죽는다.
@@ -120,8 +121,12 @@ sudo docker compose logs --tail=30 tunnel
 - 결과는 `./runtime/` 에 쌓이고, 웹 컨테이너가 `runtime/news.js` 를 **우선 서빙** → 재빌드와 무관하게 최신 유지
 - 수집이 실패하면 기존 데이터를 **덮어쓰지 않고** 그대로 둔다 (안전장치 내장)
 
-**비용은 0원** — Google 뉴스 RSS(무료)만 쓰고 유료 API(Gemini 등)는 이 파이프라인에 없다.
+**이 자동 재수집(①) 자체는 비용 0원** — Google 뉴스 RSS(무료)만 쓰고 유료 API는 이 컨테이너에 없다.
 회당 4~5분 걸리고(목록 336명 ≈ 3.8분 + 새 기사 본문만 증분), NAS CPU 부담도 미미하다.
+
+> ⚠ 대시보드의 다른 데이터(청와대 회의록 판정, 국회 발언 성향 태깅, 인물별 AI 종합분석)는 이 자동화
+> 범위 밖이다 — PC 에서 Claude Code 세션으로 사람이 주기적으로 돌려 커밋해야 갱신된다. 절차·비용은
+> [AUTOMATION_TODO.md](AUTOMATION_TODO.md) 와 `pipeline/README.md` 참고.
 횟수를 바꾸려면 `docker-compose.yml` 의 `NEWS_AT` 에 시각을 쉼표로 넣으면 된다:
 
 ```yaml
@@ -138,7 +143,8 @@ cd /volume2/docker/policy
 sudo docker compose logs --tail=20 scheduler
 ```
 
-`가동 — 매일 04:30 (KST) 수집` 이 보이면 정상. 수집이 돌면 `수집 시작/완료` 가 찍힌다.
+`가동 — 매일 06:00,09:00,12:00,15:00,18:00 (KST) 수집` 이 보이면 정상(시각은 `docker-compose.yml` 의
+`NEWS_AT` 값 그대로 찍힌다). 수집이 돌면 `수집 시작/완료` 가 찍힌다.
 
 ### ② 자동배포 — DSM 작업 스케줄러에 1회 등록 (사용자 작업)
 

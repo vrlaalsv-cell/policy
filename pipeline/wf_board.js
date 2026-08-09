@@ -14,7 +14,8 @@ const SCHEMA = {
   },
   required: ['biz', 'stance', 'picks'],
 }
-const FILE = args.file, N = args.n;
+const A = typeof args === 'string' ? JSON.parse(args) : args
+const FILE = A.file, N = A.n;
 function prompt(i) {
   return `너는 SK E&S(에너지 기업)의 정책 애널리스트다. 파일을 Read 도구로 읽어라: ${FILE}
 { groups:[{ biz, bizLabel, stance, stanceLabel, candidates:[{id,name,party,count,statements[]}] }] } 구조다.

@@ -533,28 +533,29 @@
   var brandLogo = document.querySelector(".brandwrap");
   if (brandLogo) { brandLogo.style.cursor = "pointer"; brandLogo.onclick = function () { if (landing) landing.classList.remove("hidden"); }; }
 
-  // 마지막 업데이트 시각 표시
+  // 최근 기사 갱신 시각 표시 — 뉴스 자동 수집(하루 5회, 06/09/12/15/18시 KST)의 실측 시각.
+  //  ⚠ 예전엔 🔄 업데이트 버튼을 누른 시각(localStorage)을 보여줬다. 그 버튼은 성공 여부와 무관하게
+  //  항상 "✓ 완료"를 찍고(UPDATE_GUIDE.md 참고) 이 시각도 같이 갱신했기 때문에, 실제로는 아무것도
+  //  안 바뀌었어도 "방금 업데이트됨"으로 보이는 착시가 있었다. 뉴스는 실제로 3시간 간격 자동 갱신되므로
+  //  그 실측 시각(news.json meta.collectedAt)을 그대로 보여준다 — 버튼 클릭과는 무관하게 항상 사실과 일치한다.
   function updateLastUpdateTime() {
-    var lastUpdate = localStorage.getItem("lastUpdateTime");
     var el = document.getElementById("lastUpdate");
-    if (el) {
-      if (lastUpdate) {
-        var date = new Date(lastUpdate);
-        var now = new Date();
-        var diffMs = now - date;
-        var diffMins = Math.floor(diffMs / 60000);
-        var diffHours = Math.floor(diffMs / 3600000);
-        var diffDays = Math.floor(diffMs / 86400000);
-        var timeStr;
-        if (diffMins < 1) timeStr = "방금";
-        else if (diffMins < 60) timeStr = diffMins + "분 전";
-        else if (diffHours < 24) timeStr = diffHours + "시간 전";
-        else timeStr = diffDays + "일 전";
-        el.textContent = "마지막 업데이트: " + timeStr;
-      } else {
-        el.textContent = "";
-      }
-    }
+    if (!el) return;
+    var collectedAt = NEWSMETA.collectedAt; // "YYYY-MM-DD HH:mm:ss" (KST)
+    if (!collectedAt) { el.textContent = ""; return; }
+    var date = new Date(collectedAt.replace(" ", "T") + "+09:00");
+    if (isNaN(date.getTime())) { el.textContent = ""; return; }
+    var diffMs = Date.now() - date.getTime();
+    var diffMins = Math.floor(diffMs / 60000);
+    var diffHours = Math.floor(diffMs / 3600000);
+    var diffDays = Math.floor(diffMs / 86400000);
+    var timeStr;
+    if (diffMins < 1) timeStr = "방금";
+    else if (diffMins < 60) timeStr = diffMins + "분 전";
+    else if (diffHours < 24) timeStr = diffHours + "시간 전";
+    else timeStr = diffDays + "일 전";
+    el.textContent = "최근 기사 갱신: " + timeStr;
+    el.title = "실제 수집 " + collectedAt + " (KST) · 하루 5회(06/09/12/15/18시) 자동 갱신";
   }
   updateLastUpdateTime();
 
@@ -567,27 +568,25 @@
       updateBtn.textContent = "🔄 업데이트 중…";
       updateBtn.disabled = true;
 
+      // ⚠ "최근 기사 갱신" 표시는 이제 news.json 실측 시각 기준이라 이 버튼과 무관하게 항상 정확하다
+      // (버튼 성공/실패와 무관하게 그대로 재계산될 뿐 이 요청으로 값이 바뀌지 않는다).
       var endpoint = state.view === "cabinet" ? "/api/update-cabinet" : "/api/update";
       fetch(endpoint, { method: "POST" })
         .then(function (res) { return res.json(); })
         .then(function (data) {
-          localStorage.setItem("lastUpdateTime", new Date().toISOString());
           setTimeout(function () {
             updateBtn.classList.remove("loading");
             updateBtn.disabled = false;
             updateBtn.textContent = "✓ 완료";
-            updateLastUpdateTime();
             setTimeout(function () {
               updateBtn.textContent = "🔄 업데이트";
             }, 1500);
           }, 3000);
         })
         .catch(function (err) {
-          localStorage.setItem("lastUpdateTime", new Date().toISOString());
           updateBtn.classList.remove("loading");
           updateBtn.disabled = false;
           updateBtn.textContent = "🔄 업데이트";
-          updateLastUpdateTime();
           console.error("Update request error:", err);
         });
     };

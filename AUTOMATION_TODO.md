@@ -164,7 +164,7 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
          화면·로그상으로는 정상으로 보이고 대량실패 가드도 못 잡는다.
       ② `web/app.js` 가 `data.success` 를 보지 않고 무조건 "✓ 완료" 를 띄운다. 실패해도 성공으로 보인다.
       → 발표 동안은 버튼을 감추는 게 가장 싸고 확실하다.
-- [ ] `DEPLOY.md` 문구 정정 — "컨테이너 2개"(실제 3개), "비용 0원"(API 붙이면 거짓), "매일 04:30 수집"(실제 06~18시).
+- [x] `DEPLOY.md` 문구 정정(2026-08-09) — "컨테이너 2개"→3개, "비용 0원"→자동 재수집(①)만 0원 + 범위 밖 경고 추가, "매일 04:30 수집"→실제 06/09/12/15/18시.
 
 ### 나중에 (자동화 착수 시)
 - [ ] `wf_cabinet.js`·`wf_ai.js` → Anthropic SDK 스크립트로 재작성 (위 A·B)
@@ -172,10 +172,11 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
 - [ ] Dockerfile 파이썬/베이스 결정, `scheduler.mjs` 다중 작업화
 - [x] `web/data.js` 재생성 입력 복구 — ~~`utt_ctx.json`·`_ab2_results.json` 복구~~ 대신 새 경로로 해결(2026-08-09):
       `collect_assembly_speeches.mjs`(국회도서관 발언 빅데이터, 인증키 불필요) → `build_tag_batches` → AI 태깅 →
-      `build_assembly_speeches`. 지금은 기후에너지환경노동위·산업통상자원중소벤처기업위(전량) +
-      기획재정위·과학기술정보방송통신위·국토교통위(`--by-keyword` 서버 필터 서브셋) 5개 위원회가 최신(~2026-05)이다.
-      그 외 위원회(국방위·농해수위·행안위·외통위·법사위·교육위 등)는 여전히 2025-10 이전 수동수집분에 머물러
-      있다 — 필요해지면 `--committees=` 로 같은 경로를 반복하면 된다. 자세한 절차·함정은 `pipeline/README.md`
+      `build_assembly_speeches`. 22대 상임위 17개 **전 위원회 수집 완료**(2026-08-09) — 기후에너지환경노동위·
+      산업통상자원중소벤처기업위(전량) + 나머지 15개(`--by-keyword` 서버 필터 서브셋: 기획재정·과방·국토교통 +
+      국회운영·법제사법·정무·교육·외교통일·국방·행정안전·문화체육관광·농림축산식품해양수산·보건복지·정보·
+      여성가족). 발언 근거 4,295건(의원 227명) · AI 종합분석 248명. 새 위원회는 더 없고, 이후로는 같은 경로로
+      **주기적 증분**(신규 회의분만)만 반복하면 된다. 자세한 절차·함정은 `pipeline/README.md`
       "국회(상임위 발언) 갱신" 절과 `node pipeline/findings.mjs 발언` 참고.
 - [x] `web/bizboard.js` 재생성 입력 복구 — `build_board_input2.mjs`(2026-08-09 신설)가 `web/data.js` 를
       직접 읽어 해결. 옛 `build_board_input.mjs`(입력 없어 동결)는 폐기.
