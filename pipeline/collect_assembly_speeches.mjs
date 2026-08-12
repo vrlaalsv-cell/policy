@@ -32,9 +32,20 @@ const UNTIL = arg("until", "2030-12-31");
 const DRY = process.argv.includes("--dry");
 // 에너지가 주업이 아닌 위원회(기재위·과방위·국토위 등)는 전량이 수십만 건이라 키워드 모드로 받는다
 const BY_KEYWORD = process.argv.includes("--by-keyword");
+// ⭐ --raw-only : 원본 xlsx 만 받아 `data/raw_speeches/` 에 쌓고 **끝낸다**.
+//   에너지 키워드 필터도 안 걸고 `assembly_speeches.json`(SK E&S 산출물)도 건드리지 않는다.
+//   왜 필요한가 — 이 저장소의 12,891건은 ENERGY_KEYWORDS 로 이미 걸러진 결과라(원본의 5.4%),
+//   반도체·통신·제약 같은 다른 주제로는 못 쓴다. 계열사를 늘리려면 **무필터 원본**을 확보해 두고
+//   회사별 키워드로 그때그때 로컬에서 걸러야 한다. 원본은 한 번만 받아두면 서버에 다시 안 물어봐도 된다.
+const RAW_ONLY = process.argv.includes("--raw-only");
 const COMMITTEES = arg("committees", "기후에너지환경노동위원회,산업통상자원중소벤처기업위원회").split(",").map((s) => s.trim()).filter(Boolean);
 
-const RAW = join(paths.data, "raw_speeches");
+// 원본 xlsx 보관 위치.
+//   🔴 **원본은 프로젝트가 아니라 워크스페이스 자산이다.** 같은 국회 회의록을 SK E&S 버전도,
+//   그룹사 버전도, 앞으로 만들 무엇도 똑같이 쓴다. 프로젝트 폴더 안에 두면 방마다 수백 MB 를
+//   중복 보관하거나, 새 방에서 몇 시간짜리 재수집을 또 하게 된다.
+//   → 기본값을 공용 폴더(`C:\AI\_corpus\assembly_raw`)로 둔다. `--raw-dir=` 또는 env `SPEECH_RAW_DIR` 로 바꿀 수 있다.
+const RAW = arg("raw-dir", process.env.SPEECH_RAW_DIR || "C:/AI/_corpus/assembly_raw");
 const OUT = join(paths.data, "assembly_speeches.json");
 if (!existsSync(RAW)) mkdirSync(RAW, { recursive: true });
 
@@ -207,6 +218,17 @@ const PROCEDURAL = /의석을 정돈|성원이 되었으므로|개회하겠습�
   for (const f of files) recs = recs.concat(parseXlsx(f));
   const named = recs.map((r) => ({ ...r, date: normDate(r.date) || r.date, name: cleanName(r.speaker) }));
   const mine = named.filter((r) => /^\d+$/.test(r.memberId) || roster.has(r.name));
+
+  if (RAW_ONLY) {
+    const energyN = mine.filter((r) => KW.test(r.text)).length;
+    console.log(`  파싱 ${recs.length}건 → 의원 발언 ${mine.length}건`);
+    console.log(`  (참고: 이 중 에너지 키워드 통과분은 ${energyN}건 = ${(energyN / (mine.length || 1) * 100).toFixed(1)}%)`);
+    console.log(`  ⭐ --raw-only : 원본 xlsx 만 보관하고 종료한다. assembly_speeches.json 은 건드리지 않았다.`);
+    console.log(`     원본 위치: ${RAW}`);
+    console.log(`     다음: node pipeline/build_speech_db.mjs 로 검색 가능한 DB 를 만든다.`);
+    return;
+  }
+
   const energy = mine.filter((r) => KW.test(r.text));
   const clean = energy.filter((r) => !PROCEDURAL.test(r.text) && r.text.length >= 30);
   console.log(`  파싱 ${recs.length}건 → 의원 발언 ${mine.length}건 → 에너지 ${energy.length}건 → 의사진행·초단문 제외 후 ${clean.length}건`);

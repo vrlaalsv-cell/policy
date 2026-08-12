@@ -37,7 +37,12 @@ const BBS = "BBSMSTR_000000000430";
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0 Safari/537.36";
 
 const DATA_DIR = join(process.cwd(), "data");
-const MINUTES_DIR = join(DATA_DIR, "cabinet_minutes");
+// PDF 원본은 **워크스페이스 공용 자산**이다(국회 발언 원본과 같은 원리) — 방마다 중복 보관하거나
+// 새 방에서 재수집하지 않도록 `C:\AI\_corpus\cabinet_raw` 를 기본값으로 둔다.
+// ⚠ 행안부는 오래된 회의록을 다시 안 준다(2026-01-23 이전 전량 HTTP 400, findings.json dead_ends).
+//   즉 **한 번 놓친 원본은 영영 못 받는다** → 이 폴더는 절대 지우지 말 것.
+// `--dir=` 또는 env `CABINET_RAW_DIR` 로 바꿀 수 있다. 인덱스(JSON)는 프로젝트에 남는다(커밋 대상).
+const MINUTES_DIR = arg("dir", process.env.CABINET_RAW_DIR || "C:/AI/_corpus/cabinet_raw");
 const INDEX_FILE = join(DATA_DIR, "cabinet_minutes_index.json");
 if (!existsSync(MINUTES_DIR)) mkdirSync(MINUTES_DIR, { recursive: true });
 
@@ -53,11 +58,19 @@ function meetingDate(title) {
 console.log("🔄 국무·차관회의 회의록 수집 (행정안전부)");
 
 // ---------- 기존 인덱스 ----------
+// 🔴 `--all` 은 "인덱스를 무시하고 전부 다시 받아본다"는 뜻이지 **"인덱스를 지운다"가 아니다.**
+//   예전엔 --all 이면 index 를 빈 객체로 시작해서, 이번 실행에서 못 받은 회의(행안부가 이제 400 을 주는
+//   과거분)의 항목이 **PDF 는 손에 있는데도 인덱스에서 통째로 사라졌다**(2026-08-12 실측 4건 유실 후 복구).
+//   → 파일이 실제로 남아 있는 항목은 항상 살린다.
 let index = {};
-if (!ALL && existsSync(INDEX_FILE)) {
+if (existsSync(INDEX_FILE)) {
   try {
     const j = JSON.parse(readFileSync(INDEX_FILE, "utf8"));
-    index = Array.isArray(j) ? {} : (j.posts || {});   // 구버전(배열)은 무시하고 새로 만든다
+    const prev = Array.isArray(j) ? {} : (j.posts || {});   // 구버전(배열)은 무시하고 새로 만든다
+    for (const [id, p] of Object.entries(prev)) {
+      // --all 이어도 **원본 파일이 남아 있으면 인덱스를 보존**한다. 재다운로드 여부는 아래 shouldGet 이 정한다.
+      if (!ALL || (p?.file && existsSync(join(MINUTES_DIR, p.file)))) index[id] = p;
+    }
   } catch { index = {}; }
 }
 console.log(`  기존 인덱스: ${Object.keys(index).length}건`);
