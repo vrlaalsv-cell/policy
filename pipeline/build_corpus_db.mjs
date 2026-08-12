@@ -39,6 +39,11 @@ CREATE TABLE IF NOT EXISTS speeches (
   src TEXT, conferNum TEXT, dae TEXT, classCode TEXT,
   committee TEXT, date TEXT, speaker TEXT, memberId TEXT, seq TEXT, text TEXT
 );
+-- 🔴 중복 방지 — 같은 발언이 여러 xlsx 배치에 들어온다(위원회를 나눠 받으면 겹친다).
+--   실측 2026-08-12: 중복 제거 전 1,149,618건 → 고유 1,034,540건, **10.0% 가 중복**이었다.
+--   그대로 두면 AI 판정 비용이 10% 그냥 새고, 검색 결과에도 같은 발언이 두 번 뜬다.
+--   (conferNum, seq, speaker, 본문 앞 60자) 를 자연키로 잡는다 — collect 쪽 dedupe 키와 같은 원리.
+CREATE UNIQUE INDEX IF NOT EXISTS ux_sp_nat ON speeches(conferNum, seq, speaker, substr(text,1,60));
 CREATE INDEX IF NOT EXISTS ix_sp_comm ON speeches(committee);
 CREATE INDEX IF NOT EXISTS ix_sp_date ON speeches(date);
 CREATE INDEX IF NOT EXISTS ix_sp_spk  ON speeches(speaker);
@@ -74,7 +79,8 @@ const stats = () => {
 if (STATS_ONLY) { stats(); process.exit(0); }
 
 const done = new Set(db.prepare("SELECT file FROM ingested").all().map((r) => r.file));
-const insSp = db.prepare("INSERT INTO speeches (src,conferNum,dae,classCode,committee,date,speaker,memberId,seq,text) VALUES (?,?,?,?,?,?,?,?,?,?)");
+// OR IGNORE — 위 ux_sp_nat 유니크 인덱스에 걸리면 조용히 건너뛴다(중복 10% 제거).
+const insSp = db.prepare("INSERT OR IGNORE INTO speeches (src,conferNum,dae,classCode,committee,date,speaker,memberId,seq,text) VALUES (?,?,?,?,?,?,?,?,?,?)");
 const insMi = db.prepare("INSERT INTO minutes (src,meeting,para,text) VALUES (?,?,?,?)");
 const insIng = db.prepare("INSERT OR REPLACE INTO ingested (file,kind,bytes,rows,at) VALUES (?,?,?,?,?)");
 const now = () => new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 19);
