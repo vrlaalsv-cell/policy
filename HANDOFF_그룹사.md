@@ -37,14 +37,27 @@
 
 ## 2. 지금 상태 (승계되는 것)
 
+### (a) 저장소 안 — clone 하면 따라온다
+
 | 자산 | 규모 | 승계 |
 |---|---|---|
-| `data/assembly_speeches.json` 국회 발언 원문 | 12,891건 · 17개 상임위 전 위원회 · 2024-06~2026-08 | ✅ 그대로 |
+| `data/assembly_speeches.json` **에너지로 걸러진** 국회 발언 | 12,891건 (SK E&S 용) | ✅ 그대로 |
 | `data/_assembly_tagged.json` AI 판정 | 12,891건(채택 5,127) · **내용 기반 key 보유** | ✅ 그대로 |
 | `data/_cab_results.json` 청와대 판정 + `judgedMeetings` 대장 | 발언 194건 · 판정완료 78회의 | ✅ 그대로 |
 | `data/news.json` 기사 | 420건 · NAS가 하루 5회 자동수집 | ✅ 그대로 |
 | `web/data.js` 국회 300명(발언 4,712건·AI분석 224명) | — | ✅ SK E&S 탭이 됨 |
-| `data/cabinet_minutes/*.pdf` 회의록 원본 | 46건 | ❌ **gitignore** — 필요하면 폴더째 복사 |
+
+### (b) 🔴 저장소 **밖** — `C:\AI\_corpus\` (워크스페이스 공용, git 밖)
+
+**여기가 그룹사 버전의 진짜 토대다.** clone 으로 안 따라오니 새 방에서도 **같은 경로를 그대로 보면 된다**(재수집 불필요).
+
+| 폴더 | 내용 | 규모(2026-08-12 수집 시점) |
+|---|---|---|
+| `_corpus/assembly_raw/` | 국회 상임위 발언 **무필터 원본** xlsx | **1,118,676건** · 1,000여 파일 · 수백 MB |
+| `_corpus/cabinet_raw/` | 국무·차관회의 회의록 원본 | **466개** (PDF 102 + HWPX 364) · 2022-12 ~ 2026-06 |
+
+- 규칙·경로는 상위 `C:\AI\CLAUDE.md` 의 "📦 여러 방이 같이 쓰는 원문" 절과 `_corpus/README.md` 참고.
+- 경로는 `--raw-dir=`/`--dir=`(env `SPEECH_RAW_DIR`/`CABINET_RAW_DIR`)로 바꿀 수 있다. 하드코딩 금지.
 
 ⚠️ 청와대 회의록은 **2023년치까지 전부 다시 받을 수 있다**(2026-08-12 확인). 한때 "옛것은 못 받는다"고
 적었으나 오판이었고, 실제 원인은 WAF 레이트리밋이었다 — `update-cabinet.mjs` 에 간격·재시도가 들어가 있다.
@@ -109,11 +122,11 @@ pipeline/build_assembly_speeches.mjs               meta.analysisNote
 
 ---
 
-## 3.6 🔴 제일 먼저 할 일 — **원문 더미부터 다시 모아야 한다**
+## 3.6 원문 더미(코퍼스) — 왜 다시 모아야 했나 · ✅ 2026-08-12 수집 완료
 
 > "코퍼스" = 분석 대상 원문 뭉치. 여기선 국회 회의록에서 뽑아 모아둔 **발언 원문 더미**.
 
-**지금 `data/assembly_speeches.json` 의 12,891건은 "에너지 키워드로 이미 걸러진 결과"다.**
+**저장소의 `data/assembly_speeches.json` 12,891건은 "에너지 키워드로 이미 걸러진 결과"다.**
 그물에 안 걸린 발언은 **저장 자체가 안 됐다.** 없는 걸 다시 분류할 수는 없다.
 
 **실측 (2026-08-12, 기노위+산업위):**
@@ -132,38 +145,41 @@ pipeline/build_assembly_speeches.mjs               meta.analysisNote
 | SK E&S · SK가스 · SK이노베이션 | 🟡 부분적 (에너지 그물에 걸린 것만) |
 | **SK하이닉스 · SK텔레콤 · SK바이오팜 · SK네트웍스 · SK스퀘어** | ❌ **거의 안 됨** — "반도체 수출규제"에 에너지 단어가 없으면 애초에 미수집 |
 
-**게다가 위원회마다 상태가 다르다:**
+### 확정 전략 — **원본 확보 → DB화 → 활용** (사용자 지시, 2026-08-12)
 
-| 위원회 | 원본 xlsx 가 PC 에 있나 | 새 계열사용 |
-|---|---|---|
-| 기후에너지환경노동위 · 산업통상자원중소벤처기업위 | ✅ **있다** (`data/raw_speeches/`, 121개 35MB) | **재수집 불필요** — 로컬에서 다시 거르면 끝 |
-| 나머지 15개 | ❌ **없다** — 서버에 에너지 키워드로 검색해 매칭분만 받았다 | **서버 재요청 필요** |
+> "원본파일을 최대한 확보하고 > DB화 하고 > 그걸 기반으로 이리저리 굴려봐야지.
+> 안그럼 계속 할때마다 파일 열어서 읽고 해야되잖아."
 
-### 그래서 이렇게 할 것 — **원본 확보 → DB화 → 활용** (사용자 확정 전략)
-
-**1) 원본 최대한 확보** — `--raw-only` 모드를 2026-08-12에 추가했다.
+**1) 원본 확보 — ✅ 2026-08-12 완료(또는 진행 중)**
 ```bash
-node pipeline/collect_assembly_speeches.mjs --raw-only --committees=<위원회명>
+node pipeline/collect_assembly_speeches.mjs --raw-only --committees=<위원회명>   # 국회 발언
+node pipeline/update-cabinet.mjs --pages=45                                      # 국무·차관회의
 ```
-- `--by-keyword` **없이** 그 위원회 전량을 받아 `data/raw_speeches/*.xlsx` 에만 쌓는다.
-- **에너지 필터를 안 걸고 `assembly_speeches.json`(SK E&S 산출물)도 건드리지 않는다** → 제출본 안전.
-- 국회도서관은 **무인증·무료**. **AI 를 안 쓰므로 토큰 0.** 한 번 받아두면 계열사를 늘려도 서버에 다시 안 묻는다.
-- 규모 감: xlsx 1,000건당 약 0.3MB. 기노위 20,657 · 산업위 72,333 · (기재위+과방위+국토위 합 28만) 실측 기준
-  17개 전량은 **수십만~100만 건 / 150~300MB / 수 시간**.
-- **우선순위**: 원본이 아예 없고 새 계열사 주력인 곳부터 — 과방위(텔레콤·하이닉스·스퀘어) →
-  보건복지위(바이오팜) → 정무위(스퀘어·네트웍스) → 국토위(에코플랜트) → 기재위 → 나머지.
-  ※ 기노위·산업위는 **원본 xlsx 가 이미 있다**(121개 35MB) — 재수집 불필요, 로컬 재필터만 하면 된다.
+- `--raw-only` 는 `--by-keyword` **없이** 전량을 받아 원본 폴더에만 쌓는다.
+  **에너지 필터를 안 걸고 `assembly_speeches.json`(SK E&S 산출물)도 안 건드린다** → 제출본 안전.
+- 둘 다 **무인증·무료 · AI 안 씀 → 토큰 0.** 한 번 받아두면 계열사를 늘려도 서버에 다시 안 묻는다.
+- 실측 규모: 국회 발언 **111만 건**(1,118,676), 회의록 **466개 파일**.
 
-**2) DB화** — `data/raw_speeches/` 를 검색 가능한 형태로. ⚠️ **전량을 JSON 한 덩이로 만들지 말 것**
-(발언 1건 평균 900자 × 50만건 ≈ 450MB — 열지도 못한다). **SQLite 권장**(발언 단위 테이블 + 본문 인덱스).
-원본 xlsx 가 원본이고 DB 는 파생이다(워크스페이스 규칙과 같은 원리).
+**2) DB화 — 다음 할 일**
+🔴 **전량을 JSON 한 덩이로 만들지 말 것.** 발언 111만 건 × 평균 900자 ≈ **1GB** — 열지도 못한다.
+→ **SQLite + FTS5(전문검색).** `node:sqlite` 가 **Node 22.5+ 내장**이라 **npm 설치도, 네이티브 빌드도 필요 없다**
+(2026-08-12 실측 확인: `new DatabaseSync()` + `CREATE VIRTUAL TABLE ... USING fts5` 정상 동작).
+NAS 컨테이너에서도 그대로 돌아간다.
 
-**3) 활용** — 회사별 키워드로 DB 를 쿼리해 후보를 뽑고, 그 부분집합만 AI 판정.
-- `data/candidates_<회사>.json` = 그 회사 판정 대상 (커밋 가능한 크기)
-- 계열사 추가가 **서버 요청 0 · 로컬 쿼리만으로** 끝난다. 이게 이 구조의 핵심 이득.
+권장 스키마 (원본이 원본이고 DB 는 언제든 다시 만들 수 있는 **파생물**):
+```
+C:\AI\_corpus\corpus.db        ← gitignore, 재생성 가능
+  speeches(id, conferNum, seq, committee, date, name, memberId, text)   + FTS5(text)
+  minutes (id, meeting, date, speaker, role, text, srcFile)             + FTS5(text)
+```
+JSON 은 **결과물에만** 쓴다 — 회사별 후보/판정처럼 커밋할 만한 크기일 때.
 
-⚠️ **`data/raw_speeches/` 는 `.gitignore` 라 이 PC 에만 있다.** 9개 계열사의 토대이니
-**백업 경로를 정할 것**(NAS 볼륨 등). 날리면 수 시간 재수집이다.
+**3) 활용**
+회사별 키워드로 DB 를 쿼리해 후보를 뽑고 **그 부분집합만** AI 판정한다.
+- `data/candidates_<회사>.json` = 그 회사 판정 대상(커밋 가능한 크기)
+- 계열사 추가가 **서버 요청 0 · 로컬 SQL 만으로** 끝난다. 이게 이 구조의 핵심 이득.
+
+⚠️ `_corpus/` 는 git 밖이라 **이 PC 에만 있다.** 9개 계열사의 토대이니 **백업 경로를 정할 것**(NAS 볼륨 등).
 
 ---
 
@@ -180,14 +196,14 @@ node pipeline/collect_assembly_speeches.mjs --raw-only --committees=<위원회�
    아니면 양쪽에 다 보이게 할지 **먼저 정할 것.**
 
 3. **비에너지 계열사는 소관 위원회가 다르다.** 위 표의 "주력 상임위" 참고.
-   17개 위원회를 전량 받아두되(§3.6), **판정은 그 회사 주력 위원회부터** 돌리면 적은 비용으로 화면이 먼저 찬다.
+   17개 위원회를 전량 받아뒀으니(§3.6), **판정은 그 회사 주력 위원회부터** 돌리면 적은 비용으로 화면이 먼저 찬다.
    (텔레콤=과방위, 바이오팜=보건복지위, 스퀘어=정무위처럼 에너지와 전혀 다른 곳이 주력이다.)
 
 ---
 
 ## 4. 💸 토큰 — 새 계열사 추가할 때 반드시 볼 것
 
-새 계열사를 넣으면 **그 회사 카테고리로 전 코퍼스(12,891건)를 다시 판정**해야 한다. 그대로 하면 비싸다.
+새 계열사를 넣으면 **그 회사 카테고리로 판정**해야 한다. 원본이 111만 건이라 그대로 다 돌리면 매우 비싸다.
 
 **절감 순서:**
 1. **먼저 키워드로 후보를 좁힌다.** SK E&S 가 `ENERGY_KEYWORDS` 로 12,891건까지 줄인 것처럼,
@@ -277,12 +293,48 @@ node pipeline/collect_assembly_speeches.mjs --raw-only --committees=<위원회�
 
 ---
 
+## 8.5 ✅ 원문 DB — **만들어 뒀다** (2026-08-12). 여기부터 쓰면 된다
+
+**"할 때마다 파일 열어서 읽는" 걸 없애는 게 목적이었고, 그 도구가 이제 있다.**
+
+```bash
+node pipeline/build_corpus_db.mjs              # 원본 → C:\AI\_corpus\corpus.db (증분, 이미 넣은 파일은 건너뜀)
+node pipeline/build_corpus_db.mjs --stats      # 현황만
+node pipeline/corpus_query.mjs "반도체 AND 수출규제" --limit=20
+node pipeline/corpus_query.mjs "수소" --in=minutes
+node pipeline/corpus_query.mjs "HBM OR 고대역폭" --json=data/candidates_skhynix.json   # ← AI 판정 입력
+```
+
+| 파일 | 역할 |
+|---|---|
+| `pipeline/extract_hwpx.mjs` | HWPX → 문단 텍스트. **Node 내장만 사용(의존성 0)** — zip 직접 파싱 + `<hp:p>`/`<hp:t>` 추출 |
+| `pipeline/lib/parse_speech_xlsx.mjs` | 발언 xlsx 파서(함정 3종 방어 포함). 수집기와 DB 빌더가 **공유** |
+| `pipeline/build_corpus_db.mjs` | 원본 → SQLite(+FTS5). 증분 |
+| `pipeline/corpus_query.mjs` | 전문검색 · `--json=` 으로 회사별 후보 추출 |
+
+**DB 스키마** (`C:\AI\_corpus\corpus.db`, gitignore·재생성 가능)
+```
+speeches(id, src, conferNum, dae, classCode, committee, date, speaker, memberId, seq, text) + speeches_fts
+minutes (id, src, meeting, para, text)                                                      + minutes_fts
+ingested(file, kind, bytes, rows, at)   ← 증분 판단용
+```
+FTS5 문법: `A AND B` · `A OR B` · `A NOT B` · `"연속 구절"` · `접두사*`
+
+### ⚠️ 알아둘 것
+- **`.hwp`(구형) 122개는 DB 에 안 들어간다.** `.hwpx`(ZIP+XML)와 **완전히 다른 OLE 바이너리**라
+  이 추출기로 못 읽는다. 전부 **2021~2022년**이고 PDF·hwpx 대체본이 없다.
+  지금 분석 대상이 22대 국회(2024-06~)·이재명 정부(2025-07~)라 **의도적으로 제외**했다.
+  필요해지면 별도 파서가 필요하다(난이도 있음).
+- **PDF 회의록은 아직 DB 에 안 넣었다.** hwpx 로 대부분 커버되기 때문이다.
+  넣으려면 기존 `extract_minutes.py`(pdfplumber) 결과를 `minutes` 테이블에 태우면 된다.
+- `corpus.db` 는 **백업 대상이 아니다**(언제든 재생성). 백업할 건 `_corpus/*_raw/` **원본**이다.
+
 ## 9. 아직 안 정해진 것
 
 - **각 회사의 사업 카테고리** — 계열사 9개는 확정(§3.5), 카테고리는 SK E&S 8개만 확정이고 나머지 8개사는 초안.
 - **새 repo 이름 / 서브도메인** — 미정.
-- **원문 더미 전량 재수집을 언제 돌릴지**(§3.6) — 1~2시간짜리. 이게 9개 계열사의 전제 조건이라 **가장 먼저** 할 일.
-- **`data/raw_speeches/` 백업 위치** — gitignore 라 PC 에만 있다. 날리면 재수집.
+- ~~원문 더미 전량 재수집~~ → **2026-08-12 완료**(국회 111만 건 · 회의록 466개). 다음은 §8.5 추출기·DB화.
+- **`C:\AI\_corpus\` 백업 위치** — git 밖이라 이 PC 에만 있다(국회 111만 건 + 회의록 466개). 날리면 수 시간 재수집.
 - **"부동산" 카테고리를 어느 계열사에 붙일지** — 보류 상태(2026-08-09 논의).
 - `scheduler.mjs` 에 import 가드 씌우기 — §5-2 근본 차단책. 컨테이너 엔트리포인트라 배포 직후엔 안 건드림.
 

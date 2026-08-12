@@ -28,6 +28,31 @@
 | `build_web_data.mjs` | data/*.json | `web/data.js` | — |
 | `serve.mjs` | web/ | (HTTP 서버) | — |
 
+### 🔎 원문 DB (corpus.db) — 파일 안 열고 바로 검색
+
+**"할 때마다 파일 열어서 읽는" 걸 없애는 도구.** 원본(`C:\AI\_corpus\*_raw/`)을 SQLite+FTS5 로 만들어 둔다.
+
+```bash
+node pipeline/build_corpus_db.mjs                  # 원본 → corpus.db (증분: 이미 넣은 파일은 건너뜀)
+node pipeline/build_corpus_db.mjs --stats          # 현황만
+node pipeline/corpus_query.mjs "반도체 AND 수출규제"           # 발언 검색
+node pipeline/corpus_query.mjs "수소" --in=minutes             # 회의록 문단 검색
+node pipeline/corpus_query.mjs "HBM OR 고대역폭" --json=out.json   # 후보 저장(AI 판정 입력)
+```
+
+| 스크립트 | 역할 |
+|---|---|
+| `extract_hwpx.mjs` | HWPX → 문단 텍스트. **Node 내장만(의존성 0)**, 파이썬 불필요 |
+| `lib/parse_speech_xlsx.mjs` | 발언 xlsx 파서(함정 3종 방어). 수집기·DB빌더가 공유 |
+| `build_corpus_db.mjs` | 원본 → `_corpus/corpus.db` (SQLite+FTS5, 증분) |
+| `corpus_query.mjs` | 전문검색 · 후보 추출 |
+
+- **`node:sqlite` 는 Node 22.5+ 내장** — npm 설치도 네이티브 빌드도 없다(NAS 에서도 그대로).
+- FTS5 문법: `A AND B` · `A OR B` · `A NOT B` · `"연속 구절"` · `접두사*`
+- ⚠️ **`.hwp`(구형) 은 제외**된다 — `.hwpx`(ZIP+XML)와 달리 OLE 바이너리라 포맷이 다르다.
+  실측 122개, 전부 2021~2022년이고 대체본 없음.
+- `corpus.db` 는 **파생물이라 백업 대상이 아니다.** 백업할 건 `_corpus/*_raw/` 원본.
+
 ### 국회(상임위 발언) 갱신
 
 | 스크립트 | 입력 | 출력 |

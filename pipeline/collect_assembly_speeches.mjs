@@ -55,9 +55,25 @@ if (!existsSync(RAW)) mkdirSync(RAW, { recursive: true });
 const ymd = (s) => String(s).replace(/-/g, "");
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
 
-async function get(url, opt = {}) {
-  const res = await fetch(url, { headers: { "User-Agent": UA, ...(opt.headers || {}) }, ...opt });
-  return res;
+// 🔴 수십만 건을 몇 시간 받다 보면 **네트워크가 한 번은 끊긴다.** 재시도가 없으면 그 순간 전체가 죽는다
+//   (2026-08-12 실측: 955,000/1,118,676 지점에서 ECONNRESET 으로 프로세스 종료 — 그때까지 받은 건 남지만
+//    사람이 다시 띄워줘야 했다). 일시적 오류는 백오프로 넘기고, 이미 받은 파일은 어차피 건너뛰므로 재개가 싸다.
+async function get(url, opt = {}, tries = 5) {
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    try {
+      const res = await fetch(url, { headers: { "User-Agent": UA, ...(opt.headers || {}) }, ...opt });
+      if (res.status >= 500 || res.status === 429) throw new Error(`HTTP ${res.status}`);
+      return res;
+    } catch (e) {
+      lastErr = e;
+      if (i === tries - 1) break;
+      const wait = 2000 * Math.pow(2, i);            // 2s → 4s → 8s → 16s
+      console.log(`\n      (통신 오류 ${e.message} — ${wait / 1000}초 후 재시도 ${i + 1}/${tries - 1})`);
+      await sleep(wait);
+    }
+  }
+  throw lastErr;
 }
 
 /** 검색 결과 HTML → 발언 메타(레코드 본문은 스니펫이라 쓰지 않는다) */
