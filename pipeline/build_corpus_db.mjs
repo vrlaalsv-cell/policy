@@ -125,8 +125,19 @@ const allMi = existsSync(miDir) ? readdirSync(miDir) : [];
 //   실측 2026-08-12: hwp 122개(전부 2021~2022년, PDF·hwpx 대체본 없음) — 지금 분석 대상이
 //   22대 국회(2024-06~)·이재명 정부(2025-07~)라 우선순위가 낮아 **의도적으로 제외**한다.
 //   필요해지면 별도 파서가 필요하다(§HANDOFF 참고).
+// 🔴 **정권 경계 필터 — 이재명 정부(2025-06-05~) 회의록만 넣는다.**
+//   이 대시보드는 *현직* 국무위원의 성향을 본다. 이전 정권 회의록을 섞으면 지금 없는 사람들의 발언이
+//   들어와 **분석이 오염된다**(사용자 지시 2026-08-12: "그전에 껀 오히려 오염돼").
+//   경계 근거(실측): 회의록 주재자 표기가 250528 까지 '대통령권한대행' → **250605 부터 '대통령'**.
+//   총리는 250705 부터 김민석(그 전은 직무대행)이라, 총리 기준으로 자르면 6월분을 놓친다 → **주재자 기준**.
+//   ※ 원본 파일은 지우지 않는다(이미 받아둔 것이고 언젠가 비교용으로 쓸 수 있다). DB 에만 안 넣는다.
+const MIN_SINCE = arg("minutes-since", "2025-06-05");
+const fileDate = (f) => { const m = f.match(/^(\d{2})(\d{2})(\d{2})/); return m ? `20${m[1]}-${m[2]}-${m[3]}` : ""; };
 let miFiles = allMi.filter((f) => /\.hwpx$/i.test(f)).sort();
+const preAdmin = miFiles.filter((f) => { const d = fileDate(f); return d && d < MIN_SINCE; });
+miFiles = miFiles.filter((f) => { const d = fileDate(f); return !d || d >= MIN_SINCE; });
 const oldHwp = allMi.filter((f) => /\.hwp$/i.test(f));
+if (preAdmin.length) console.log(`  (정권 필터: ${MIN_SINCE} 이전 회의록 ${preAdmin.length}개 제외 — 이전 정권이라 분석 오염)`);
 miFiles = miFiles.filter((f) => !done.has(f));
 if (LIMIT) miFiles = miFiles.slice(0, LIMIT);
 console.log(`회의록 hwpx: 처리 대상 ${miFiles.length}개` + (oldHwp.length ? `  (구형 .hwp ${oldHwp.length}개는 제외 — 포맷이 다름)` : ""));
