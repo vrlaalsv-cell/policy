@@ -166,9 +166,39 @@ for (let i = 0; i < miFiles.length; i++) {
 }
 if (miFiles.length) process.stdout.write("\n");
 
+// ── 2') HWPX 가 없는 회의는 PDF 로 보충 ─────────────────────────
+//   HWPX 커버리지가 실측 95/112(85%) 라 나머지는 PDF 에서 가져와야 빠짐이 없다.
+//   PDF 텍스트는 `extract_pdf_text.py`(무필터, 2단 조판 처리 포함)가 만든 JSON 을 읽어 넣는다.
+//     python pipeline/extract_pdf_text.py --src <원본> --since 2025-06-05 --out <CORPUS>/_pdf_text.json
+//   ⚠ `extract_minutes.py` 를 쓰면 안 된다 — 그쪽은 **에너지 키워드로 걸러서** SK E&S 전용이다.
+const pdfJson = join(CORPUS, "_pdf_text.json");
+let pdfRows = 0, pdfDocs = 0;
+if (existsSync(pdfJson)) {
+  const { readFileSync } = await import("node:fs");
+  const docs = JSON.parse(readFileSync(pdfJson, "utf8")).docs || [];
+  const haveHwpx = new Set(allMi.filter((f) => /\.hwpx$/i.test(f)).map((f) => f.replace(/\.hwpx$/i, "")));
+  for (const d of docs) {
+    const stem = d.file.replace(/\.pdf$/i, "");
+    if (haveHwpx.has(stem)) continue;                       // HWPX 로 이미 들어갔다
+    if (done.has(d.file)) continue;                          // 이미 처리
+    if (MIN_SINCE && d.date && d.date < MIN_SINCE) continue; // 정권 필터
+    try {
+      db.exec("BEGIN");
+      d.paragraphs.forEach((t, k) => insMi.run(d.file, d.meeting, k, t));
+      insIng.run(d.file, "minutes-pdf", 0, d.paragraphs.length, now());
+      db.exec("COMMIT");
+      pdfRows += d.paragraphs.length; pdfDocs++;
+    } catch (e) { try { db.exec("ROLLBACK"); } catch { /* noop */ } console.log(`  ✗ ${d.file}: ${e.message}`); }
+  }
+  console.log(`회의록 PDF 보충: ${pdfDocs}개 · ${pdfRows.toLocaleString()}문단 (HWPX 없는 회의만)`);
+} else {
+  console.log(`회의록 PDF 보충: 건너뜀 — ${pdfJson} 없음`);
+  console.log(`  만들려면: python pipeline/extract_pdf_text.py --src ${join(CORPUS, "cabinet_raw")} --since ${MIN_SINCE} --out ${pdfJson}`);
+}
+
 // ── 3) 전문검색 인덱스 재구축 ──
 //   external content FTS 는 원본에 INSERT 해도 자동으로 안 따라온다 → 여기서 한 번에 rebuild.
-if (spRows || miRows) {
+if (spRows || miRows || pdfRows) {
   console.log("전문검색 인덱스 재구축 중…");
   db.exec("INSERT INTO speeches_fts(speeches_fts) VALUES('rebuild')");
   db.exec("INSERT INTO minutes_fts(minutes_fts) VALUES('rebuild')");

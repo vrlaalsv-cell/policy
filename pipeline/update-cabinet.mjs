@@ -28,6 +28,14 @@ const arg = (k, d) => {
   const hit = process.argv.find((a) => a.startsWith(`--${k}=`));
   return hit ? hit.split("=").slice(1).join("=") : d;
 };
+// 🔴 **정권 하한선 — 이재명 정부(2025-06-05~) 회의록만 받는다.**
+//   이 대시보드는 *현직* 국무위원의 성향을 본다. 이전 정권 회의록이 섞이면 지금 없는 사람들의 발언이
+//   들어와 분석이 오염된다(사용자 지시 2026-08-12). 실제로 --pages=45 로 긁었다가 2003~2020년
+//   연도별 묶음 zip 까지 딸려와 476개+36zip 을 지웠다.
+//   경계 근거: 회의록 주재자 표기가 250528 까지 '대통령권한대행' → **250605 부터 '대통령'**.
+//   ⚠ 국무총리로 자르면 안 된다 — 김민석 총리는 250705 부터라 6월분이 통째로 빠진다.
+//   넘기려면 `--floor=` 로 명시(연구 목적 등). 기본값은 항상 이 하한을 지킨다.
+const FLOOR = arg("floor", "2025-06-05");
 const SINCE = arg("since", "");
 const PAGES = Number(arg("pages", 2));
 const ALL = process.argv.includes("--all");
@@ -124,11 +132,18 @@ console.log(`  목록 ${posts.length}건 (${PAGES}페이지)`);
 if (!posts.length) { console.error("✗ 게시글을 찾지 못했습니다 — 페이지 구조가 바뀌었을 수 있습니다."); process.exit(1); }
 
 // ---------- 받을 대상 고르기 ----------
+let floorSkip = 0;
 const targets = posts.filter((p) => {
+  // 정권 하한선 — 회의일을 못 읽는 글(연도별 묶음 zip 등)도 여기서 함께 걸러진다.
+  if (FLOOR) {
+    if (!p.meetingAt) { floorSkip++; return false; }
+    if (p.meetingAt < FLOOR) { floorSkip++; return false; }
+  }
   if (SINCE && p.meetingAt && p.meetingAt < SINCE) return false;
   if (!ALL && index[p.nttId]) return false;     // 이미 받음
   return true;
 });
+if (floorSkip) console.log(`  정권 하한선(${FLOOR}) 이전·회의일 미상 ${floorSkip}건 제외`);
 console.log(`  받을 대상: ${targets.length}건${SINCE ? ` (회의일 ${SINCE} 이후)` : ""}`);
 
 // ---------- 첨부 다운로드 ----------
