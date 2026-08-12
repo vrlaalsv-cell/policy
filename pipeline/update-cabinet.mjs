@@ -42,7 +42,12 @@ const DATA_DIR = join(process.cwd(), "data");
 // ⚠ 행안부는 오래된 회의록을 다시 안 준다(2026-01-23 이전 전량 HTTP 400, findings.json dead_ends).
 //   즉 **한 번 놓친 원본은 영영 못 받는다** → 이 폴더는 절대 지우지 말 것.
 // `--dir=` 또는 env `CABINET_RAW_DIR` 로 바꿀 수 있다. 인덱스(JSON)는 프로젝트에 남는다(커밋 대상).
-const MINUTES_DIR = arg("dir", process.env.CABINET_RAW_DIR || "C:/AI/_corpus/cabinet_raw");
+// ⚠ 컨테이너(리눅스)에서는 위 윈도우 경로가 없다 → **폴더가 실제로 있을 때만** 공용 경로를 쓰고,
+//   없으면 `data/cabinet_minutes`(컨테이너에선 볼륨 마운트된 /app/data)로 떨어진다.
+//   NAS 스케줄러는 compose 의 `CABINET_RAW_DIR` 로 명시 지정한다.
+const SHARED_CABINET = "C:/AI/_corpus/cabinet_raw";
+const MINUTES_DIR = arg("dir", process.env.CABINET_RAW_DIR
+  || (existsSync(SHARED_CABINET) ? SHARED_CABINET : join(DATA_DIR, "cabinet_minutes")));
 const INDEX_FILE = join(DATA_DIR, "cabinet_minutes_index.json");
 if (!existsSync(MINUTES_DIR)) mkdirSync(MINUTES_DIR, { recursive: true });
 

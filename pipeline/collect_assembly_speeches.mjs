@@ -45,7 +45,10 @@ const COMMITTEES = arg("committees", "기후에너지환경노동위원회,산�
 //   그룹사 버전도, 앞으로 만들 무엇도 똑같이 쓴다. 프로젝트 폴더 안에 두면 방마다 수백 MB 를
 //   중복 보관하거나, 새 방에서 몇 시간짜리 재수집을 또 하게 된다.
 //   → 기본값을 공용 폴더(`C:\AI\_corpus\assembly_raw`)로 둔다. `--raw-dir=` 또는 env `SPEECH_RAW_DIR` 로 바꿀 수 있다.
-const RAW = arg("raw-dir", process.env.SPEECH_RAW_DIR || "C:/AI/_corpus/assembly_raw");
+// ⚠ 컨테이너(리눅스)엔 위 윈도우 경로가 없다 → 실제로 있을 때만 쓰고, 없으면 프로젝트 data/ 로 떨어진다.
+const SHARED_SPEECH = "C:/AI/_corpus/assembly_raw";
+const RAW = arg("raw-dir", process.env.SPEECH_RAW_DIR
+  || (existsSync(SHARED_SPEECH) ? SHARED_SPEECH : join(paths.data, "raw_speeches")));
 const OUT = join(paths.data, "assembly_speeches.json");
 if (!existsSync(RAW)) mkdirSync(RAW, { recursive: true });
 

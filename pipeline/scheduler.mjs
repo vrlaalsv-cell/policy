@@ -50,6 +50,35 @@ function runOnce(reason) {
   });
 }
 
+// ── 국무·차관회의 회의록 PDF 자동 확보 ───────────────────────────────────────
+//  🔴 왜 자동화가 꼭 필요한가 — **행안부는 오래된 회의록 첨부를 순차적으로 내린다.**
+//     실측(2026-08-12): 3일 전만 해도 받아지던 2026-01-23~02-03 4건이 그 사이 전부 HTTP 400 이 됐다.
+//     즉 공개된 걸 제때 안 받으면 **영구 소실**이다(다시 받을 방법이 없다 — findings.json dead_ends).
+//     사람이 기억해서 돌리는 구조로는 반드시 놓친다 → 매일 자동으로 훑어 받아 둔다.
+//  · 새 회의록은 회의 후 약 6주 뒤 올라오므로 하루 1회면 충분하다(놓칠 위험 대비 여유 큼).
+//  · 받기만 한다. 판정·빌드는 사람이 PC 에서 한다(AI 비용이 드는 단계라 자동화하지 않는다).
+//  · PDF 저장 위치는 env `CABINET_RAW_DIR`. 컨테이너에선 반드시 **볼륨 마운트 경로**여야 살아남는다.
+const CAB_ON = (process.env.CABINET_FETCH ?? "1") !== "0";
+const CAB_AT = (process.env.CABINET_AT || "05:30").trim();
+const CAB_PAGES = Number(process.env.CABINET_PAGES || 3);
+
+function fetchCabinet(reason) {
+  return new Promise((resolve) => {
+    log(`회의록 PDF 확보 시작 (${reason})`);
+    const started = Date.now();
+    const child = spawn(process.execPath, [join(paths.root, "pipeline", "update-cabinet.mjs"), `--pages=${CAB_PAGES}`], {
+      cwd: paths.root, env: process.env, stdio: ["ignore", "inherit", "inherit"],
+    });
+    child.on("close", (code) => {
+      const min = Math.round((Date.now() - started) / 60000);
+      // 실패해도 절대 죽지 않는다 — 기사 수집 루프가 이것 때문에 멈추면 안 된다.
+      log(code === 0 ? `회의록 확보 완료 (${min}분)` : `회의록 확보 실패 code=${code} — 다음 주기에 재시도`);
+      resolve(code);
+    });
+    child.on("error", (e) => { log("회의록 확보 실행 오류:", e.message); resolve(-1); });
+  });
+}
+
 /** data/news.json 이 얼마나 오래됐는지(시간). 없으면 Infinity */
 function dataAgeHours() {
   const p = join(paths.data, "news.json");
@@ -63,21 +92,28 @@ function dataAgeHours() {
   } catch { return Infinity; }
 }
 
-/** 다음 실행 예정 시각과 남은 ms (여러 시각 중 가장 가까운 것) */
+/** 다음 실행 예정 작업과 남은 ms. 기사 수집(news)과 회의록 확보(cabinet)를 한 타임라인에서 고른다. */
 function nextRun() {
   const now = new Date();
+  const jobs = AT_LIST.map((t) => ({ t, kind: "news" }));
+  if (CAB_ON && /^\d{1,2}:\d{2}$/.test(CAB_AT)) jobs.push({ t: CAB_AT, kind: "cabinet" });
   let best = null;
-  for (const t of AT_LIST) {
-    const [h, m] = t.split(":").map(Number);
+  for (const j of jobs) {
+    const [h, m] = j.t.split(":").map(Number);
     const at = new Date(now);
     at.setHours(h, m, 0, 0);
     if (at <= now) at.setDate(at.getDate() + 1);
-    if (!best || at < best.at) best = { at, label: t };
+    if (!best || at < best.at) best = { at, label: j.t, kind: j.kind };
   }
-  return { ms: best.at - now, label: best.label };
+  return { ms: best.at - now, label: best.label, kind: best.kind };
 }
 
-log(`가동 — 매일 ${AT} (KST) 수집 · 시작 시 검사 ${ON_START ? "on" : "off"} · 낡음 기준 ${MAX_AGE_H}시간`);
+log(`가동 — 매일 ${AT} (KST) 기사 수집 · 시작 시 검사 ${ON_START ? "on" : "off"} · 낡음 기준 ${MAX_AGE_H}시간`);
+log(`     회의록 PDF 확보 ${CAB_ON ? `매일 ${CAB_AT} (KST) · 목록 ${CAB_PAGES}페이지` : "꺼짐"}`);
+
+// 시작 시 회의록도 한 번 훑는다. 재부팅·재배포로 컨테이너가 내려가 있던 사이에 공개분이 생겼을 수 있고,
+// 행안부는 시간이 지나면 그걸 다시 안 준다 → 뜨자마자 확인하는 편이 안전하다(이미 받은 건 건너뛰므로 싸다).
+if (CAB_ON) await fetchCabinet("시작 시 확인");
 
 if (ON_START) {
   const age = dataAgeHours();
@@ -89,11 +125,12 @@ if (ON_START) {
   }
 }
 
-// 무한 루프: 다음 예정 시각까지 자고 일어나서 수집
+// 무한 루프: 다음 예정 작업 시각까지 자고 일어나서 실행
 for (;;) {
-  const { ms, label } = nextRun();
-  log(`다음 수집까지 ${Math.round(ms / 60000)}분 대기 (${label} KST)`);
+  const { ms, label, kind } = nextRun();
+  log(`다음 작업까지 ${Math.round(ms / 60000)}분 대기 (${label} KST · ${kind === "cabinet" ? "회의록 확보" : "기사 수집"})`);
   await new Promise((r) => setTimeout(r, ms));
-  await runOnce(`정기 실행 ${label}`);
+  if (kind === "cabinet") await fetchCabinet(`정기 실행 ${label}`);
+  else await runOnce(`정기 실행 ${label}`);
   await new Promise((r) => setTimeout(r, 60000)); // 같은 분에 두 번 도는 것 방지
 }

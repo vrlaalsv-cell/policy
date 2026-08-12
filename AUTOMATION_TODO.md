@@ -14,7 +14,8 @@
 |---|---|---|
 | `web/news.js` (최근 기사) | `5_collect_news` → `6_fetch_excerpts` → `build_news_web` | ✅ **자동** — 컨테이너 `policy-scheduler`, 매일 06/09/12/15/18시 |
 | 코드 배포 | `scripts/autodeploy.sh` | ✅ **자동** — DSM 작업 스케줄러 |
-| `web/cabinet.js` (청와대 발언·성향) | `update-cabinet` → `extract_minutes.py` → `cab_todo`(남은 회의만) → **AI 판정** → `merge_cabinet_judged` → `build_cabinet2` | ⚠️ 1단계만 자동, **판정은 사람**. `cab_todo.mjs`(2026-08-12 신설)를 건너뛰면 이미 판정한 회의까지 재판정된다. |
+| 회의록 PDF **원본 확보** | `update-cabinet` | ✅ **자동**(2026-08-12~) — 컨테이너 `policy-scheduler`, **매일 05:30 + 컨테이너 시작 시**. 🔴 행안부가 오래된 첨부를 순차적으로 내려서 **놓치면 영구 소실**이라 자동화했다(실측: 3일 만에 4건이 400으로 바뀜). PDF 는 볼륨(`/app/data/cabinet_raw`)에 쌓인다. |
+| `web/cabinet.js` (청와대 발언·성향) | `update-cabinet` → `extract_minutes.py` → `cab_todo`(남은 회의만) → **AI 판정** → `merge_cabinet_judged` → `build_cabinet2` | ⚠️ **원본 확보만 자동, 판정은 사람**(AI 비용 단계라 일부러 자동화 안 함). `cab_todo.mjs`(2026-08-12 신설)를 건너뛰면 이미 판정한 회의까지 재판정된다. |
 | `members.ai` / `speakers.ai` (AI 종합분석) | `build_ai_input` → **AI 분석** → `build_ai` | ❌ **전부 사람** |
 | `web/data.js` (국회 발언·성향) | `collect_assembly_speeches` → `build_tag_batches --only-new` → **AI 태깅** → `build_assembly_speeches` | ⚠️ 1단계만 자동, **태깅은 사람** — 2026-08-09 이후 갱신 경로 확보(아래 E 참고). `--only-new` 가 판정 아카이브 기준으로 걸러 이미 판정한 건 안 보낸다(2026-08-12). 옛 `build_assembly2`·`build_board_input`(입력 `utt_ctx.json` 없어 동결)는 **2026-08-12 삭제**. |
 | `web/bizboard.js` (사업별 보드) | `build_board_input2` → **AI 선정·요약** → `build_board` | ⚠️ 자동 트리거 없음. `build_board_input2`(2026-08-09 신설)가 `web/data.js` 를 직접 읽어 후보를 재계산 — 국회 발언을 갱신한 뒤 반드시 먼저 돌릴 것. 옛 `build_board_input`(입력 `utt_ctx.json` 없어 동결)는 **2026-08-12 삭제**. |
