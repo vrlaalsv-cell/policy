@@ -48,8 +48,12 @@ node pipeline/build_ai_input.mjs && node pipeline/build_ai.mjs  # ⑤ AI 종합�
 
 - **원본 xlsx 는 PC 에만** (`data/raw_speeches/`, gitignore). 정규화·판정 결과는 커밋해서 NAS 로.
 - ①은 이미 받은 배치를 건너뛴다. 주기적으로 다시 돌리면 새 회의분만 받는다.
-- ②·④에 `--committees=`를 줬으면 **①'과 정확히 같은 목록**을 줄 것 — 다르면 배치 id 가 어긋나 엉뚱한
-  발언에 태깅이 붙는다.
+- ⭐ **②는 `data/_assembly_tagged.json` 에 이미 판정이 있는 발언을 통째로 건너뛴다**(2026-08-12).
+  예전엔 화면에 실린 **채택분만** 제외해서, 기각된 판정 7,764건이 증분 때마다 다시 AI 로 갔다.
+  지금은 증분에서 새 발언이 없으면 `0건 → 0배치` 가 나오고 **AI 태깅 단계를 아예 건너뛰면 된다.**
+- ⭐ 판정을 되붙일 때는 **내용 기반 안정 키**(`lib/tagkey.mjs`)로 맞춘다 — 배치 순번(id)이 아니다.
+  그래서 ②·④에 `--committees=` 를 다르게 줘도, 수집이 중간에 늘어도 엉뚱한 발언에 붙지 않는다.
+  (예전엔 필터를 정확히 재현해야만 맞는 구조라 늘 조심해야 했다. 옛 판정 JSON 은 자동 폴백된다.)
 - ④는 인용문이 원문에 실제로 있는지, 기존 발언과 겹치지 않는지 검사해 걸러낸다.
   **기존 발언(다른 상임위·국정감사분)은 보존**한다 — 위원회 단위로 덧붙이는 구조라 한 번에 다 갱신할 필요 없다.
 - 함정(한 자리 월·일, 필리버스터 컬럼 밀림, 발언내용1~7 분할 등)은 `node pipeline/findings.mjs 발언` 참고.
@@ -102,13 +106,18 @@ node pipeline/build_board.mjs                         # ③ 빌드
 ```bash
 node pipeline/update-cabinet.mjs                 # ① 아직 안 받은 회의록 PDF 받기
 python pipeline/extract_minutes.py               # ② PDF → 발언 원문
-                                                 # ③ AI 판정 (Claude Code)
+node pipeline/cab_todo.mjs                       # ②' ⭐ 아직 판정 안 한 회의만 추리기 (0건이면 ③ 건너뜀)
+                                                 # ③ AI 판정 (Claude Code, wf_cabinet.js — ②'의 --json 을 args 로)
 node pipeline/merge_cabinet_judged.mjs <판정.json> data/_cab_minutes_raw.json --dry   # ④ 먼저 --dry 로 확인
 node pipeline/build_cabinet2.mjs && node pipeline/build_ai.mjs                        # ⑤ 빌드
 ```
 
 - **PDF 원본은 PC에만 둔다**(`.gitignore`). 추출·판정 결과는 전부 커밋해서 NAS 로 보낸다 —
   PDF 없이도 재판정·재빌드가 되게.
+- ⭐ **②'를 건너뛰고 보유 PDF 를 통째로 ③에 넘기지 말 것** — wf_cabinet 은 준 파일을 전부 AI 로 보낸다.
+  특히 **"에너지 발언 없음"으로 0건 판정된 회의**는 결과에 아무것도 안 남아 *안 한 것*처럼 보인다
+  (2026-08-12 실측: 46건 중 22건이 이 경우라, 대장 없이는 매번 46건 전부 재판정).
+  → `_cab_results.json` 의 `judgedMeetings` 대장이 그 기록이고, `cab_todo.mjs` 가 그걸 보고 거른다.
 - ④는 인용문이 원문에 실제로 있는지, 목차 찌꺼기가 섞이지 않았는지, 기존 발언과 겹치지 않는지를
   검사해 걸러낸다. **`--dry` 로 먼저 확인**하고 실행할 것.
 - ⑤에서 `build_cabinet2` 는 `ai` 필드를 지우므로 **반드시 `build_ai.mjs` 를 이어서** 돌린다.

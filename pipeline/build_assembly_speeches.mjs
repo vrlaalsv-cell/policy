@@ -15,6 +15,7 @@
 import { readFileSync, writeFileSync, copyFileSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
+import { tagKey } from "./lib/tagkey.mjs";
 
 const [tagPath] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const DRY = process.argv.includes("--dry");
@@ -42,12 +43,22 @@ const unesc = (s) => String(s || "")
   .replace(/&amp;/g, "&").replace(/&lt;/g, "<").replace(/&gt;/g, ">")
   .replace(/&quot;/g, '"').replace(/&#39;/g, "'");
 const norm = (s) => String(s || "").replace(/\s+/g, "").slice(0, 40);
-const seenPrior = new Set(app.members.flatMap((m) => (m.quotes || []).flatMap((q) => [norm(q.core), norm(q.pre)])).filter(Boolean));
+// ⭐ 판정을 원문에 되붙이는 방식: `key`(내용 기반 안정 키)가 있으면 그걸로 찾는다.
+//   예전엔 build_tag_batches 의 필터를 여기서 **똑같이 재현**해 순번(id)으로 맞췄는데, 필터가 한 글자만
+//   달라도 엉뚱한 발언에 판정이 붙는 구조였다(README 에도 "정확히 같은 목록을 줄 것" 경고가 있었다).
+//   key 방식은 수집이 늘든 위원회를 나눠 돌리든 안전하다. 옛 판정(key 없음)은 순번 재현으로 폴백한다.
+const byKey = new Map(src.map((s) => [tagKey(s), s]));
+const hasKeys = tagged.some((t) => t.key);
 let items = src;
-if (COMM.length) items = items.filter((s) => COMM.some((c) => String(s.committee).startsWith(c)));
-items = items.filter((s) => !seenPrior.has(norm(s.text)));
-console.log(`태깅 대상 재현: ${src.length} → ${items.length}건 (태깅 결과 ${tagged.length}건)${COMM.length ? ` · 위원회 ${COMM.join(",")}` : ""}`);
-if (items.length !== tagged.length) console.warn(`⚠ 건수가 다르다 — id 정렬이 어긋났을 수 있으니 결과를 확인할 것`);
+if (!hasKeys) {
+  const seenPrior = new Set(app.members.flatMap((m) => (m.quotes || []).flatMap((q) => [norm(q.core), norm(q.pre)])).filter(Boolean));
+  if (COMM.length) items = items.filter((s) => COMM.some((c) => String(s.committee).startsWith(c)));
+  items = items.filter((s) => !seenPrior.has(norm(s.text)));
+  console.log(`(옛 방식) 태깅 대상 재현: ${src.length} → ${items.length}건 (태깅 결과 ${tagged.length}건)${COMM.length ? ` · 위원회 ${COMM.join(",")}` : ""}`);
+  if (items.length !== tagged.length) console.warn(`⚠ 건수가 다르다 — id 정렬이 어긋났을 수 있으니 결과를 확인할 것`);
+} else {
+  console.log(`판정 ${tagged.length}건을 key 로 매칭 (원문 ${src.length}건)`);
+}
 
 const byName = new Map(app.members.map((m) => [m.name, m]));
 const nrm = (t) => String(t || "").replace(/\s+/g, "");
@@ -72,8 +83,9 @@ const skipped = {};
 const skip = (why) => (skipped[why] = (skipped[why] || 0) + 1);
 
 for (const t of tagged) {
-  const s = items[t.id];
+  const s = t.key ? byKey.get(t.key) : items[t.id];
   if (!s) { skip("원본 없음"); continue; }
+  if (COMM.length && !COMM.some((c) => String(s.committee).startsWith(c))) { skip("위원회 필터 제외"); continue; }
   if (!t.relevant || t.biz === "NONE" || !BIZ.includes(t.biz)) { skip("근거 부적합"); continue; }
   const m = byName.get(s.name);
   if (!m) { skip("명단에 없는 이름"); continue; }

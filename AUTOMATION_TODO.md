@@ -14,10 +14,10 @@
 |---|---|---|
 | `web/news.js` (최근 기사) | `5_collect_news` → `6_fetch_excerpts` → `build_news_web` | ✅ **자동** — 컨테이너 `policy-scheduler`, 매일 06/09/12/15/18시 |
 | 코드 배포 | `scripts/autodeploy.sh` | ✅ **자동** — DSM 작업 스케줄러 |
-| `web/cabinet.js` (청와대 발언·성향) | `update-cabinet` → `extract_minutes.py` → **AI 판정** → `merge_cabinet_judged` → `build_cabinet2` | ⚠️ 1단계만 자동, **판정은 사람** |
+| `web/cabinet.js` (청와대 발언·성향) | `update-cabinet` → `extract_minutes.py` → `cab_todo`(남은 회의만) → **AI 판정** → `merge_cabinet_judged` → `build_cabinet2` | ⚠️ 1단계만 자동, **판정은 사람**. `cab_todo.mjs`(2026-08-12 신설)를 건너뛰면 이미 판정한 회의까지 재판정된다. |
 | `members.ai` / `speakers.ai` (AI 종합분석) | `build_ai_input` → **AI 분석** → `build_ai` | ❌ **전부 사람** |
-| `web/data.js` (국회 발언·성향) | `collect_assembly_speeches` → `build_tag_batches` → **AI 태깅** → `build_assembly_speeches` | ⚠️ 1단계만 자동, **태깅은 사람** — 2026-08-09 이후 갱신 경로 확보(아래 E 참고). 옛 `build_assembly2`(입력 `utt_ctx.json` 없어 동결)는 폐기, 안 씀. |
-| `web/bizboard.js` (사업별 보드) | `build_board_input2` → **AI 선정·요약** → `build_board` | ⚠️ 자동 트리거 없음. `build_board_input2`(2026-08-09 신설)가 `web/data.js` 를 직접 읽어 후보를 재계산 — 국회 발언을 갱신한 뒤 반드시 먼저 돌릴 것. 옛 `build_board_input`(입력 `utt_ctx.json` 없어 동결)는 폐기, 안 씀. |
+| `web/data.js` (국회 발언·성향) | `collect_assembly_speeches` → `build_tag_batches --only-new` → **AI 태깅** → `build_assembly_speeches` | ⚠️ 1단계만 자동, **태깅은 사람** — 2026-08-09 이후 갱신 경로 확보(아래 E 참고). `--only-new` 가 판정 아카이브 기준으로 걸러 이미 판정한 건 안 보낸다(2026-08-12). 옛 `build_assembly2`·`build_board_input`(입력 `utt_ctx.json` 없어 동결)는 **2026-08-12 삭제**. |
+| `web/bizboard.js` (사업별 보드) | `build_board_input2` → **AI 선정·요약** → `build_board` | ⚠️ 자동 트리거 없음. `build_board_input2`(2026-08-09 신설)가 `web/data.js` 를 직접 읽어 후보를 재계산 — 국회 발언을 갱신한 뒤 반드시 먼저 돌릴 것. 옛 `build_board_input`(입력 `utt_ctx.json` 없어 동결)는 **2026-08-12 삭제**. |
 
 **원본과 DB의 위치 규칙** (2026-08-08 확정)
 - **회의록 PDF 원본 = 내 PC에만.** `data/cabinet_minutes/*` 는 `.gitignore` 대상 — 용량이 크고 공개 자료라 굳이 안 올린다.
@@ -33,7 +33,8 @@
 ```
 node pipeline/update-cabinet.mjs            # ① 행안부에서 PDF 수집 (자동화 가능, 무료)
 python pipeline/extract_minutes.py          # ② PDF → 발언 원문 (자동화 가능, 무료)
-   ↓  ★ 여기서 끊긴다 — Claude Code 워크플로로 사람이 판정
+node pipeline/cab_todo.mjs                  # ②' 아직 판정 안 한 회의만 추림(0건이면 아래를 건너뜀) · --json 이면 wf_cabinet args
+   ↓  ★ 여기서 끊긴다 — Claude Code 워크플로로 사람이 판정 (②'가 준 목록만!)
 node pipeline/merge_cabinet_judged.mjs <판정.json> <추출.json>   # ③ 병합 (자동화 가능)
 node pipeline/build_cabinet2.mjs && node pipeline/build_ai.mjs  # ④ 빌드
 ```
@@ -94,6 +95,22 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
 - 배치 42개(국회 35 + 청와대 7) = 약 19만자, 결과 246명분 약 9.9만자.
 - 한글 1자 ≈ 1.5토큰 → **전원 1회 재생성 = 입력 약 0.33M / 출력 약 0.15M 토큰**.
 - Sonnet 5 약 **3,000원** / Opus 5 약 **7,500원** (1,400원/달러).
+
+### ⚡ 토큰 줄이기 — API 로 옮길 때 반드시 같이 할 것 (2026-08-12)
+운영 중 체감상 **회의록 판정 워크플로가 토큰을 가장 많이 먹는다.** 원인은 두 가지고 둘 다 구조 문제다.
+
+1. **한 거 또 하기.** 2026-08-12에 국회·청와대 **양쪽 다 고쳤다.**
+   - 국회: `build_tag_batches --only-new` 가 판정 아카이브(`data/_assembly_tagged.json`)를 보고
+     **이미 판정한 발언을 건너뛴다.** 그전에는 화면에 실린 채택분만 제외해서 기각 7,764건이 증분마다 재판정.
+   - 청와대: `pipeline/cab_todo.mjs` 가 `_cab_results.json` 의 **`judgedMeetings` 대장**을 보고
+     아직 판정 안 한 회의만 추린다. 0건 판정된 회의(46건 중 22건)는 발췌가 안 남아 *안 한 것*과
+     구분이 안 되던 게 원인이었다 → 대장에 회의명을 남겨 해결.
+   - ⚠ **API 판(`judge_cabinet.mjs`)도 이 대장을 그대로 읽고 쓸 것.** 안 그러면 낭비가 그대로 재발한다.
+2. **프롬프트 캐싱.** `wf_*.js` 프롬프트는 **변하는 부분(파일 경로·그룹 인덱스)을 맨 뒤**에 둔다.
+   앞에 끼면 뒤 지시문 전체가 매번 새 토큰이 된다. 실측 공통 접두사: wf_cabinet 1,133자·wf_ai 727자.
+   → SDK 로 옮길 때 이 공통 접두사 블록에 `cache_control: {type:"ephemeral"}` 을 걸면 그대로 캐시된다.
+   지시문을 고칠 때 **이 순서를 깨지 말 것**(각 파일 주석에도 적어 뒀다).
+   ⚠ 배치 JSON 을 프롬프트에 인라인할 때도 **공통 지시문 먼저 → 배치 데이터 나중** 순서를 지킬 것.
 
 ### 증분 전략 — 매번 전원 재생성하지 말 것
 기사는 하루 5번 갱신되지만, 사람의 **성향**이 하루에 다섯 번 바뀌지는 않는다. 재생성 기준은:

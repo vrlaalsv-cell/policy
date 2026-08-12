@@ -29,9 +29,9 @@ for (let i = 0; i < A.asm; i++) files.push(A.dir + '\\asm_b' + i + '.json')
 for (let i = 0; i < A.cab; i++) files.push(A.dir + '\\cab_b' + i + '.json')
 
 function prompt(file) {
+  // ⚡ 프롬프트 캐싱 — 변하는 부분(파일 경로)은 맨 뒤. 자세한 이유는 wf_cabinet.js 주석 참고.
   return `너는 SK E&S(LNG·전력·재생에너지·수소·도시가스·원전·에너지솔루션·분산에너지 사업을 하는 에너지 기업)의 정책 애널리스트다.
-파일을 Read 도구로 읽어라: ${file}
-{ people:[{ key, name, party 또는 role, district?, stances(8사업 성향 요약), quotes(회의록 핵심 발언), news(최근 기사 제목·에너지라벨·날짜) }] } 형태다.
+입력 파일은 { people:[{ key, name, party 또는 role, district?, stances(8사업 성향 요약), quotes(회의록 핵심 발언), news(최근 기사 제목·에너지라벨·날짜) }] } 형태다.
 
 각 인물마다, 제공된 "발언 + 기사 + 사업별 성향"을 종합해 그 인물의 에너지 정책 성향을 분석하라. 결과는 다음 두 필드로:
 - headline: 45자 이내 한 줄 총평. 예) "재생에너지 확대엔 적극적, 원전엔 비판적"
@@ -42,7 +42,11 @@ function prompt(file) {
 - 발언과 기사가 적거나 한 사업에만 쏠려 있으면 "판단 근거가 제한적"임을 분석에 명시하라.
 - 특정 정당이라는 이유로 성향을 단정하지 마라. 근거 텍스트가 우선이다.
 - 중립적·분석적 어조. 과장 금지.
-모든 인물을 results 배열에 key를 그대로 넣어 반환하라.`
+모든 인물을 results 배열에 key를 그대로 넣어 반환하라.
+
+── 처리 대상 (이 줄 위까지는 모든 배치에 공통이다) ──
+Read 도구로 아래 파일을 읽어 위 기준대로 처리하라:
+${file}`
 }
 
 phase('Summarize')
