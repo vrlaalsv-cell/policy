@@ -51,7 +51,30 @@ const MINUTES_DIR = arg("dir", process.env.CABINET_RAW_DIR
 const INDEX_FILE = join(DATA_DIR, "cabinet_minutes_index.json");
 if (!existsSync(MINUTES_DIR)) mkdirSync(MINUTES_DIR, { recursive: true });
 
-const get = (url, opt = {}) => axios.get(url, { headers: { "User-Agent": UA }, timeout: 60000, ...opt });
+// 🔴 **행안부는 빠르게 연속 요청하면 WAF 가 막는다 — HTTP 400 이 뜬다.** (2026-08-12 원인 규명)
+//   증상이 헷갈린다: 앞의 40여 건은 성공하다가 그 뒤로 전부 400 이 나서, 마치 "오래된 첨부가 삭제됐다"
+//   처럼 보인다. 실제로 그렇게 오판해서 findings.json 에 "영구 소실" 로 적었다가 뒤집었다.
+//   판별법: 실패한 그 파일을 **단건으로** 다시 받아 보면 멀쩡히 받아진다(실측 1.1MB). 그러면 레이트리밋이다.
+//   → 요청 간 간격을 두고, 400/403/429 는 백오프로 재시도한다.
+const DELAY = Number(arg("delay", 1500));          // 다운로드 사이 간격(ms)
+const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+
+async function get(url, opt = {}, tries = 4) {
+  let lastErr;
+  for (let i = 0; i < tries; i++) {
+    try {
+      return await axios.get(url, { headers: { "User-Agent": UA }, timeout: 60000, ...opt });
+    } catch (e) {
+      lastErr = e;
+      const st = e.response?.status;
+      if (![400, 403, 429, 503].includes(st)) throw e;   // 레이트리밋 계열이 아니면 즉시 포기
+      const wait = 3000 * Math.pow(2, i);                 // 3s → 6s → 12s → 24s
+      console.log(`      (차단 추정 ${st} — ${wait / 1000}초 후 재시도 ${i + 1}/${tries - 1})`);
+      await sleep(wait);
+    }
+  }
+  throw lastErr;
+}
 const clean = (s) => String(s || "").replace(/\s+/g, " ").trim();
 
 /** 제목 끝의 (YYMMDD) → 실제 회의일 "YYYY-MM-DD" */
@@ -123,16 +146,31 @@ for (const post of targets) {
       const name = (label.match(/^(.*?\.(?:pdf|hwpx?|zip))/i) || [])[1];
       if (href && name) files.push({ href, name });
     });
-    const pdf = files.find((f) => /\.pdf$/i.test(f.name));
-    const pick = pdf || files[0];
-    if (!pick) { console.log(`    - 첨부 없음: ${post.title}`); continue; }
-
-    const res = await get(BASE + pick.href, { responseType: "arraybuffer" });
-    const safe = pick.name.replace(/[\/\\:*?"<>|]/g, "_");
-    writeFileSync(join(MINUTES_DIR, safe), res.data);
-    index[post.nttId] = { title: post.title, meetingAt: post.meetingAt, postedAt: post.postedAt, file: safe, bytes: res.data.length };
+    // 🔴 **pdf 와 hwpx 를 둘 다 받는다.**
+    //   ① 2025-07-05 이전 글은 **hwpx 만 있고 pdf 가 없다** — pdf 만 받으면 그 구간을 통째로 놓친다.
+    //   ② hwpx 가 텍스트 추출에 훨씬 유리하다: ZIP+XML 이라 문단 순서가 그대로고(PDF 는 2단 조판에서
+    //      좌우가 뒤섞여 별도 방어가 필요했다), 크기도 10배 작고, Node 만으로 파싱된다(파이썬 불필요).
+    //   hwpx 는 100~160KB 수준이라 둘 다 받아도 부담이 없다.
+    if (!files.length) { console.log(`    - 첨부 없음: ${post.title}`); continue; }
+    const wanted = files.filter((f) => /\.(pdf|hwpx?)$/i.test(f.name));
+    const saved = [];
+    for (const f of (wanted.length ? wanted : [files[0]])) {
+      const res = await get(BASE + f.href, { responseType: "arraybuffer" });
+      const safe = f.name.replace(/[\/\\:*?"<>|]/g, "_");
+      writeFileSync(join(MINUTES_DIR, safe), res.data);
+      saved.push({ name: safe, bytes: res.data.length });
+      if (saved.length < (wanted.length || 1)) await sleep(DELAY);   // 같은 글의 두 번째 첨부도 간격을 둔다
+    }
+    // `file` 은 기존 소비자(extract_minutes.py·cab_todo)와의 호환을 위해 pdf 우선으로 남긴다.
+    const primary = saved.find((s) => /\.pdf$/i.test(s.name)) || saved[0];
+    const hwpx = saved.find((s) => /\.hwpx?$/i.test(s.name));
+    index[post.nttId] = {
+      title: post.title, meetingAt: post.meetingAt, postedAt: post.postedAt,
+      file: primary.name, bytes: primary.bytes,
+      ...(hwpx ? { hwpx: hwpx.name, hwpxBytes: hwpx.bytes } : {}),
+    };
     ok++;
-    console.log(`    ✓ ${post.meetingAt || post.postedAt}  ${safe} (${(res.data.length / 1024).toFixed(0)}KB)`);
+    console.log(`    ✓ ${post.meetingAt || post.postedAt}  ${saved.map((s) => `${s.name} (${(s.bytes / 1024).toFixed(0)}KB)`).join(" + ")}`);
 
     if (GOOGLE_CREDENTIALS && GOOGLE_FOLDER_ID) {
       try { await uploadFile(GOOGLE_FOLDER_ID, join(MINUTES_DIR, safe), safe, GOOGLE_CREDENTIALS); }
@@ -142,6 +180,7 @@ for (const post of targets) {
     fail++;
     console.log(`    ✗ ${post.title}: ${e.message}`);
   }
+  await sleep(DELAY);   // WAF 차단 방지 (아래 주석 참고)
 }
 
 writeFileSync(INDEX_FILE, JSON.stringify({ updatedAt: new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 19), posts: index }, null, 1), "utf8");
