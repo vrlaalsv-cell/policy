@@ -171,7 +171,7 @@ if (miFiles.length) process.stdout.write("\n");
 //   PDF 텍스트는 `extract_pdf_text.py`(무필터, 2단 조판 처리 포함)가 만든 JSON 을 읽어 넣는다.
 //     python pipeline/extract_pdf_text.py --src <원본> --since 2025-06-05 --out <CORPUS>/_pdf_text.json
 //   ⚠ `extract_minutes.py` 를 쓰면 안 된다 — 그쪽은 **에너지 키워드로 걸러서** SK E&S 전용이다.
-const pdfJson = join(CORPUS, "_pdf_text.json");
+const pdfJson = arg("pdf-text", join(CORPUS, "extracted", "cabinet_pdf_text.json"));
 let pdfRows = 0, pdfDocs = 0;
 if (existsSync(pdfJson)) {
   const { readFileSync } = await import("node:fs");

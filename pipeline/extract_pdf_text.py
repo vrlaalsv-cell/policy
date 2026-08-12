@@ -1,7 +1,8 @@
 #!/usr/bin/env python3
 """회의록 PDF → 무필터 문단 텍스트 (코퍼스 DB 적재용)
 
-    python pipeline/extract_pdf_text.py --src C:/AI/_corpus/cabinet_raw --since 2025-06-05 --out out.json
+    python pipeline/extract_pdf_text.py --src C:/AI/_corpus/cabinet_raw --since 2025-06-05
+    (기본 출력: C:/AI/_corpus/extracted/cabinet_pdf_text.json — 공용이라 다른 프로젝트도 그대로 쓴다)
 
 🔴 `extract_minutes.py` 와 무엇이 다른가
    그쪽은 **SK E&S 전용**이다 — 발언자 블록으로 자르고 **에너지 키워드로 걸러서**(KW.search)
@@ -74,7 +75,8 @@ def meeting_of(path):
 def main():
     ap = argparse.ArgumentParser()
     ap.add_argument("--src", default="C:/AI/_corpus/cabinet_raw")
-    ap.add_argument("--out", required=True)
+    ap.add_argument("--out", default="C:/AI/_corpus/extracted/cabinet_pdf_text.json",
+                    help="기본값은 공용 코퍼스 폴더 — 다른 프로젝트도 그대로 쓴다")
     ap.add_argument("--since", default="", help="YYYY-MM-DD 이후 회의만 (정권 경계 필터)")
     a = ap.parse_args()
 
