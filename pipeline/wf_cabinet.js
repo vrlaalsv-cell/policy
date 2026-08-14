@@ -1,6 +1,6 @@
 export const meta = {
   name: 'cabinet-reanalyze-8biz',
-  description: '국무회의·차관회의 94건을 8사업(전력·LNG·재생E·수소·도시가스·원전·에너지솔루션·분산에너지) + 앞뒤 맥락 포함 발췌로 재분석',
+  description: '국무회의·차관회의를 8사업(전력·LNG·재생E·수소·도시가스·원전·에너지솔루션·분산에너지) + 앞뒤 맥락 포함 발췌로 재분석',
   phases: [{ title: 'Extract', detail: '회의록별 에너지 발언 발췌·성향 판정' }],
 }
 
@@ -29,6 +29,13 @@ const SCHEMA = {
 }
 
 const items = typeof args === 'string' ? JSON.parse(args) : args // [{file, meeting}]
+
+// 🔴 원본(PDF·HWPX·xlsx) 경로가 섞여 들어오면 여기서 막는다 — 조용히 통과시키면 corpus.db 원칙이
+//   깨진 걸 못 알아챈다(2026-08-14, SKpolicy 방에서 실제로 232건이 이렇게 새 나갔었다).
+const rawFiles = items.filter((it) => /\.(pdf|hwpx?|xlsx?|docx?)$/i.test(it.file))
+if (rawFiles.length) {
+  throw new Error(`원본 파일 경로가 ${rawFiles.length}건 섞여 있다 — cab_todo.mjs --json 으로 다시 만들 것(corpus.db 텍스트만 받아야 한다).`)
+}
 
 function prompt(file) {
   // ⚡ 프롬프트 캐싱 — **변하는 부분(파일 경로)은 반드시 맨 뒤에** 둔다.
@@ -59,11 +66,30 @@ Read 도구로 아래 파일을 읽어 위 기준대로 처리하라:
 ${file}`
 }
 
+// 🔴 실패(에이전트 오류 → null)와 성공-0건([])을 반드시 구분한다.
+//   `.then()`은 늘 배열을 반환하므로 `results.filter(Boolean)`으로는 실패를 못 거른다
+//   (SKpolicy 방 2026-08-14 실사고 — "에너지 발언 없음" 0건 판정이 "실패"와 똑같이 보여서
+//   재판정 대상 판별이 깨졌었다). agent()가 null 이면 그 회의는 안 본 것으로 남겨야 한다.
+async function extractOne(it, i) {
+  const r = await agent(prompt(it.file), { label: `cab:${i}`, phase: 'Extract', schema: SCHEMA, effort: 'low' })
+  if (!r) return { meeting: it.meeting, ok: false, statements: [] }
+  const statements = (r.statements || []).map((s) => ({
+    speaker: s.speaker, role: s.role, businesses: s.businesses, stance: s.stance, quote: s.quote, note: s.note, meeting: it.meeting,
+  }))
+  return { meeting: it.meeting, ok: true, statements }
+}
+
 phase('Extract')
-const results = await parallel(items.map((it, i) => () =>
-  agent(prompt(it.file), { label: `cab:${i}`, phase: 'Extract', schema: SCHEMA, effort: 'low' })
-    .then((r) => (r && r.statements ? r.statements.map((s) => ({ speaker: s.speaker, role: s.role, businesses: s.businesses, stance: s.stance, quote: s.quote, note: s.note, meeting: it.meeting })) : []))
-))
-const statements = results.filter(Boolean).flat()
-log(`발췌 완료: 파일 ${results.filter(Boolean).length}/${items.length}, 발언 ${statements.length}건`)
-return { fileCount: items.length, filesOk: results.filter(Boolean).length, statements }
+// ⚡ 첫 건은 혼자 보낸다 — 캐시 항목은 첫 응답이 와야 다른 요청이 읽을 수 있다.
+//   전량을 동시에 쏘면 아무도 서로의 캐시 쓰기를 못 읽어 전원이 쓰기 요금을 낸다(fan-out 함정).
+const [first, ...rest] = items
+const firstResult = first ? [await extractOne(first, 0)] : []
+const restResults = rest.length ? await parallel(rest.map((it, i) => () => extractOne(it, i + 1))) : []
+const results = [...firstResult, ...restResults].filter(Boolean)
+
+const okMeetings = results.filter((r) => r.ok).map((r) => r.meeting)
+const statements = results.flatMap((r) => r.statements)
+const failedCount = results.length - okMeetings.length
+
+log(`발췌 완료: 회의 ${okMeetings.length}/${items.length} 성공(0건 판정 포함)${failedCount ? `, 실패 ${failedCount}건` : ''}, 발언 ${statements.length}건`)
+return { fileCount: items.length, okMeetings, statements }

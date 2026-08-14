@@ -203,3 +203,20 @@ writeFileSync(INDEX_FILE, JSON.stringify({ updatedAt: new Date().toLocaleString(
 const dates = Object.values(index).map((v) => v.meetingAt).filter(Boolean).sort();
 console.log(`✔ 신규 ${ok}건 · 실패 ${fail}건 · 보유 ${Object.keys(index).length}건`);
 if (dates.length) console.log(`  회의일 범위: ${dates[0]} ~ ${dates[dates.length - 1]}`);
+
+// 🔴 다운로드만 하고 corpus.db 적재를 안 부르면, DB 가 조용히 낡아 새 회의가 cab_todo.mjs 에
+//   영영 안 뜬다(워크스페이스 규칙 C:\AI\CLAUDE.md §①-B — "수집 → 변환 → DB 적재가 자동으로
+//   이어지는지 확인할 것"). SKpolicy 방에서 검증된 두 단계를 그대로 잇는다(2026-08-14 이식).
+if (ok > 0) {
+  const { spawnSync } = await import("node:child_process");
+  const run = (cmd, cmdArgs, label) => {
+    console.log(`\n▶ ${label}: ${cmd} ${cmdArgs.join(" ")}`);
+    const r = spawnSync(cmd, cmdArgs, { stdio: "inherit", shell: process.platform === "win32" });
+    if (r.status !== 0) { console.log(`  ⚠ ${label} 실패(exit ${r.status}) — 수동으로 다시 돌릴 것.`); return false; }
+    return true;
+  };
+  const okExtract = run("python", ["pipeline/extract_pdf_text.py", "--since", FLOOR], "PDF 텍스트 추출(hwpx 없는 회의 보충용)");
+  if (okExtract) run("node", ["pipeline/build_corpus_db.mjs"], "corpus.db 적재(증분)");
+} else {
+  console.log("  (신규 없음 — corpus.db 적재 단계 생략)");
+}
