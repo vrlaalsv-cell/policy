@@ -58,15 +58,36 @@ cd /volume2/docker
 git clone https://github.com/vrlaalsv-cell/policy.git policy
 cd policy
 git config core.autocrlf false
+mkdir -p runtime
 ```
 
-`.env` 만들기 — `<토큰>` 자리에 A-2 에서 복사한 `eyJ...` 를 붙여넣는다 (Synology 에는 `nano` 가 없다):
+> 🔴 **`mkdir -p runtime` 을 빠뜨리지 말 것.** `runtime/` 은 `.gitignore` 대상이라 **clone 에 안 딸려온다.**
+> 그런데 compose 의 `app`·`scheduler` 가 둘 다 `./runtime:/app/data` 로 바인드 마운트하므로, 폴더가
+> 없으면 기동이 `Bind mount failed: '/volume2/docker/policy/runtime' does not exist` 로 죽는다.
+> **빌드는 멀쩡히 끝난 뒤 기동에서 죽어서** 로그를 안 보면 성공한 줄 안다. `tunnel` 은 `depends_on: app`
+> 이라 같이 안 떠서 브라우저엔 **Cloudflare Error 1033** 이 뜬다 — 터널이 틀린 것처럼 보이지만 원인은
+> 이 폴더 하나다. (2026-08-17 같은 구조의 SKpolicy 실배포에서 실제로 걸렸다.)
+
+`.env` 만들기 (Synology 에는 `nano` 가 없다). **표준 절차는 `C:\AI\CLAUDE.md` 의 "🔑 `.env` 만드는 표준 절차"** —
+아래는 그걸 이 프로젝트 경로로 옮긴 것이다.
+
+**①** 실행하면 커서만 깜빡인다. A-2 에서 복사한 토큰을 붙여넣고 **Enter → Ctrl+D**:
 
 ```bash
-cd /volume2/docker/policy
-echo 'CLOUDFLARE_TUNNEL_TOKEN=<토큰>' > .env
-chmod 600 .env
+cat > /tmp/tok.txt
 ```
+
+**②** 조립 + 확인:
+
+```bash
+printf 'CLOUDFLARE_TUNNEL_TOKEN=%s\n' "$(tr -d ' \t\r\n' < /tmp/tok.txt)" > /volume2/docker/policy/.env; chmod 600 /volume2/docker/policy/.env; rm -f /tmp/tok.txt; head -c 30 /volume2/docker/policy/.env; echo; wc -c < /volume2/docker/policy/.env
+```
+
+`CLOUDFLARE_TUNNEL_TOKEN=eyJ` + **200 이상**이면 정상. **25**면 값이 안 들어간 것이니 ①부터 다시.
+
+> 🔴 옛 방식(`echo 'CLOUDFLARE_TUNNEL_TOKEN=<토큰>' > .env`)은 폐기했다 — 코드블록에 손으로 고칠
+> 자리를 남기고, **대시보드에서 복사한 토큰에 줄바꿈이 섞이면 조각이 셸 명령으로 실행된다.**
+> `read` 로 물어보는 방식도 같은 이유로 안 된다(2026-08-17 SKpolicy 실배포에서 두 번 실패).
 
 기동:
 
