@@ -13,7 +13,7 @@
 | 산출물 | 만드는 스크립트 | 지금 누가 돌리나 |
 |---|---|---|
 | `web/news.js` (최근 기사) | `5_collect_news` → `6_fetch_excerpts` → `build_news_web` | ✅ **자동** — 컨테이너 `policy-scheduler`, 매일 06/09/12/15/18시 |
-| 코드 배포 | `scripts/autodeploy.sh` | ✅ **자동** — DSM 작업 스케줄러 |
+| 코드 배포 | `scripts/autodeploy.sh` | 🔴 **중단됨 (2026-08-24~)** — 아래 F 참고. 원래는 DSM 작업 스케줄러가 자동. |
 | 회의록 PDF **원본 확보** | `update-cabinet` | ✅ **자동**(2026-08-12~) — 컨테이너 `policy-scheduler`, **매일 05:30 + 컨테이너 시작 시**. 🔴 행안부가 오래된 첨부를 순차적으로 내려서 **놓치면 영구 소실**이라 자동화했다(실측: 3일 만에 4건이 400으로 바뀜). PDF 는 볼륨(`/app/data/cabinet_raw`)에 쌓인다. |
 | `web/cabinet.js` (청와대 발언·성향) | `update-cabinet` → `extract_minutes.py` → `cab_todo`(남은 회의만) → **AI 판정** → `merge_cabinet_judged` → `build_cabinet2` | ⚠️ **원본 확보만 자동, 판정은 사람**(AI 비용 단계라 일부러 자동화 안 함). `cab_todo.mjs`(2026-08-12 신설)를 건너뛰면 이미 판정한 회의까지 재판정된다. |
 | `members.ai` / `speakers.ai` (AI 종합분석) | `build_ai_input` → **AI 분석** → `build_ai` | ❌ **전부 사람** |
@@ -123,13 +123,19 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
 1. **`data/_ai_manual.json` 이 `_ai_results.json` 을 덮어쓴다** (`build_ai.mjs`, 나중에 로드되는 쪽이 이김).
    여기에 옛 1차 스냅샷 51건이 남아 있어서, 2026-08-08 에 재생성한 분석이 **화면에 안 나오고 있었다.**
    지금은 비워 뒀다. 손으로 고친 것만 넣을 것.
-2. **`build_ai.mjs` 는 실패하면 기존 분석을 지운다.** 결과가 비면 `catch` 로 `[]` 가 되고,
-   `web/data.js`·`web/cabinet.js` 의 `ai` 필드 246명분을 `delete` 한 뒤 제자리에 덮어쓴다. 원본이 안 남는다.
-   → API 판 스크립트에는 **대량 실패 가드**가 반드시 필요하다. 본보기가 이미 있다:
-   `5_collect_news.mjs` 의 "🛑 대량 실패 안전장치" (2026-08-08 에 336명 중 9명만 성공해 기사 전체가
-   0건으로 덮여쓰인 사고 이후 넣은 것). 성공률 60% 미만이면 아무것도 쓰지 않고 종료한다.
-3. **`build_cabinet2.mjs` 도 같은 위험** — `_cab_results.json` 을 통째로 읽어 `cabinet.json`/`cabinet.js` 를
-   전량 재작성한다. 판정이 대부분 비면 청와대 화면이 통째로 빈다.
+2. ~~**`build_ai.mjs` 는 실패하면 기존 분석을 지운다.**~~ → **2026-08-27 가드 추가로 해결.**
+   예전엔 결과가 비면 `catch` 로 `[]` 가 되고 `web/data.js`·`web/cabinet.js` 의 `ai` 필드를
+   전부 `delete` 한 뒤 덮어써서 원본이 안 남았다. 지금은 **지금 붙어 있는 ai 수의 60% 미만**이면
+   아무것도 쓰지 않고 `exit 1` 한다(강행은 `--force`). 본보기는 `5_collect_news.mjs` 의
+   "🛑 대량 실패 안전장치"(2026-08-08 에 336명 중 9명만 성공해 기사가 0건으로 덮인 사고 이후 도입).
+   ⚠️ **`build_cabinet2.mjs` 에는 아직 같은 가드가 없다**(아래 3번).
+3. **`build_cabinet2.mjs` 도 같은 위험 — 아직 가드 없음** — `_cab_results.json` 을 통째로 읽어
+   `cabinet.json`/`cabinet.js` 를 전량 재작성한다. 판정이 대부분 비면 청와대 화면이 통째로 빈다.
+   🔴 **이 위험이 실제로 터졌다(2026-08-14 → 08-27, 13일간 발견 못 함).** 회의록 112회의를 반영하며
+   이걸 돌렸는데 `build_ai.mjs` 를 이어서 안 돌려, 재작성된 `speakers` 에서 **청와대 총평 33명분이
+   통째로 사라진 채 배포됐다.** 에러도 경고도 없었다.
+   → 2026-08-27 에 **ai 필드 인계**를 넣어 그 경로는 막았다(재빌드 시 기존 `speakers[].ai` 를
+   이름 기준으로 물려받는다). 하지만 **판정 자체가 급감할 때의 가드는 여전히 없다.**
 4. **`extract_minutes.py` 는 0건이어도 성공처럼 끝난다** (`OK 0 records`, exit 0).
    조판이 바뀌어 판별이 깨지면 조용히 0건이 된다. → 0건이거나 직전 대비 급감이면 exit 1 로 바꿀 것.
 
@@ -186,7 +192,11 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
 
 ### 나중에 (자동화 착수 시)
 - [ ] `wf_cabinet.js`·`wf_ai.js` → Anthropic SDK 스크립트로 재작성 (위 A·B)
-- [ ] 대량 실패 가드를 회의록·AI 쪽에 이식 (`5_collect_news.mjs` 패턴)
+- [x] ~~대량 실패 가드를 **AI 쪽**에 이식~~ — 2026-08-27 완료. `build_ai.mjs` 가 지금 붙어 있는 ai 수를
+      세어, 이번에 붙일 게 60% 미만이면 **아무것도 쓰지 않고 exit 1**. 강행은 `--force`.
+- [ ] 대량 실패 가드를 **회의록**(`build_cabinet2.mjs`) 쪽에도 이식 (`5_collect_news.mjs` 패턴).
+      단 ai 필드 유실 위험은 2026-08-27 에 따로 막았다 — 재빌드 시 기존 `speakers[].ai` 를 이름 기준으로
+      물려받는다(그전엔 재빌드가 총평을 통째로 날렸고, 실제로 13일간 그 상태로 배포돼 있었다).
 - [ ] Dockerfile 파이썬/베이스 결정, `scheduler.mjs` 다중 작업화
 - [x] `web/data.js` 재생성 입력 복구 — ~~`utt_ctx.json`·`_ab2_results.json` 복구~~ 대신 새 경로로 해결(2026-08-09):
       `collect_assembly_speeches.mjs`(국회도서관 발언 빅데이터, 인증키 불필요) → `build_tag_batches` → AI 태깅 →
@@ -202,3 +212,29 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
       직접 읽어 해결. 옛 `build_board_input.mjs`(입력 없어 동결)는 폐기.
 - [ ] `data/cabinet.json` 은 아무도 안 읽는 산출물 — 정리할지 결정
 - [ ] Next.js 랜딩 앱(`app/`)은 배포 경로 밖이다 (`.dockerignore` 제외, `serve.mjs` 만 뜬다). 쓸지 말지 정리
+
+---
+
+## F. 🔴 NAS 폴더명 원복 — autodeploy 가 멈춰 있다 (2026-08-24~)
+
+**증상**: GitHub 에 푸시해도 NAS 에 자동 반영되지 않는다. 매번 사람이 SSH 로 배포해야 한다.
+
+**원인**: 2026-08-24 프로젝트 종료 작업 때 NAS 폴더를 `policy` → **`policy.종료_20260824`** 로 바꿨는데,
+`scripts/autodeploy.sh`·`scripts/autodeploy-loop.sh` 가 `DIR=/volume2/docker/policy` 를 **하드코딩**한다.
+DSM 작업 스케줄러 등록 명령도 `sh /volume2/docker/policy/scripts/autodeploy-loop.sh` 라 경로를 못 찾는다.
+같은 이유로 그 사이 사이트도 3일간 죽어 있었다(컨테이너까지 `compose down` 돼 있었음 — 2026-08-27 복구).
+
+**고치는 법** — 폴더명을 되돌리는 게 정답이다(스크립트 3곳을 고치는 것보다 안전하다).
+```
+sudo /usr/local/bin/docker compose -p policy down
+sudo mv /volume2/docker/policy.종료_20260824 /volume2/docker/policy
+cd /volume2/docker/policy && git pull && sudo /usr/local/bin/docker compose up -d --build
+```
+- 🔴 폴더명이 바뀐 상태에서 띄울 땐 **`-p policy` 필수** — 안 붙이면 compose 기본 프로젝트명이 달라져
+  기존 `policy-app:latest` 이미지를 못 찾고 J4125 로 5~10분 재빌드한다.
+- 되돌린 뒤엔 `-p` 없이 그냥 `docker compose up -d` 로 충분하다.
+- 원복 후 DSM 작업 스케줄러의 autodeploy 작업이 다시 도는지 확인할 것
+  (부팅 트리거 루프라, 필요하면 스케줄러에서 수동 1회 실행).
+
+**교훈**: "이제 개발 안 한다"는 배포를 내리라는 뜻이 아니다. 종료 작업에 `compose down`·폴더명 변경을
+묶지 말 것 — 이 프로젝트는 Claude API 를 안 써서 띄워두는 비용이 사실상 0이다.
