@@ -73,8 +73,20 @@ node pipeline/collect_assembly_speeches.mjs --committees=<위원회명,...> --by
 node pipeline/build_tag_batches.mjs --only-new [--committees=<위원회명,...>]   # ② 아직 태깅 안 된 것만 배치로
                                                        # ③ AI 태깅 (Claude Code)
 node pipeline/build_assembly_speeches.mjs <판정.json> [--committees=<위원회명,...>] --dry   # ④ --dry 로 먼저 확인
-node pipeline/build_ai_input.mjs && node pipeline/build_ai.mjs  # ⑤ AI 종합분석 갱신
+node pipeline/build_ai_input.mjs --todo --batch=8       # ⑤ AI 종합분석 — 근거가 바뀐 사람만 배치로
+                                                       # ⑥ wf_ai_verified.js 워크플로 (생성 + 근거 검증)
+node pipeline/collect_ai.mjs <워크플로결과.json>        # ⑦ 증분 병합 (덮어쓰지 않는다)
+node pipeline/build_ai.mjs                             # ⑧ web/data.js·cabinet.js 에 반영
 ```
+
+- ⭐ **⑤는 `--todo` 를 쓸 것.** 인물별 근거(성향·발언·기사) payload 를 해시해 `_ai_results.json` 에 같이
+  저장해 두고, 지금 해시와 같으면 건너뛴다. 기사는 하루 5번 갱신되지만 **사람의 성향이 하루에
+  다섯 번 바뀌지는 않는다** — 갱신 여부가 아니라 **그 사람에게 실제로 들어가는 근거가 달라졌는지**가 기준이다.
+  (플래그 없이 돌리면 근거가 그대로인 사람까지 전원 재생성한다.)
+- ⭐ **⑥은 `wf_ai.js` 가 아니라 `wf_ai_verified.js`** — 생성 후 근거 기반 적대 검증이 붙어 있다.
+  증분 대상은 대개 발언 1~2건짜리 인물이라 AI 가 부풀리기 쉽다(2026-08-27 실측: 23명 중 2명 탈락·재생성).
+- 🔴 **⑦을 건너뛰고 결과 파일을 직접 복사하지 말 것.** `collect_ai.mjs` 가 key 기준 증분 병합 + 근거 해시
+  기록을 같이 한다. 해시가 안 붙으면 다음 `--todo` 가 그 사람을 또 돌린다.
 
 - **원본 xlsx 는 PC 에만** (`data/raw_speeches/`, gitignore). 정규화·판정 결과는 커밋해서 NAS 로.
 - ①은 이미 받은 배치를 건너뛴다. 주기적으로 다시 돌리면 새 회의분만 받는다.

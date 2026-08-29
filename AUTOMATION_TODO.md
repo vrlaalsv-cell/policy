@@ -80,17 +80,27 @@ node pipeline/build_cabinet2.mjs && node pipeline/build_ai.mjs  # ④ 빌드
 
 ### 지금 흐름
 ```
-node pipeline/build_ai_input.mjs      # 배치 생성 (data/_ai/{asm,cab}_b*.json, 6명씩)
-   ↓  ★ Claude Code 워크플로(pipeline/wf_ai.js)로 사람이 실행
-node pipeline/collect_ai.mjs <워크플로.output>   # → data/_ai_results.json
+node pipeline/build_ai_input.mjs --todo --batch=8   # 근거가 바뀐 사람만 배치로 (+ 근거해시 대장 _index.json)
+   ↓  ★ Claude Code 워크플로(pipeline/wf_ai_verified.js)로 사람이 실행 — 생성 + 근거 적대검증
+node pipeline/collect_ai.mjs <워크플로.output>      # → data/_ai_results.json 에 증분 병합 + 해시 기록
 node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabinet.js(speakers.ai)
 ```
+🔴 **`--todo` 없이 돌리면 근거가 그대로인 사람까지 전원 재생성한다**(2026-08-29 신설).
+판단 기준은 "기사가 갱신됐나"가 아니라 **"이 사람에게 들어가는 payload 가 달라졌나"**(srcHash)다 —
+기사는 하루 5번 갱신되지만 사람의 성향이 하루 다섯 번 바뀌지는 않는다(아래 "증분 전략" 절과 같은 취지).
+워크플로도 무검증 `wf_ai.js` 가 아니라 검증이 붙은 **`wf_ai_verified.js`** 를 쓴다.
 
 ### 만들 것
 `pipeline/run_ai.mjs` — `data/_ai/*.json` 배치를 API 로 처리해 `_ai_results.json` 을 직접 만든다.
-`wf_ai.js` 의 프롬프트·스키마를 거의 그대로 쓸 수 있다. 두 군데만 고치면 된다:
+**`wf_ai_verified.js`** 의 프롬프트·스키마를 옮긴다(무검증 `wf_ai.js` 아님 — 아래 참고). 고칠 곳:
 - "파일을 Read 도구로 읽어라" → 배치 JSON 을 프롬프트 본문에 인라인
 - `agent(..., { schema })` → `output_config.format`
+- 🔴 **생성 → 근거 검증 → 탈락분 재생성, 3단을 그대로 옮길 것.** 검증을 빼면 안 된다.
+  2026-08-29 실측: 130명 중 **17명(13%)** 이 근거를 넘어서 탈락했다(원문에 없는 연료 추가,
+  다른 의원의 논점 차용, "태양광"을 "수면 태양광"으로 구체화, 자료없음 사업에 성향 단정 등).
+  전부 그럴듯해서 **사람 눈으로는 안 걸린다.** 자동화하면 검토자가 더 없어지므로 게이트가 더 중요하다.
+- 🔴 **증분 판단(`--todo` + `srcHash`)도 같이 옮길 것.** 안 그러면 매 실행이 전원 재생성이 된다
+  (2026-08-29 실측: 279명 중 149명이 근거 무변경 → 건너뛰어 약 절반 절감).
 
 ### 비용 (실측 기반)
 - 배치 42개(국회 35 + 청와대 7) = 약 19만자, 결과 246명분 약 9.9만자.
@@ -191,7 +201,8 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
 - [x] `DEPLOY.md` 문구 정정(2026-08-09) — "컨테이너 2개"→3개, "비용 0원"→자동 재수집(①)만 0원 + 범위 밖 경고 추가, "매일 04:30 수집"→실제 06/09/12/15/18시.
 
 ### 나중에 (자동화 착수 시)
-- [ ] `wf_cabinet.js`·`wf_ai.js` → Anthropic SDK 스크립트로 재작성 (위 A·B)
+- [ ] `wf_cabinet.js`·**`wf_ai_verified.js`**(무검증 `wf_ai.js` 아님) → Anthropic SDK 스크립트로 재작성 (위 A·B).
+      생성만 옮기지 말고 **근거 검증 단계와 `--todo` 증분 판단까지** 같이 옮길 것 — 근거는 §B "만들 것".
 - [x] ~~대량 실패 가드를 **AI 쪽**에 이식~~ — 2026-08-27 완료. `build_ai.mjs` 가 지금 붙어 있는 ai 수를
       세어, 이번에 붙일 게 60% 미만이면 **아무것도 쓰지 않고 exit 1**. 강행은 `--force`.
 - [ ] 대량 실패 가드를 **회의록**(`build_cabinet2.mjs`) 쪽에도 이식 (`5_collect_news.mjs` 패턴).
