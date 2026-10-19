@@ -399,17 +399,17 @@
   var search = document.getElementById("search");
   search.oninput = function () { state.query = search.value; renderMap(); renderStats(); renderCards(); };
 
-  // 청와대 조직도 — 장관 렌더 (2026-07 공개 조직도, 참고용)
+  // 청와대 조직도 — 장관 렌더 (2026-10-19 기준, 임명이 끝난 사람만 — 후보자는 안 넣는다. 근거는 data/cabinet_roles.json sources)
   var CABINET = [
     { pos: "교육부장관", who: "최교진" }, { pos: "외교부장관", who: "조현" },
-    { pos: "통일부장관", who: "정동영", concurrent: true }, { pos: "법무부장관", who: "정성호", concurrent: true },
-    { pos: "국방부장관", who: "안규백", concurrent: true }, { pos: "행정안전부장관", who: "윤호중", concurrent: true },
+    { pos: "통일부장관", who: "정동영", concurrent: true }, { pos: "법무부장관", who: "공석", vacant: true },
+    { pos: "국방부장관", who: "강신철" }, { pos: "행정안전부장관", who: "윤호중", concurrent: true },
     { pos: "국가보훈부장관", who: "권오을" }, { pos: "문화체육관광부장관", who: "최휘영" },
     { pos: "농림축산식품부장관", who: "송미령" }, { pos: "산업통상부장관", who: "김정관", energy: true },
     { pos: "보건복지부장관", who: "정은경" }, { pos: "기후에너지환경부장관", who: "김성환", concurrent: true, energy: true },
     { pos: "고용노동부장관", who: "김영훈" }, { pos: "성평등가족부장관", who: "원민경" },
-    { pos: "국토교통부장관", who: "김윤덕", concurrent: true }, { pos: "해양수산부장관", who: "황종우" },
-    { pos: "중소벤처기업부장관", who: "공석", vacant: true }, { pos: "기획예산처장관", who: "박홍근", concurrent: true }
+    { pos: "국토교통부장관", who: "홍지선" }, { pos: "해양수산부장관", who: "황종우" },
+    { pos: "중소벤처기업부장관", who: "이소영", concurrent: true }, { pos: "기획예산처장관", who: "박홍근", concurrent: true }
   ];
   (function renderCabinet() {
     var host = document.getElementById("ministers"); if (!host) return;

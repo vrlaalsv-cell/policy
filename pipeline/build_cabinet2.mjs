@@ -78,9 +78,17 @@ const prevAI = (() => {
   return m;
 })();
 
+// 🔴 화면 직위는 '지금' 직위로 — 발언에서 뽑은 직위는 그 회의 당시 것이라 개각·이동이 있으면 낡는다
+//   (2026-10-19: 총리·국조실장·경제부총리 등이 바뀌었는데 옛 직위로 떠 있었다). 사람 이름 → 지금 직위는
+//   data/cabinet_roles.json 에 근거(회의록 참석자 명단·인사 기사)와 함께 손으로 적는다. 발언별 직위는 안 바꾼다.
+const ROLE_NOW = (() => {
+  try { return JSON.parse(readFileSync(join(paths.data, "cabinet_roles.json"), "utf8")).roles || {}; }
+  catch { return {}; }
+})();
+
 const speakers = Object.values(bySpeaker).map((sp) => {
   const stance = {}; BIZ.forEach((b) => stance[b] = sp.tally[b] ? agg(sp.tally[b]) : "unknown");
-  const out = { name: sp.name, role: sp.role, stance, count: sp.quotes.length, quotes: sp.quotes };
+  const out = { name: sp.name, role: ROLE_NOW[sp.name] || sp.role, stance, count: sp.quotes.length, quotes: sp.quotes };
   const ai = prevAI.get(sp.name);
   if (ai) out.ai = ai;
   return out;
