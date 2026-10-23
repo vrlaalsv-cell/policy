@@ -2,6 +2,17 @@
 
 # policy — 정책돋보기 (SK E&S 판, 회사 조별과제 7조)
 
+## 🟢 지금 상태 (2026-10-24 NAS 실측)
+
+- **사이트는 운영 중이다.** 2026-08-24 에 개발 '종료'로 정했지만 배포는 내리지 않았고(8/27 복구), **2026-10-19 데이터 전면 갱신**을 했다(CHANGELOG).
+- NAS `/volume2/docker/policy` — `policy-web`(호스트 8007 → 8137, healthy) · `policy-scheduler`(기사 매일 06/09/12/15/18시 + 회의록 PDF 05:30) ·
+  `policy-tunnel` → `https://7.yes-i-can.kr`(응답 200, **Cloudflare Access 없음** — 주소만 알면 열린다). `policy-collect` 는 10-19 갱신 때 쓴 1회용 수집 컨테이너(멈춘 채, 재시작 안 함).
+- 🔴 **자동배포는 안 돈다** — DSM 작업 스케줄러에 autodeploy 작업이 없고(crontab 에 없음) 루프 프로세스도 없다. `runtime/autodeploy.log` 마지막 기록 2026-08-08.
+  push 뒤 NAS 반영은 SSH 로 `git pull` + `compose up -d --build`(DEPLOY.md E). NAS 폴더명(`policy.종료_20260824`)은 원복돼 있다.
+- 로컬 `C:\AI\policy` 는 2026-10-19 노트북(SKES23)에 GitHub 에서 **다시 clone** 한 것이다. `C:\AI\_corpus`·`C:\AI\SKpolicy` 는 이 PC 에 없다 —
+  회의록 `corpus.db`(131회의) 정본은 NAS `/volume2/homes/yongsilver/work/policy_upd/_corpus/`, 8/24 묶음은 NAS `Archive/2026-08-24_종료프로젝트/`.
+- 커밋은 `main` 에 바로 한다(8월 이후 전부). 팀 브랜치(`minjeong`·`jiyechoi`·`feature/*`)는 2026-07-23 이후 새 커밋 없음.
+
 ## 🔴 작업 시작 전에 반드시 읽을 것
 
 **`HANDOFF_토큰절감_SKpolicy에서.md`** — 이 방에서 분기해 나간 `C:\AI\SKpolicy`(AI보좌관, SK 그룹사 판)에서
@@ -42,7 +53,7 @@
 
 ## 이 저장소 특성
 
-- **6인 협업 repo**(`vrlaalsv-cell/policy`). 내 브랜치는 `minjeong`.
+- **6인 협업 repo**(`vrlaalsv-cell/policy`). 이 PC 의 git 이름은 `minjeong`, 작업은 `main` 에 직접 한다(위 '지금 상태').
   커밋·푸시 전에 `git status`·`git log` 로 팀 변경을 먼저 확인하고, 가능하면 팀에 알릴 것.
 - 배포: NAS 8007 · Cloudflare 터널 **7.yes-i-can.kr** (조 번호 = 서브도메인)
-- 원문 코퍼스는 `C:\AI\_corpus` 를 `SKpolicy` 와 **공유**한다(git 밖). 규칙은 `_corpus/README.md`.
+- 원문 코퍼스는 `C:\AI\_corpus` 를 `SKpolicy` 와 **공유**했었다(git 밖, 규칙은 `_corpus/README.md`). 2026-08-24 로컬에서 내렸다 — 지금 위치는 위 '지금 상태'.

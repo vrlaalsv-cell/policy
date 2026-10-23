@@ -1,5 +1,8 @@
 # NAS 배포 (Synology + Cloudflare Tunnel)
 
+> 🟢 **2026-10-24 실측: 세 컨테이너 모두 떠 있고 `https://7.yes-i-can.kr` 응답 200.** 마지막 배포 2026-10-19(`6bf6305`).
+> 🔴 단 **자동배포(아래 ②)는 등록돼 있지 않다** — 평상시 배포는 E 절차로 손으로(또는 Claude 가 SSH 로) 한다.
+
 대시보드를 `pipeline/serve.mjs`(Node) 이미지로 굽고, Cloudflare 터널로 외부에 공개한다.
 컨테이너는 **3개**: `policy-web`(Node) + `policy-scheduler`(기사 자동 재수집) + `policy-tunnel`(cloudflared).
 포트포워딩·공인IP 불필요.
@@ -28,7 +31,7 @@
 3. **Public hostname** 탭 → Add a public hostname
    - Subdomain `7` / Domain `yes-i-can.kr`  ← 7조라서 `7.yes-i-can.kr`
    - Type `HTTP` / URL `app:8137`
-4. (권장) Zero Trust → **Access** → Applications → Add an application → Self-hosted
+4. (권장) Zero Trust → **Access** → Applications → Add an application → Self-hosted — ⚠️ **2026-10-24 실측: 지금은 Access 가 안 걸려 있다**(주소를 열면 바로 대시보드)
    - 도메인 `7.yes-i-can.kr`, 정책은 **Emails** 로 팀원 6명 이메일만 허용
    - 조별과제 데이터이므로 Access 없이 두면 **주소만 알면 누구나** 들어온다.
      발표·시연 때만 잠깐 열어두고 싶으면 Access 를 나중에 붙였다 떼도 된다 (코드 수정 0)
@@ -186,7 +189,7 @@ sudo docker compose logs --tail=20 scheduler
 `main` 에 push 되면 NAS 가 알아서 `git pull` + 재빌드한다. **등록 방식이 두 가지**이고 원하는 쪽을 고르면 된다.
 둘 다 등록해도 된다 — `autodeploy.sh` 에 잠금이 걸려 있어 동시에 돌지 않는다.
 
-**방법 A — 예약된 작업 (← 현재 운영 중인 설정)**
+**방법 A — 예약된 작업** (⚠️ 예전엔 '현재 운영 중인 설정' 이라고 적혀 있었지만 **2026-10-24 실측으로 A·B 둘 다 등록돼 있지 않다** — NAS crontab 에 작업이 없고 루프 프로세스도 없음, `autodeploy.log` 마지막 2026-08-08)
 
 DSM → 제어판 → 작업 스케줄러 → **생성 → 예약된 작업 → 사용자 정의 스크립트**
 

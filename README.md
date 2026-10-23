@@ -1,5 +1,7 @@
 # 정책돋보기
 
+> 🟢 **운영 중 (2026-10-24 실측)** — `https://7.yes-i-can.kr` · NAS 8007. 데이터는 2026-10-19 전면 갱신, 기사는 NAS 스케줄러가 하루 5번 자동 수집. 상세는 `CLAUDE.md` 맨 위 '지금 상태'.
+
 국회·행정부(청와대) 에너지 정책 성향을 데이터로 분석하는 정책 인텔리전스 프로젝트입니다. (SK E&S · 정책 인텔리전스, 기획안 v1.0 기반)
 
 ## 구성
@@ -23,6 +25,7 @@ http://localhost:3000 에서 확인할 수 있습니다.
 ## 대시보드 MVP 미리보기 (샘플 데이터)
 
 > 현재 MVP 화면은 **가상 샘플 데이터**로 동작합니다. `.env`에 키를 넣고 파이프라인을 실행하면 실데이터로 바뀝니다.
+> (2026-10-24 덧붙임: 지금 저장소의 `web/*.js` 는 이미 **실데이터**다 — 이 안내는 초기 MVP 때 것.)
 
 ```bash
 npm run serve      # → http://localhost:8137
@@ -100,7 +103,8 @@ npm run collect:news    # 수집 → data/news.json + web/news.js (약 3분, 300
 
 ## NAS 배포 (7.yes-i-can.kr)
 
-Synology NAS 에 nginx + Cloudflare 터널 2컨테이너로 올린다. 절차·트러블슈팅은 **[DEPLOY.md](DEPLOY.md)**.
+Synology NAS 에 **3컨테이너**로 올린다 — `policy-web`(Node `pipeline/serve.mjs`, 업데이트 버튼 때문에 nginx 아님) + `policy-scheduler`(기사·회의록 PDF 자동 수집) + `policy-tunnel`(cloudflared). 절차·트러블슈팅은 **[DEPLOY.md](DEPLOY.md)**.
+자동배포는 지금 안 돈다(DSM 작업 미등록, 2026-10-24 실측) — push 뒤 NAS 에서 직접 `git pull` 후 아래를 실행.
 
 ```bash
 sudo docker compose up -d --build

@@ -13,7 +13,7 @@
 | 산출물 | 만드는 스크립트 | 지금 누가 돌리나 |
 |---|---|---|
 | `web/news.js` (최근 기사) | `5_collect_news` → `6_fetch_excerpts` → `build_news_web` | ✅ **자동** — 컨테이너 `policy-scheduler`, 매일 06/09/12/15/18시 |
-| 코드 배포 | `scripts/autodeploy.sh` | 🔴 **중단됨 (2026-08-24~)** — 아래 F 참고. 원래는 DSM 작업 스케줄러가 자동. |
+| 코드 배포 | `scripts/autodeploy.sh` | 🔴 **안 돈다** — NAS 폴더명은 원복됐지만 DSM 작업 스케줄러에 작업이 없다(2026-10-24 실측). 아래 F 참고. 지금은 사람이 SSH 로 배포. |
 | 회의록 PDF **원본 확보** | `update-cabinet` | ✅ **자동**(2026-08-12~) — 컨테이너 `policy-scheduler`, **매일 05:30 + 컨테이너 시작 시**. 🔴 행안부가 오래된 첨부를 순차적으로 내려서 **놓치면 영구 소실**이라 자동화했다(실측: 3일 만에 4건이 400으로 바뀜). PDF 는 볼륨(`/app/data/cabinet_raw`)에 쌓인다. |
 | `web/cabinet.js` (청와대 발언·성향) | `update-cabinet` → `extract_minutes.py` → `cab_todo`(남은 회의만) → **AI 판정** → `merge_cabinet_judged` → `build_cabinet2` | ⚠️ **원본 확보만 자동, 판정은 사람**(AI 비용 단계라 일부러 자동화 안 함). `cab_todo.mjs`(2026-08-12 신설)를 건너뛰면 이미 판정한 회의까지 재판정된다. |
 | `members.ai` / `speakers.ai` (AI 종합분석) | `build_ai_input` → **AI 분석** → `build_ai` | ❌ **전부 사람** |
@@ -234,6 +234,10 @@ node pipeline/build_ai.mjs            # → web/data.js(members.ai) + web/cabine
 - [ ] 청와대 후보자 — `data/cabinet_roles.json` 의 `notYetAppointed`(김승원·용혜인)가 임명되면 조직도·직위 반영.
 
 ## F. 🔴 NAS 폴더명 원복 — autodeploy 가 멈춰 있다 (2026-08-24~)
+
+> **2026-10-24 실측**: ✅ 폴더명은 원복됐다(`/volume2/docker/policy` — 10-19 배포 컨테이너도 이 경로). 아래 '고치는 법' 의 3줄은 할 필요 없다.
+> 🔴 그런데 **DSM 작업 스케줄러에 autodeploy 작업이 없다**(NAS `/etc/crontab` 에 없음, `autodeploy-loop.sh` 프로세스도 없음, `runtime/deployed.sha` 없음).
+> 남은 일은 하나 — DSM 에 다시 등록(사용자 GUI 작업, DEPLOY.md ②). 등록 전까지는 push 해도 NAS 에 안 따라온다.
 
 **증상**: GitHub 에 푸시해도 NAS 에 자동 반영되지 않는다. 매번 사람이 SSH 로 배포해야 한다.
 
