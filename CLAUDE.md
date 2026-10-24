@@ -4,6 +4,7 @@
 
 ## 🟢 지금 상태 (2026-10-24 NAS 실측)
 
+- 🔚 **2026-10-31 까지만 운영하고 폐지한다**(2026-10-24 사용자 '10월까지만 운영, 폐지 예정'). 11월에 할 일: NAS 컨테이너 넷(`policy-web`·`policy-scheduler`·`policy-tunnel`·멈춘 `policy-collect`) 내리기 → `/volume2/docker/policy` 를 NAS `Archive/` 로 묶어 보관(체크섬) → 주소 `7.yes-i-can.kr`·터널 `7` 정리(Cloudflare, 사용자 허락) → 8888 카드·공통 문서 갱신. 그 전엔 새 데이터 갱신 안 함.
 - **사이트는 운영 중이다.** 2026-08-24 에 개발 '종료'로 정했지만 배포는 내리지 않았고(8/27 복구), **2026-10-19 데이터 전면 갱신**을 했다(CHANGELOG).
 - NAS `/volume2/docker/policy` — `policy-web`(호스트 8007 → 8137, healthy) · `policy-scheduler`(기사 매일 06/09/12/15/18시 + 회의록 PDF 05:30) ·
   `policy-tunnel` → `https://7.yes-i-can.kr`(응답 200, **Cloudflare Access 없음** — 주소만 알면 열린다). `policy-collect` 는 10-19 갱신 때 쓴 1회용 수집 컨테이너(멈춘 채, 재시작 안 함).
