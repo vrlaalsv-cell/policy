@@ -4,7 +4,8 @@
 
 ## 🟢 지금 상태 (2026-10-24 NAS 실측)
 
-- 🔚 **2026-10-31 까지만 운영하고 폐지한다**(2026-10-24 사용자 '10월까지만 운영, 폐지 예정'). 11월에 할 일: NAS 컨테이너 넷(`policy-web`·`policy-scheduler`·`policy-tunnel`·멈춘 `policy-collect`) 내리기 → `/volume2/docker/policy` 를 NAS `Archive/` 로 묶어 보관(체크섬) → 주소 `7.yes-i-can.kr`·터널 `7` 정리(Cloudflare, 사용자 허락) → 8888 카드·공통 문서 갱신. 그 전엔 새 데이터 갱신 안 함.
+- 🔚 **2026-10-31 까지만 운영하고 폐지한다**(2026-10-24 사용자 '10월까지만 운영, 폐지 예정'). 11월에 할 일: NAS 컨테이너 넷(`policy-web`·`policy-scheduler`·`policy-tunnel`·멈춘 `policy-collect`) 내리기 → `/volume2/docker/policy` 를 NAS `Archive/` 로 묶어 보관(체크섬) → 주소 `7.yes-i-can.kr`·터널 `7` 정리(Cloudflare, 사용자 허락) → home-watch `config.toml` 의 `docker.ignore` 에 `policy-web`·`policy-scheduler`·`policy-tunnel` 넣고 `git push nas`(안 넣으면 지운 컨테이너가 '사라짐' 고장으로 매일 뜬다 — 10-24 오마당섯다 때 겪음) → 8888 카드·공통 문서 갱신(체크리스트는 `C:\AI\CLAUDE.md` '앱을 종료·폐기할 땐'). 그 전엔 새 데이터 갱신 안 함.
+- 🔶 **사용자 결정 대기**: 7.yes-i-can.kr 에서 수집을 실행시키는 `POST /api/update`·`/api/update-cabinet`(`pipeline/serve.mjs`)이 인증·중복 실행 막기 없이 열려 있다 — 요청마다 node 자식 프로세스가 떠 연달아 보내면 국회 API 한도·NAS CPU 를 다 쓴다. 폐지일(10-31)까지 그대로 둘지, 그 두 주소를 막을지(2026-10-24 점검 · 10-25 주간 점검).
 - **사이트는 운영 중이다.** 2026-08-24 에 개발 '종료'로 정했지만 배포는 내리지 않았고(8/27 복구), **2026-10-19 데이터 전면 갱신**을 했다(CHANGELOG).
 - NAS `/volume2/docker/policy` — `policy-web`(호스트 8007 → 8137, healthy) · `policy-scheduler`(기사 매일 06/09/12/15/18시 + 회의록 PDF 05:30) ·
   `policy-tunnel` → `https://7.yes-i-can.kr`(응답 200, **Cloudflare Access 없음** — 주소만 알면 열린다). `policy-collect` 는 10-19 갱신 때 쓴 1회용 수집 컨테이너(멈춘 채, 재시작 안 함).
