@@ -574,6 +574,14 @@
       fetch(endpoint, { method: "POST" })
         .then(function (res) { return res.json(); })
         .then(function (data) {
+          if (!data || data.success === false) {
+            // 공개 주소에서는 서버가 거절한다(자동 수집만 돈다). '✓ 완료' 로 속이지 않는다.
+            updateBtn.classList.remove("loading");
+            updateBtn.disabled = false;
+            updateBtn.textContent = "자동 갱신만 됩니다";
+            setTimeout(function () { updateBtn.textContent = "🔄 업데이트"; }, 2500);
+            return;
+          }
           setTimeout(function () {
             updateBtn.classList.remove("loading");
             updateBtn.disabled = false;

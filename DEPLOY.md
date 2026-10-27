@@ -35,8 +35,8 @@
    - 도메인 `7.yes-i-can.kr`, 정책은 **Emails** 로 팀원 6명 이메일만 허용
    - 조별과제 데이터이므로 Access 없이 두면 **주소만 알면 누구나** 들어온다.
      발표·시연 때만 잠깐 열어두고 싶으면 Access 를 나중에 붙였다 떼도 된다 (코드 수정 0)
-   - ⚠ **업데이트 버튼(`POST /api/update`)이 인증 없이 노출**된다. 누르면 국회 API 수집 + Google Drive
-     업로드가 돌아가므로, 공개해 둘 거면 Access 를 거는 편이 안전하다.
+   - ✅ 2026-10-28 부터 업데이트 버튼(`POST /api/update`·`/api/update-cabinet`)은 **공개 주소(터널)로 오면 403**
+     으로 거절한다(`pipeline/serve.mjs`). 실행은 집 LAN·Tailscale `ys:8007` 에서만. 그 전엔 인증 없이 열려 있었다.
 
 ## B. GitHub — 배포할 코드 올리기 (PC)
 
@@ -267,7 +267,7 @@ cd C:\AI\policy; npm run collect:news; git add data/news.json web/news.js; git c
 
 ## 메모 — 지금 배포되는 것
 
-- 이 구성은 **대시보드(`web/`) + `POST /api/update`** 를 서비스한다. `web/index.html` 자체에
+- 이 구성은 **대시보드(`web/`) + `POST /api/update`**(터널로 오면 403, 2026-10-28) 를 서비스한다. `web/index.html` 자체에
   로고+청와대/국회 랜딩이 들어 있어 그것만으로 완결된 화면이다.
 - 검색엔진 차단은 `web/robots.txt` 로 한다(정적 서버라 헤더 주입이 없다). 확실히 막으려면 Cloudflare Access.
 - Next.js 랜딩(`app/`)은 아직 배포 대상이 아니다. 나중에 붙이려면 Next `standalone` 빌드 이미지를 만들어

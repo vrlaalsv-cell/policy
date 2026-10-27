@@ -69,14 +69,25 @@ function runScript(res, script, timeoutMs = 300000) {
 const runUpdate = (res) => runScript(res, "update-assembly.mjs");
 const runUpdateCabinet = (res) => runScript(res, "update-cabinet.mjs");
 
+// 수집 실행은 집 LAN·Tailscale(ys:8007)에서만 받는다. 공개 주소(Cloudflare 터널)로 온 요청에는
+// Cloudflare 가 cf-connecting-ip·cf-ray 를 붙이므로 그걸로 가려 거절한다(2026-10-28 사용자 결정).
+// 기사·회의록은 스케줄러가 어차피 자동으로 모은다.
+const viaTunnel = (req) => Boolean(req.headers["cf-connecting-ip"] || req.headers["cf-ray"]);
+const refuseUpdate = (res) => {
+  res.writeHead(403, { "Content-Type": "application/json; charset=utf-8" });
+  res.end(JSON.stringify({ success: false, error: "공개 주소에서는 업데이트를 실행할 수 없습니다" }));
+};
+
 createServer(async (req, res) => {
   try {
     // API 엔드포인트
     if (req.url === "/api/update" && req.method === "POST") {
+      if (viaTunnel(req)) { refuseUpdate(res); return; }
       await runUpdate(res);
       return;
     }
     if (req.url === "/api/update-cabinet" && req.method === "POST") {
+      if (viaTunnel(req)) { refuseUpdate(res); return; }
       await runUpdateCabinet(res);
       return;
     }
