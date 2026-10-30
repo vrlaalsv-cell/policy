@@ -7,7 +7,7 @@
 - 🟢 **운영 계속 — 폐지 보류**(2026-10-25 사용자 정정: '회사에서 아직 평가 중' — 내리지 말 것). 10-24 에 적었던 '10-31 까지만 운영 후 폐지'는 취소됐다. 폐지가 다시 정해지면 순서는 `C:\AI\CLAUDE.md` '앱을 종료·폐기할 땐' 체크리스트(컨테이너 내리기 → NAS 보관 → 주소·터널 정리 → home-watch `docker.ignore` → 8888·공통 문서).
 - ✅ 2026-10-28 사용자 결정으로 막음: 공개 주소(터널)로 온 수집 실행 요청은 `pipeline/serve.mjs` 가 403 으로 거절한다. 실행은 `ys:8007` 에서만(CHANGELOG 10-28).
 - **사이트는 운영 중이다.** 2026-08-24 에 개발 '종료'로 정했지만 배포는 내리지 않았고(8/27 복구), **2026-10-19 데이터 전면 갱신**을 했다(CHANGELOG).
-- NAS `/volume2/docker/policy` — `policy-web`(호스트 `127.0.0.1:8007` → 8137 — 2026-10-30 집 와이파이 주소 막음, healthy) · `policy-scheduler`(기사 매일 06/09/12/15/18시 + 회의록 PDF 05:30) ·
+- NAS `/volume2/docker/policy` — `policy-web`(호스트 `127.0.0.1:8007` → 8137 — 2026-10-30 집 와이파이 주소 막음, healthy) · `policy-scheduler`(기사 매일 07시 1번 — 2026-10-30 하루 5번에서 줄임 + 회의록 PDF 05:30) ·
   `policy-tunnel` → `https://7.yes-i-can.kr`(응답 200, **Cloudflare Access 없음** — 주소만 알면 열린다). `policy-collect` 는 10-19 갱신 때 쓴 1회용 수집 컨테이너(멈춘 채, 재시작 안 함).
 - 🔴 **자동배포는 안 돈다** — DSM 작업 스케줄러에 autodeploy 작업이 없고(crontab 에 없음) 루프 프로세스도 없다. `runtime/autodeploy.log` 마지막 기록 2026-08-08.
   push 뒤 NAS 반영은 SSH 로 `git pull` + `compose up -d --build`(DEPLOY.md E). NAS 폴더명(`policy.종료_20260824`)은 원복돼 있다.

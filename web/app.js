@@ -324,9 +324,10 @@
     var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
     h += '<div class="mprofile-wrap">' +
-      // jpg → png 순으로 시도하고, 둘 다 없으면 사진 칸을 숨긴다(깨진 이미지 아이콘 방지).
-      '<div class="mprofile-photo"><img src="images/parliament_photos/' + esc(m.name) + '.jpg"' +
-      ' onerror="if(!this.dataset.alt){this.dataset.alt=1;this.src=\'images/parliament_photos/' + esc(m.name) + '.png\'}else{this.parentNode.style.display=\'none\'}"' +
+      // 화면용 썸네일(320px, 장당 25KB 안쪽)을 쓴다 — 원본(parliament_photos, 최대 22MB)은 그대로 둔다.
+      // 썸네일은 scripts/make_thumbs.sh 로 만든다. 없으면 사진 칸을 숨긴다(깨진 이미지 아이콘 방지).
+      '<div class="mprofile-photo"><img src="images/parliament_thumbs/' + esc(m.name) + '.jpg"' +
+      ' loading="lazy" onerror="this.parentNode.style.display=\'none\'"' +
       ' alt="' + esc(m.name) + '"></div>' +
       '<div class="mprofile">' +
       '<div><span class="pl">정당</span><span class="pv">' + m.party + '</span></div>' +
@@ -533,10 +534,10 @@
   var brandLogo = document.querySelector(".brandwrap");
   if (brandLogo) { brandLogo.style.cursor = "pointer"; brandLogo.onclick = function () { if (landing) landing.classList.remove("hidden"); }; }
 
-  // 최근 기사 갱신 시각 표시 — 뉴스 자동 수집(하루 5회, 06/09/12/15/18시 KST)의 실측 시각.
+  // 최근 기사 갱신 시각 표시 — 뉴스 자동 수집(하루 1회 07시 KST — 2026-10-30 하루 5회에서 줄임)의 실측 시각.
   //  ⚠ 예전엔 🔄 업데이트 버튼을 누른 시각(localStorage)을 보여줬다. 그 버튼은 성공 여부와 무관하게
   //  항상 "✓ 완료"를 찍고(UPDATE_GUIDE.md 참고) 이 시각도 같이 갱신했기 때문에, 실제로는 아무것도
-  //  안 바뀌었어도 "방금 업데이트됨"으로 보이는 착시가 있었다. 뉴스는 실제로 3시간 간격 자동 갱신되므로
+  //  안 바뀌었어도 "방금 업데이트됨"으로 보이는 착시가 있었다. 뉴스는 실제로 자동 갱신되므로
   //  그 실측 시각(news.json meta.collectedAt)을 그대로 보여준다 — 버튼 클릭과는 무관하게 항상 사실과 일치한다.
   function updateLastUpdateTime() {
     var el = document.getElementById("lastUpdate");
@@ -555,7 +556,7 @@
     else if (diffHours < 24) timeStr = diffHours + "시간 전";
     else timeStr = diffDays + "일 전";
     el.textContent = "최근 기사 갱신: " + timeStr;
-    el.title = "실제 수집 " + collectedAt + " (KST) · 하루 5회(06/09/12/15/18시) 자동 갱신";
+    el.title = "실제 수집 " + collectedAt + " (KST) · 매일 오전 7시 자동 갱신";
   }
   updateLastUpdateTime();
 

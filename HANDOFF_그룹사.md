@@ -47,7 +47,7 @@
 | `data/assembly_speeches.json` **에너지로 걸러진** 국회 발언 | 12,891건 (SK E&S 용) | ✅ 그대로 |
 | `data/_assembly_tagged.json` AI 판정 | 12,891건(채택 5,127) · **내용 기반 key 보유** | ✅ 그대로 |
 | `data/_cab_results.json` 청와대 판정 + `judgedMeetings` 대장 | 발언 194건 · 판정완료 78회의 | ✅ 그대로 |
-| `data/news.json` 기사 | 420건 · NAS가 하루 5회 자동수집 | ✅ 그대로 |
+| `data/news.json` 기사 | 420건 · NAS가 하루 5회 자동수집(2026-10-30 부터 매일 07시 1회) | ✅ 그대로 |
 | `web/data.js` 국회 300명(발언 4,712건·AI분석 224명) | — | ✅ SK E&S 탭이 됨 |
 
 ### (b) 🔴 저장소 **밖** — `C:\AI\_corpus\` (워크스페이스 공용, git 밖)
