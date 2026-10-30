@@ -17,9 +17,9 @@ services:
       - .env
     environment:
       - TZ=Asia/Seoul
-    # Tailscale 로 직접 볼 때: http://ys:8007
+    # Tailscale 로 직접 볼 때: http://ys:8007 — 2026-10-30 집 와이파이 주소(192.168.0.6:8007)는 막음
     ports:
-      - "8007:8137"
+      - "127.0.0.1:8007:8137"   # Tailscale 전용(ys:8007). 터널(7.yes-i-can.kr)은 도커 망으로 app:8137 을 부르니 영향 없음
     expose:
       - "8137"
     volumes:
