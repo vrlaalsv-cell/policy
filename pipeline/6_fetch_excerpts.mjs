@@ -17,7 +17,9 @@
 import { readFileSync, writeFileSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
-import { labelsOf, matchedKeyword, NEWS_LABELS, NOISE_RE, isMilitaryPower } from "./lib/news_labels.mjs";
+import { labelsOf, matchedKeyword, NOISE_RE, isMilitaryPower } from "./lib/news_labels.mjs";
+import { isGoogleNewsUrl } from "./lib/news_merge.mjs";
+import { isPublicUrl } from "./lib/net.mjs";
 import { buildNewsWeb } from "./build_news_web.mjs";
 
 const arg = (k, d) => {
@@ -31,6 +33,22 @@ const MAXLEN = Number(arg("maxlen", 220));
 
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/122.0.0.0 Safari/537.36";
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// 응답이 안 오거나 터무니없이 큰 페이지에서 수집 전체가 멈추지 않게 — 요청마다 시간·크기 상한
+const TIMEOUT_MS = 20000;
+const MAX_BYTES = 3 * 1024 * 1024;
+
+/** 본문을 MAX_BYTES 까지만 읽는다 */
+async function readCapped(res) {
+  const len = Number(res.headers.get("content-length") || 0);
+  if (len > MAX_BYTES) { res.body?.cancel(); throw new Error(`너무 큼 ${len}B`); }
+  const chunks = []; let n = 0;
+  for await (const c of res.body) {
+    n += c.length;
+    if (n > MAX_BYTES) throw new Error("너무 큼");
+    chunks.push(c);
+  }
+  return Buffer.concat(chunks);
+}
 
 const decode = (s) => String(s || "")
   .replace(/&quot;/g, '"').replace(/&#39;/g, "'").replace(/&apos;/g, "'")
@@ -43,7 +61,7 @@ const decode = (s) => String(s || "")
 async function resolveGoogle(link) {
   const id = link.split("/articles/")[1]?.split("?")[0];
   if (!id) return null;
-  const page = await fetch(link, { headers: { "User-Agent": UA } }).then((r) => r.text());
+  const page = await fetch(link, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(TIMEOUT_MS) }).then((r) => r.text());
   const sig = page.match(/data-n-a-sg="([^"]+)"/)?.[1];
   const ts = page.match(/data-n-a-ts="([^"]+)"/)?.[1];
   if (!sig || !ts) return null;
@@ -55,6 +73,7 @@ async function resolveGoogle(link) {
     method: "POST",
     headers: { "User-Agent": UA, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
     body: "f.req=" + encodeURIComponent(JSON.stringify([[["Fbv4je", payload, null, "generic"]]])),
+    signal: AbortSignal.timeout(TIMEOUT_MS),
   });
   const txt = await res.text();
   const m = txt.match(/garturlres\\",\\"(.*?)\\",/);
@@ -63,10 +82,20 @@ async function resolveGoogle(link) {
 }
 
 // ---------- 기사 HTML → 텍스트 ----------
+// 리다이렉트는 직접 따라가며 매 단계 공개 주소인지 본다(redirect:"follow" 면 사설 IP 로 넘어가도 모른다).
 async function fetchHtml(url) {
-  const res = await fetch(url, { headers: { "User-Agent": UA, "Accept-Language": "ko" }, redirect: "follow" });
+  let res;
+  for (let hop = 0; ; hop++) {
+    if (!isPublicUrl(url)) throw new Error("공개 주소 아님");
+    res = await fetch(url, { headers: { "User-Agent": UA, "Accept-Language": "ko" }, redirect: "manual", signal: AbortSignal.timeout(TIMEOUT_MS) });
+    const loc = res.status >= 300 && res.status < 400 && res.headers.get("location");
+    if (!loc) break;
+    if (hop >= 5) throw new Error("리다이렉트 너무 많음");
+    res.body?.cancel();
+    url = new URL(loc, url).href;
+  }
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
-  const buf = Buffer.from(await res.arrayBuffer());
+  const buf = await readCapped(res);
   let html = buf.toString("utf8");
   const cs = (res.headers.get("content-type") || "").match(/charset=([\w-]+)/i)?.[1]
     || html.slice(0, 3000).match(/charset=["']?([\w-]+)/i)?.[1];
@@ -125,10 +154,13 @@ for (let n = 0; n < targets.length; n++) {
   const { mid, i, a } = targets[n];
   try {
     let url = a.url || a.link;
-    if (/news\.google\.com/.test(url)) {
+    if (isGoogleNewsUrl(url)) {
       const r = await resolveGoogle(url);
       if (r) { url = r; resolved++; }
     }
+    // 🔴 복원에 실패한 채로 news.google.com 을 읽으면 그 페이지의 안내 문구("Google 뉴스가 전세계 매체로부터…")가
+    //   발췌로 저장된다(2026-11-01 전수감사). 실패로 세고 발췌를 비워 둔다 — 다음 수집 때 다시 시도.
+    if (isGoogleNewsUrl(url)) throw new Error("원문 링크 복원 실패");
     const html = await fetchHtml(url);
     const lead = metaOf(html, "og:description", "description", "twitter:description");
     const sentences = bodySentences(html);

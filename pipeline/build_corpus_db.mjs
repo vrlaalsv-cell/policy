@@ -14,8 +14,8 @@
 // 원본이 원본이고 **DB 는 언제든 다시 만들 수 있는 파생물**이다(워크스페이스 규칙과 같은 원리).
 // → `corpus.db` 는 백업 대상이 아니다. 백업해야 할 건 `_corpus/*_raw/` 원본 폴더다.
 import { DatabaseSync } from "node:sqlite";
-import { readdirSync, existsSync, mkdirSync, statSync } from "node:fs";
-import { join, basename } from "node:path";
+import { readdirSync, existsSync, statSync } from "node:fs";
+import { join } from "node:path";
 import { parseSpeechXlsx, normSpeechDate } from "./lib/parse_speech_xlsx.mjs";
 import { extractHwpx } from "./extract_hwpx.mjs";
 

@@ -10,13 +10,12 @@
 //
 // ⚠ 원본 xlsx 를 data/raw_speeches/ 에 남긴다. 지금 국회 발언 갱신이 막혔던 근본 원인이
 //   "원본을 안 남기고 가공본만 커밋" 이었다. 원본이 있으면 파서만 고쳐 재파싱된다.
-import { readFileSync, writeFileSync, mkdirSync, existsSync, readdirSync } from "node:fs";
+import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
 import { join } from "node:path";
 import { randomUUID } from "node:crypto";
-import { createRequire } from "node:module";
 import { paths } from "./lib/env.mjs";
-// xlsx 0.18 은 CJS 라 ESM 의 네임스페이스 임포트로는 readFile 이 안 잡힌다(XLSX.readFile is not a function).
-const XLSX = createRequire(import.meta.url)("xlsx");
+// xlsx 파서·날짜 정리는 build_corpus_db 와 같은 것을 쓴다(예전엔 같은 코드가 여기 복사돼 있었다)
+import { parseSpeechXlsx as parseXlsx, normSpeechDate as normDate } from "./lib/parse_speech_xlsx.mjs";
 import { ENERGY_KEYWORDS } from "./lib/config.mjs";
 
 const UA = "Mozilla/5.0 (Windows NT 10.0; Win64; x64) AppleWebKit/537.36 (KHTML, like Gecko) Chrome/126.0.0.0 Safari/537.36";
@@ -143,38 +142,7 @@ async function downloadBatch(ids, name) {
   return file;
 }
 
-/** xlsx → 발언 레코드 (함정 3종 방어) */
-function parseXlsx(file) {
-  const wb = XLSX.readFile(file);
-  const rows = XLSX.utils.sheet_to_json(wb.Sheets[wb.SheetNames[0]], { header: 1, defval: "" });
-  const out = [];
-  for (const r of rows.slice(3)) {
-    if (!r || r.length < 12) continue;
-    let c = r.slice();
-    // ⚠ 함정: 무제한토론(필리버스터) 행은 컬럼이 한 칸 우측으로 밀린다.
-    //   판별 — 의원ID 자리(12)에 숫자가 아닌 값이 온다.
-    const idCell = String(c[12] ?? "").trim();
-    if (idCell && !/^\d+(\.\d+)?$/.test(idCell)) c = [...c.slice(0, 11), ...c.slice(12)];
-    // ⚠ 함정: 발언내용1~7 은 엑셀 셀 한도(32,767자)로 넘어간 것 — 고정 분할이 아니다. 반드시 이어붙인다.
-    const text = c.slice(14, 21).map((x) => String(x ?? "")).join("").replace(/\s+/g, " ").trim();
-    if (!text) continue;
-    out.push({
-      conferNum: String(c[0] ?? ""), dae: String(c[2] ?? ""), classCode: String(c[3] ?? ""),
-      committee: String(c[4] ?? ""), date: String(c[8] ?? ""),
-      speaker: String(c[11] ?? "").trim(), memberId: String(c[12] ?? "").trim(),
-      seq: String(c[13] ?? ""), text,
-    });
-  }
-  return out;
-}
-
 const KW = new RegExp(ENERGY_KEYWORDS.map((k) => k.replace(/[.*+?^${}()|[\]\\]/g, "\\$&")).join("|"));
-/** "2026년04월02일(목)" / "2024년7월9일(화)" → "2026-04-02"
- *  ⚠ 월·일이 한 자리로 오는 행이 섞여 있다(1319/5452 실측). \d{2} 로 고정하면 조용히 파싱 실패한다. */
-const normDate = (s) => {
-  const m = String(s).match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/);
-  return m ? `${m[1]}-${String(m[2]).padStart(2, "0")}-${String(m[3]).padStart(2, "0")}` : "";
-};
 /** 발언자 표기 흔들림 정리: '위원장 이철규' / '이철규 위원' / '소위원장 김원이' / '위원장대리 김주영' → 이름만 */
 const TITLE = "(?:소위원장|위원장대리|위원장직무대리|부위원장|위원장|간사|위원|의원)";
 const cleanName = (s) => String(s).replace(new RegExp(`^${TITLE}\\s*`), "").replace(new RegExp(`\\s*${TITLE}$`), "").trim();
@@ -244,7 +212,7 @@ const PROCEDURAL = /의석을 정돈|성원이 되었으므로|개회하겠습�
     console.log(`  (참고: 이 중 에너지 키워드 통과분은 ${energyN}건 = ${(energyN / (mine.length || 1) * 100).toFixed(1)}%)`);
     console.log(`  ⭐ --raw-only : 원본 xlsx 만 보관하고 종료한다. assembly_speeches.json 은 건드리지 않았다.`);
     console.log(`     원본 위치: ${RAW}`);
-    console.log(`     다음: node pipeline/build_speech_db.mjs 로 검색 가능한 DB 를 만든다.`);
+    console.log(`     다음: node pipeline/build_corpus_db.mjs 로 검색 가능한 DB 를 만든다.`);
     return;
   }
 

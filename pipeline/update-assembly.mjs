@@ -1,9 +1,12 @@
 import { writeFileSync, readFileSync, mkdirSync } from "node:fs";
 import { join } from "node:path";
-import XLSX from "xlsx";
+import { createRequire } from "node:module";
 import { fetchAll, SERVICE } from "./lib/assembly.mjs";
 import { uploadFile } from "./lib/google-drive.mjs";
 import { districtToSido } from "./lib/config.mjs";
+
+// xlsx 0.20(SheetJS 공식 배포)의 ESM 판은 default export 가 없고 파일 쓰기에 set_fs 가 필요하다 → CJS 판을 쓴다
+const XLSX = createRequire(import.meta.url)("xlsx");
 
 // 환경 변수 확인
 const API_KEY = process.env.ASSEMBLY_API_KEY;

@@ -43,9 +43,3 @@ export function normSpeechDate(s) {
   const m = String(s).match(/(\d{4})\s*년\s*(\d{1,2})\s*월\s*(\d{1,2})\s*일/);
   return m ? `${m[1]}-${m[2].padStart(2, "0")}-${m[3].padStart(2, "0")}` : "";
 }
-
-/** 발언자 표기 정리 — '柳榮夏 의원' 처럼 한자가 섞이고 '이재강 위원'/'위원장 이철규' 로 흔들린다. */
-export function cleanSpeakerName(s) {
-  return String(s || "").replace(/\s*(의원|위원장|위원|장관|차관|본부장|청장|처장|실장|총장|원장)\s*$/, "")
-    .replace(/^\s*(위원장|부위원장|의원)\s*/, "").trim();
-}

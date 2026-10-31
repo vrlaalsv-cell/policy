@@ -181,7 +181,10 @@ ${JSON.stringify(items)}`,
 }
 
 // 재생성분이 1차분을 덮어쓴다.
-const merged = new Map(all.map((r) => [r.key, r]))
+// 🔴 1차분은 **검증을 통과한 것만** 남긴다 — 탈락분은 재생성이 실패해도 그대로 남았고, 검증 배치가 죽은
+//   미검증분도 통과로 실렸다(2026-11-01 전수감사). 빠진 사람은 다음 --missing 배치에 다시 잡힌다.
+const notPassed = new Set([...failed, ...unchecked].map((r) => r.key))
+const merged = new Map(all.filter((r) => !notPassed.has(r.key)).map((r) => [r.key, r]))
 for (const r of redone) merged.set(r.key, r)
 const results = [...merged.values()].filter((r) => r && r.key && r.analysis && String(r.analysis).trim())
 
@@ -193,6 +196,7 @@ return {
     okBatches: batches.filter((b) => b.ok).length,
     generated: all.length,
     failedVerify: failed.length,
+    unchecked: unchecked.length,
     redone: redone.length,
     final: results.length,
     problems: failed.map((r) => ({ key: r.key, problem: (verdictByKey.get(r.key) || {}).problem || '' })),

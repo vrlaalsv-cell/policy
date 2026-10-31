@@ -14,7 +14,7 @@ RUN npm ci --omit=dev
 
 COPY pipeline/ ./pipeline/
 COPY web/ ./web/
-COPY data/ ./data/
+# data/ 는 굽지 않는다 — compose 가 /app/data 에 ./runtime 을 덮어 붙여 이미지 안 사본은 어차피 안 보였다.
 
 # 배포 확인용 워터마크 — https://<도메인>/build.txt
 RUN date -u +"build %Y-%m-%d %H:%M UTC" > /app/web/build.txt

@@ -16,6 +16,7 @@ import { readFileSync, writeFileSync, copyFileSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
 import { tagKey } from "./lib/tagkey.mjs";
+import { mergeStance } from "./lib/stance.mjs";
 
 const [tagPath] = process.argv.slice(2).filter((a) => !a.startsWith("--"));
 const DRY = process.argv.includes("--dry");
@@ -114,23 +115,10 @@ for (const a of added) (byMember[a.name] || (byMember[a.name] = [])).push(a);
 let touched = 0;
 for (const [name, list] of Object.entries(byMember)) {
   const m = byName.get(name);
-  m.quotes = (m.quotes || []).concat(list.map((a) => ({ biz: a.biz, meeting: a.meeting, pre: a.pre, core: a.core, post: a.post })));
-  // 성향 재집계: 사업별 favor/oppose 다수결 (build_cabinet2 의 agg 와 같은 규칙)
-  const tally = {};
-  for (const q of m.quotes) {
-    const st = (list.find((a) => a.core === q.core) || {}).stance;
-    if (!st) continue;                                  // 기존 발언은 성향 정보가 quote 에 없다 → 기존 stance 를 존중
-    (tally[q.biz] || (tally[q.biz] = { favor: 0, neutral: 0, oppose: 0 }))[st]++;
-  }
-  m.stance = m.stance || {};
-  for (const b of BIZ) {
-    const c = tally[b];
-    if (!c) continue;                                   // 이번에 근거가 안 늘어난 사업은 기존 판정 유지
-    const cur = m.stance[b];
-    const next = c.favor > c.oppose ? "favor" : c.oppose > c.favor ? "oppose" : "neutral";
-    // 기존 판정이 있으면 새 근거와 합쳐서 본다(기존을 통째로 뒤집지 않는다)
-    m.stance[b] = cur && cur !== "unknown" && cur !== next ? "neutral" : next;
-  }
+  // 발언마다 stance 를 남긴다 — 다음 재집계 때 전체 발언 다수결의 표가 된다(lib/stance.mjs).
+  m.quotes = (m.quotes || []).concat(list.map((a) => ({ biz: a.biz, meeting: a.meeting, pre: a.pre, core: a.core, post: a.post, ...(a.stance ? { stance: a.stance } : {}) })));
+  // 이번에 근거가 안 늘어난 사업은 기존 판정 유지
+  m.stance = mergeStance(m.quotes, m.stance, BIZ, new Set(list.map((a) => a.biz)));
   touched++;
 }
 

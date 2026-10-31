@@ -188,8 +188,11 @@ for (const post of targets) {
     console.log(`    ✓ ${post.meetingAt || post.postedAt}  ${saved.map((s) => `${s.name} (${(s.bytes / 1024).toFixed(0)}KB)`).join(" + ")}`);
 
     if (GOOGLE_CREDENTIALS && GOOGLE_FOLDER_ID) {
-      try { await uploadFile(GOOGLE_FOLDER_ID, join(MINUTES_DIR, safe), safe, GOOGLE_CREDENTIALS); }
-      catch (e) { console.log(`      (드라이브 업로드 실패: ${e.message})`); }
+      // 받은 첨부 전부(pdf·hwpx). 예전엔 블록 밖 변수(safe)를 불러 업로드가 늘 ReferenceError 였다.
+      for (const s of saved) {
+        try { await uploadFile(GOOGLE_FOLDER_ID, join(MINUTES_DIR, s.name), s.name, GOOGLE_CREDENTIALS); }
+        catch (e) { console.log(`      (드라이브 업로드 실패: ${e.message})`); }
+      }
     }
   } catch (e) {
     fail++;
@@ -207,16 +210,33 @@ if (dates.length) console.log(`  회의일 범위: ${dates[0]} ~ ${dates[dates.l
 // 🔴 다운로드만 하고 corpus.db 적재를 안 부르면, DB 가 조용히 낡아 새 회의가 cab_todo.mjs 에
 //   영영 안 뜬다(워크스페이스 규칙 C:\AI\CLAUDE.md §①-B — "수집 → 변환 → DB 적재가 자동으로
 //   이어지는지 확인할 것"). SKpolicy 방에서 검증된 두 단계를 그대로 잇는다(2026-08-14 이식).
-if (ok > 0) {
+// ⚠ 원본 코퍼스 폴더(CORPUS_DIR, 기본 C:/AI/_corpus)가 있는 곳에서만 돈다. NAS 컨테이너(node:22-alpine)엔
+//   그 폴더도 파이썬(pdfplumber)도 없어 매번 '실패(exit null)' 를 찍었다(2026-10-31 로그) — 거기선 받기만 한다.
+const CORPUS = process.env.CORPUS_DIR || "C:/AI/_corpus";
+let dbFail = false;
+if (ok > 0 && existsSync(CORPUS)) {
   const { spawnSync } = await import("node:child_process");
   const run = (cmd, cmdArgs, label) => {
     console.log(`\n▶ ${label}: ${cmd} ${cmdArgs.join(" ")}`);
     const r = spawnSync(cmd, cmdArgs, { stdio: "inherit", shell: process.platform === "win32" });
-    if (r.status !== 0) { console.log(`  ⚠ ${label} 실패(exit ${r.status}) — 수동으로 다시 돌릴 것.`); return false; }
+    if (r.status !== 0) { console.log(`  ⚠ ${label} 실패(exit ${r.status}) — 수동으로 다시 돌릴 것.`); dbFail = true; return false; }
     return true;
   };
-  const okExtract = run("python", ["pipeline/extract_pdf_text.py", "--since", FLOOR], "PDF 텍스트 추출(hwpx 없는 회의 보충용)");
-  if (okExtract) run("node", ["pipeline/build_corpus_db.mjs"], "corpus.db 적재(증분)");
+  const slash = (p) => p.replace(/\\/g, "/");
+  if (slash(MINUTES_DIR) !== slash(join(CORPUS, "cabinet_raw"))) {
+    console.log(`  ⚠ 받은 폴더(${MINUTES_DIR})가 ${CORPUS}/cabinet_raw 가 아니다 — corpus.db 는 그 폴더만 읽으니 옮겨 둘 것.`);
+  }
+  const okExtract = run("python", ["pipeline/extract_pdf_text.py", "--src", MINUTES_DIR, "--since", FLOOR,
+    "--out", join(CORPUS, "extracted", "cabinet_pdf_text.json")], "PDF 텍스트 추출(hwpx 없는 회의 보충용)");
+  if (okExtract) run("node", ["pipeline/build_corpus_db.mjs", `--corpus=${CORPUS}`], "corpus.db 적재(증분)");
+} else if (ok > 0) {
+  console.log(`  (원본 코퍼스 폴더 ${CORPUS} 없음 — corpus.db 적재는 코퍼스가 있는 PC 에서)`);
 } else {
   console.log("  (신규 없음 — corpus.db 적재 단계 생략)");
 }
+
+// 받기 실패가 하나라도 있으면 실패로 끝낸다(스케줄러 로그에 '실패' 로 남게). 예전엔 늘 0 이라 '완료' 로만 보였다.
+// 성공했을 때만 마지막 성공 시각을 남긴다 — 이 파일이 하루 넘게 안 바뀌면 받기가 멈춘 것이다.
+if (fail > 0 || dbFail) process.exit(1);
+writeFileSync(join(DATA_DIR, "cabinet_last_success.json"),
+  JSON.stringify({ at: new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 19), newPosts: ok, held: Object.keys(index).length }) + "\n", "utf8");

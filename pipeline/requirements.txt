@@ -1,0 +1,3 @@
+# PC 에서 회의록 PDF 텍스트를 뽑을 때만 필요(extract_minutes.py · extract_pdf_text.py). NAS 컨테이너엔 넣지 않는다.
+#   pip install -r pipeline/requirements.txt
+pdfplumber>=0.11,<1

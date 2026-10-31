@@ -18,6 +18,8 @@ components
 public
 data/raw
 data/cabinet_minutes
+# 의원 사진 원본(334MB, 최대 22MB) — 화면은 parliament_thumbs 만 쓴다(app.js). 썸네일은 NAS 저장소 폴더에서 만든다(scripts/make_thumbs.sh)
+web/images/parliament_photos
 
 *.log
 .DS_Store

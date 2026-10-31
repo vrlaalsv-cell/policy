@@ -1,7 +1,7 @@
 // [5] 의원별 최근 에너지 기사 수집 → data/news.json (+ web/news.js)
 //
 //   사용:
-//     node pipeline/5_collect_news.mjs                  # 기본: 최근 90일, 의원당 5건
+//     node pipeline/5_collect_news.mjs                  # 기본: 최근 365일, 의원당 5건
 //     node pipeline/5_collect_news.mjs --days=180 --per=8
 //     node pipeline/5_collect_news.mjs --only=김영환     # 특정 의원만 (테스트용)
 //     node pipeline/5_collect_news.mjs --source=naver    # 소스 강제
@@ -20,6 +20,7 @@ import { join } from "node:path";
 import { loadEnv, paths } from "./lib/env.mjs";
 import { labelsOf, QUERY_TERMS, NOISE_RE, isMilitaryPower, isOtherPerson } from "./lib/news_labels.mjs";
 import { buildNewsWeb } from "./build_news_web.mjs";
+import { buildCarry, applyCarry, mergeNews } from "./lib/news_merge.mjs";
 
 // ---------- args ----------
 const arg = (k, d) => {
@@ -38,22 +39,16 @@ if (SOURCE === "auto") SOURCE = process.env.NAVER_CLIENT_ID && process.env.NAVER
 if (!["naver", "google"].includes(SOURCE)) { console.error(`--source 는 naver|google|auto`); process.exit(1); }
 
 // ---------- 의원 명단 ----------
-// data/members.json 이 있으면 그걸, 없으면 이미 만들어져 있는 web/data.js 를 읽는다.
+// 화면이 읽는 web/data.js 의 명단(id = M001~)을 쓴다.
+// 🔴 data/members.json 을 먼저 읽으면 안 된다 — '업데이트' 단추(update-assembly.mjs)가 그 파일을 열린국회
+//   의원코드(MONA_CD) id 로 써서, 기사 키가 화면 id 와 어긋나 기사가 화면에서 사라졌다(2026-11-01 전수감사).
 function loadMembers() {
-  let base;
-  const p = join(paths.data, "members.json");
-  if (existsSync(p)) base = JSON.parse(readFileSync(p, "utf8"));
-  else {
-    const dj = join(paths.web, "data.js");
-    if (!existsSync(dj)) {
-      console.error("data/members.json 도 web/data.js 도 없습니다. 먼저 `npm run collect:members`.");
-      process.exit(1);
-    }
-    const src = readFileSync(dj, "utf8");
-    const i = src.indexOf("window.APP_DATA");
-    const body = src.slice(src.indexOf("=", i) + 1).trim().replace(/;\s*$/, "");
-    base = JSON.parse(body).members;
-  }
+  const dj = join(paths.web, "data.js");
+  if (!existsSync(dj)) { console.error("web/data.js 가 없습니다."); process.exit(1); }
+  const src = readFileSync(dj, "utf8");
+  const i = src.indexOf("window.APP_DATA");
+  const body = src.slice(src.indexOf("=", i) + 1).trim().replace(/;\s*$/, "");
+  const base = JSON.parse(body).members;
   // 청와대 국무위원도 뉴스 수집 대상에 포함 (id="CAB:이름", 힌트=직위)
   try {
     const cj = join(paths.web, "cabinet.js");
@@ -98,6 +93,8 @@ function hintsOf(m) {
   return ["의원", party, short, ...district, ...bare, ...(m.committee || [])].filter((s) => s && s.length > 1);
 }
 const sleep = (ms) => new Promise((r) => setTimeout(r, ms));
+// 응답이 안 오면 한 의원에서 수집 전체(와 그 뒤 05:30 회의록 받기)가 멈춘다 → 요청마다 시간 상한
+const TIMEOUT_MS = 20000;
 const since = Date.now() - DAYS * 864e5;
 
 // ---------- 소스별 fetch ----------
@@ -105,7 +102,7 @@ async function fromGoogle(name) {
   const when = DAYS <= 400 ? ` when:${DAYS}d` : "";
   const q = `"${name}" (${QUERY_TERMS.join(" OR ")})${when}`;
   const url = `https://news.google.com/rss/search?q=${encodeURIComponent(q)}&hl=ko&gl=KR&ceid=KR:ko`;
-  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (policy-dashboard news collector)" } });
+  const res = await fetch(url, { headers: { "User-Agent": "Mozilla/5.0 (policy-dashboard news collector)" }, signal: AbortSignal.timeout(TIMEOUT_MS) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const xml = await res.text();
   return (xml.match(/<item>[\s\S]*?<\/item>/g) || []).map((it) => {
@@ -125,6 +122,7 @@ async function fromNaver(name) {
       "X-Naver-Client-Id": process.env.NAVER_CLIENT_ID,
       "X-Naver-Client-Secret": process.env.NAVER_CLIENT_SECRET,
     },
+    signal: AbortSignal.timeout(TIMEOUT_MS),
   });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const j = await res.json();
@@ -146,6 +144,7 @@ console.log(`[news] source=${SOURCE} · 최근 ${DAYS}일 · 의원당 최대 ${
 
 const byMember = {};
 let okCount = 0, artCount = 0, failed = [];
+const okIds = [];
 for (let i = 0; i < targets.length; i++) {
   const m = targets[i];
   try {
@@ -178,6 +177,7 @@ for (let i = 0; i < targets.length; i++) {
     const list = keep.slice(0, PER).map(({ strong, ...rest }) => (strong ? { ...rest, strong: 1 } : rest));
     if (list.length) { byMember[m.id] = list; artCount += list.length; }
     okCount++;
+    okIds.push(m.id);
   } catch (e) {
     failed.push(`${m.name}(${e.message})`);
   }
@@ -212,21 +212,9 @@ if (prevArticles > 0 && (okRate < 0.6 || artCount === 0)) {
 }
 // 이미 받아둔 발췌·원문링크(6_fetch_excerpts.mjs 산출물)는 제목이 같으면 그대로 물려준다.
 // 이게 없으면 재수집할 때마다 발췌가 통째로 날아가 화면에 제목만 남는다.
-const titleKey = (t) => String(t || "").replace(/[^가-힣A-Za-z0-9]/g, "").slice(0, 40);
-const carry = {};
-for (const list of Object.values(prev)) {
-  for (const a of list || []) { if (a && a.excerpt) carry[titleKey(a.title)] = { excerpt: a.excerpt, hl: a.hl, url: a.url }; }
-}
-let carried = 0;
-for (const list of Object.values(byMember)) {
-  for (const a of list) {
-    const c = carry[titleKey(a.title)];
-    if (c) { a.excerpt = c.excerpt; if (c.hl) a.hl = c.hl; if (c.url) a.url = c.url; carried++; }
-  }
-}
+const carried = applyCarry(byMember, buildCarry(prev));
 
-for (const m of targets) { delete prev[m.id]; }          // 이번 대상은 결과로 교체(0건이면 제거)
-const merged = { ...prev, ...byMember };
+const merged = mergeNews(prev, byMember, okIds);         // 조회 성공한 의원만 결과로 교체(0건이면 제거)
 
 const payload = {
   meta: {

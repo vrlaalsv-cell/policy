@@ -25,7 +25,10 @@ export async function uploadFile(folderId, filePath, fileName, credentialsJson) 
   const drive = google.drive({ version: "v3", auth });
 
   const fileMetadata = { name: fileName, parents: [folderId] };
-  const media = { mimeType: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet", body: fs.createReadStream(filePath) };
+  // 확장자대로 — 예전엔 회의록 pdf·hwpx 까지 엑셀 형식으로 올렸다
+  const MIME = { pdf: "application/pdf", xlsx: "application/vnd.openxmlformats-officedocument.spreadsheetml.sheet" };
+  const ext = String(fileName).split(".").pop().toLowerCase();
+  const media = { mimeType: MIME[ext] || "application/octet-stream", body: fs.createReadStream(filePath) };
 
   const res = await drive.files.create({ resource: fileMetadata, media, fields: "id" });
   return res.data.id;

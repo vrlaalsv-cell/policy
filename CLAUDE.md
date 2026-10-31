@@ -15,6 +15,20 @@
   회의록 `corpus.db`(131회의) 정본은 NAS `/volume2/homes/yongsilver/work/policy_upd/_corpus/`, 8/24 묶음은 NAS `Archive/2026-08-24_종료프로젝트/`.
 - 커밋은 `main` 에 바로 한다(8월 이후 전부). 팀 브랜치(`minjeong`·`jiyechoi`·`feature/*`)는 2026-07-23 이후 새 커밋 없음.
 
+## 📝 남은 것 (2026-11-01 전수감사에서 넘긴 것)
+
+- **사용자 결정**
+  - Next 앱(`app/`·`components/`·`public/`·`next.config.ts`·`AGENTS.md` 등) — 배포 밖이고 아무도 안 쓴다. 지울지(팀 저장소라 팀 의견도). 11-01 에 `next`·`react` 는 운영 의존성에서 개발용으로만 내렸다(이미지에 안 들어감).
+  - 화면 '🔄 업데이트' 단추 + `/api/update`·`/api/update-cabinet` — NAS `.env` 에 `ASSEMBLY_API_KEY` 가 없어 국회 쪽은 늘 실패하고, 회의록은 스케줄러가 매일 받는다. 접을지. (11-01: 이 화면이 보낸 요청만·한 번에 하나만 받게 막았고, 국회 단추가 쓰는 `data/members.json` 을 기사 수집이 더는 안 읽는다.)
+  - `scripts/autodeploy.sh`·`autodeploy-loop.sh` — 등록 안 돼 안 돈다(위 '지금 상태'). 지울지, 다른 방처럼 `git push nas main` 훅으로 바꿀지.
+- **보고만(low)**
+  - 아무도 안 읽는 데이터 파일: `data/_manual_assembly.json`·`_manual_statements.json`·`_excerpts_missing.md`·`utterances.json`(옛 2단계 산출물)·`cabinet.json`(build_cabinet2 가 쓰지만 화면은 web/cabinet.js 만 읽음).
+  - compose 의 `env_file: .env` 를 웹·스케줄러가 통째로 받는다(지금 `.env` 엔 터널 토큰뿐). 키가 늘면 서비스별로 나눌 것.
+  - `googleapis` 173 아래 `glob`·`minimatch` 중간(moderate) 취약점 5건 — 고치려면 googleapis 189 로 큰 판 올림. 드라이브 올리기는 `GOOGLE_*` 가 없어 NAS 에서 안 돈다.
+  - 큰 파일 쪼개기 후보(시험 없음): `web/app.js` 600줄, `collect_assembly_speeches.mjs`. `merge_cabinet_judged.mjs`(옛 수동 판정 병합 — 판정 대장을 안 고침)는 문서에서 `collect_cab.mjs` 로 바꿔 두기만 했다.
+- **헤드방에 넘김**: home-watch `[[files]]` 에 `policy/runtime/cabinet_last_success.json` 낡음 감시(max_age_h 30) 등록 — 이 방은 home-watch 를 안 고쳤다(미등록). 그전까진 회의록 받기가 멈춰도 아무도 모른다.
+- **배포 뒤 확인할 것**: 다음 05:30 회의록 받기 뒤 `runtime/cabinet_last_success.json` 이 생기면 성공(받기 실패가 있으면 안 생기고 로그에 '실패 code=1'). 다음 07:00 기사 수집 뒤 `runtime/news.json` 에 'Google 뉴스가 전세계…' 발췌가 0건이면 성공(11-01 NAS 8건).
+
 ## 📜 당시 기록(참고) — 2026-08-14 토큰 절감 인수인계
 
 > ✅ **2026-10-24 점검 정정: 아래 6가지는 2026-08-14 에 적용 끝났다**(§1 = `593fe6e`, §4·§5 = `32cd224`). `cab_todo.mjs` 는 이제 `corpus.db` 에서 읽는다.

@@ -40,17 +40,16 @@ web/       # 대시보드(정적) — index.html · styles.css · app.js · data
 data/      # DB(정형 데이터) — 파이프라인 산출물
   cabinet_minutes/  # 국무회의 회의록을 여기에 넣으세요 (지정 폴더)
   raw/              # 발언 빅데이터 EXCEL/CSV 원본 (수동 다운로드)
-pipeline/  # 수집·분석 스크립트 (Node, 외부 패키지 없음)
-  1_collect_members.mjs   2_collect_utterances.mjs
-  3_analyze_gemini.mjs    4_analyze_cabinet.mjs
-  5_collect_news.mjs      build_web_data.mjs   serve.mjs
-  lib/ (env·assembly·gemini·config)
+pipeline/  # 수집·분석 스크립트 (Node) — 지금 쓰는 흐름은 pipeline/README.md
+  5_collect_news.mjs  6_fetch_excerpts.mjs  scheduler.mjs  serve.mjs  update-cabinet.mjs …
+  lib/ (env·assembly·config·news_labels·news_merge·stance …)
+test/      # node:test 시험 — npm test
 .env.example
 ```
 
 ### 의원 상세 모달 — 최근 기사 (에너지원 라벨)
 
-의원 카드/육각형을 클릭하면 열리는 모달 **최하단**에, 그 의원의 **최근 90일 에너지 기사**가
+의원 카드/육각형을 클릭하면 열리는 모달 **최하단**에, 그 의원의 **최근 1년(365일) 에너지 기사**가
 `원전 · 수소 · 재생E · LNG · 도시가스 · 전력` 라벨과 함께 붙습니다.
 
 ```bash
@@ -67,21 +66,11 @@ npm run collect:news    # 수집 → data/news.json + web/news.js (약 3분, 300
 - **국무회의**는 API가 아니라 **지정 폴더(`data/cabinet_minutes/`)**의 파일을 분석 → 국무위원 성향 DB화.
 - 무거운 계산(수집·필터·LLM)은 **파이프라인**에서 끝내고, 웹은 결과만 조회(클릭당 AI 호출 0원).
 
-### 실데이터 채우기 (키 발급 후)
+### 실데이터 채우기
 
-1. `.env`에 키 입력 (`.env.example` 참고)
-2. 파이프라인 실행:
-   ```bash
-   npm run collect:members     # 국회의원 명단·지역구·위원회 → data/members.json
-   # 발언 빅데이터(dataset.nanet.go.kr) EXCEL/CSV 를 data/raw/ 에 저장한 뒤:
-   npm run collect:utterances  # → data/utterances.json
-   npm run analyze             # Gemini 사업별 우호도 태깅 → data/analysis.json
-   npm run build:data          # 병합 → web/data.js (대시보드 갱신)
-   # 선택:
-   npm run analyze:cabinet     # 국무회의 지정폴더 분석 → data/cabinet.json
-   npm run collect:news        # 의원별 최근 90일 에너지 기사 → data/news.json + web/news.js
-   ```
-   또는 한 번에: `npm run pipeline`
+옛 한 번에 돌리기(`npm run pipeline` — 명단 → 발언 → Gemini 태깅 → web/data.js 덮어쓰기)는 **2026-11-01 삭제**했다.
+유료 Gemini 를 부르고 지금 화면 데이터(web/data.js)를 옛 형식으로 백업 없이 덮어썼기 때문이다.
+지금 갱신 흐름(국회 발언·청와대 회의록·기사)은 [pipeline/README.md](pipeline/README.md) 와 [AUTOMATION_TODO.md](AUTOMATION_TODO.md).
 
 ### 필요한 API 키 (모두 `.env`)
 
@@ -90,10 +79,8 @@ npm run collect:news    # 수집 → data/news.json + web/news.js (약 3분, 300
 | `ASSEMBLY_API_KEY` | 국회 인적사항/회의록/표결/발의 | open.assembly.go.kr (무료·즉시) |
 | `DATA_GO_KR_API_KEY` | 회의록 전문(ProceedingInfoService) 보완 | data.go.kr (무료) |
 | `NAVER_CLIENT_ID/SECRET` | 최근 기사 | developers.naver.com (무료) |
-| `GEMINI_API_KEY` | 성향 분석 | ai.google.dev ($30 한도) |
 
-> ⚠ 국회·Gemini 키는 **파이프라인(로컬/CI)에서만** 사용 — 브라우저·배포물에 절대 노출 금지.
-> 비용: 1차 배치 실비 약 $2~6 (Batch API 사용 시 절반). `analyze`는 현재 동기 호출이며, 대량 처리 시 Batch API 전환 권장.
+> ⚠ 국회 키는 **파이프라인(로컬/CI)에서만** 사용 — 브라우저·배포물에 절대 노출 금지.
 
 ### 유의
 

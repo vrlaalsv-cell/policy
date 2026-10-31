@@ -31,6 +31,14 @@ const MAX_AGE_H = Number(process.env.NEWS_MAX_AGE_H || 20);
 const stamp = () => new Date().toLocaleString("sv-SE", { timeZone: "Asia/Seoul" }).slice(0, 19);
 const log = (...a) => console.log(`[scheduler ${stamp()}]`, ...a);
 
+// 자식 작업이 응답 없는 사이트에 걸려 끝나지 않으면 이 루프 전체(다음 날 수집·회의록)가 멈춘다.
+// 평소 기사 5분·회의록 1~3분이라 넉넉히 잡고, 넘으면 죽이고 다음 주기로 넘어간다.
+const NEWS_LIMIT_MIN = Number(process.env.NEWS_LIMIT_MIN || 60);
+const CAB_LIMIT_MIN = Number(process.env.CABINET_LIMIT_MIN || 45);
+function killAfter(child, min, what) {
+  return setTimeout(() => { log(`${what} ${min}분 넘음 — 강제 종료`); child.kill("SIGKILL"); }, min * 60000);
+}
+
 /** 수집 1회 실행 (collect → excerpts). 실패해도 프로세스는 죽지 않는다. */
 function runOnce(reason) {
   return new Promise((resolve) => {
@@ -41,12 +49,14 @@ function runOnce(reason) {
       env: process.env,
       stdio: ["ignore", "inherit", "inherit"],
     });
+    const timer = killAfter(child, NEWS_LIMIT_MIN, "기사 수집");
     child.on("close", (code) => {
+      clearTimeout(timer);
       const min = Math.round((Date.now() - started) / 60000);
       log(code === 0 ? `수집 완료 (${min}분)` : `수집 실패 code=${code} (${min}분) — 기존 데이터는 유지됨`);
       resolve(code);
     });
-    child.on("error", (e) => { log("수집 실행 오류:", e.message); resolve(-1); });
+    child.on("error", (e) => { clearTimeout(timer); log("수집 실행 오류:", e.message); resolve(-1); });
   });
 }
 
@@ -69,13 +79,15 @@ function fetchCabinet(reason) {
     const child = spawn(process.execPath, [join(paths.root, "pipeline", "update-cabinet.mjs"), `--pages=${CAB_PAGES}`], {
       cwd: paths.root, env: process.env, stdio: ["ignore", "inherit", "inherit"],
     });
+    const timer = killAfter(child, CAB_LIMIT_MIN, "회의록 확보");
     child.on("close", (code) => {
+      clearTimeout(timer);
       const min = Math.round((Date.now() - started) / 60000);
       // 실패해도 절대 죽지 않는다 — 기사 수집 루프가 이것 때문에 멈추면 안 된다.
       log(code === 0 ? `회의록 확보 완료 (${min}분)` : `회의록 확보 실패 code=${code} — 다음 주기에 재시도`);
       resolve(code);
     });
-    child.on("error", (e) => { log("회의록 확보 실행 오류:", e.message); resolve(-1); });
+    child.on("error", (e) => { clearTimeout(timer); log("회의록 확보 실행 오류:", e.message); resolve(-1); });
   });
 }
 

@@ -120,7 +120,7 @@
       var p = posOf(m); if (!p) return;
       var dim = ids && !ids[m.id] ? " dim" : "";
       svg += '<polygon class="hexm' + dim + '" data-id="' + m.id + '" fill="' + hexColor(m) + '" points="' + corners(p.x + ox, p.y + oy) + '">' +
-        '<title>' + m.name + " · " + partyShort(m.party) + " · " + m.district + "</title></polygon>";
+        '<title>' + esc(m.name + " · " + partyShort(m.party) + " · " + m.district) + "</title></polygon>";
     });
     // 정당별 라벨 (해당 정당 쐐기의 바깥쪽)
     Object.keys(partySpan).forEach(function (p) {
@@ -247,8 +247,8 @@
     list.forEach(function (m) {
       var card = document.createElement("div"); card.className = "mcard";
       var pc = partyColor(m.party);
-      var html = '<div class="row1"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span class="nm">' + m.name + "</span></div>";
-      html += '<div class="meta">' + m.district + " · " + (m.committee[0] || "") + "</div>";
+      var html = '<div class="row1"><span class="pchip" style="background:' + pc + '">' + esc(partyShort(m.party)) + '</span><span class="nm">' + esc(m.name) + "</span></div>";
+      html += '<div class="meta">' + esc(m.district + " · " + (m.committee[0] || "")) + "</div>";
       if (state.business === "all") {
         html += '<div class="badges">' + BIZ.map(function (b) { return badge(b.id, m.stance[b.id] || "unknown"); }).join("") + "</div>";
       } else {
@@ -321,7 +321,7 @@
     var pc = partyColor(m.party);
     var termsTxt = m.terms ? m.terms + "선" : "-";
     var commTxt = (m.committee && m.committee.length) ? m.committee.join(", ") : "-";
-    var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + partyShort(m.party) + '</span><span style="font-size:19px;font-weight:800">' + m.name + '</span></div></div>' +
+    var h = '<div class="mhd"><div><div style="display:flex;align-items:center;gap:8px"><span class="pchip" style="background:' + pc + '">' + esc(partyShort(m.party)) + '</span><span style="font-size:19px;font-weight:800">' + esc(m.name) + '</span></div></div>' +
       '<button class="x" aria-label="닫기">×</button></div><div class="mbd">';
     h += '<div class="mprofile-wrap">' +
       // 화면용 썸네일(320px, 장당 25KB 안쪽)을 쓴다 — 원본(parliament_photos, 최대 22MB)은 그대로 둔다.
@@ -330,10 +330,10 @@
       ' loading="lazy" onerror="this.parentNode.style.display=\'none\'"' +
       ' alt="' + esc(m.name) + '"></div>' +
       '<div class="mprofile">' +
-      '<div><span class="pl">정당</span><span class="pv">' + m.party + '</span></div>' +
-      '<div><span class="pl">선거구</span><span class="pv">' + m.district + '</span></div>' +
-      '<div><span class="pl">선수</span><span class="pv">' + termsTxt + '</span></div>' +
-      '<div><span class="pl">소속위원회</span><span class="pv">' + commTxt + '</span></div>' +
+      '<div><span class="pl">정당</span><span class="pv">' + esc(m.party) + '</span></div>' +
+      '<div><span class="pl">선거구</span><span class="pv">' + esc(m.district) + '</span></div>' +
+      '<div><span class="pl">선수</span><span class="pv">' + esc(termsTxt) + '</span></div>' +
+      '<div><span class="pl">소속위원회</span><span class="pv">' + esc(commTxt) + '</span></div>' +
       '</div></div>';
     h += '<div style="font-size:13px;font-weight:800;color:var(--brand);margin:4px 0 2px">사업별 우호도</div><div class="stancegrid">' +
       BIZ.map(function (b) { var s = stanceInfo(m.stance[b.id] || "unknown"); return '<div class="sg"><div class="b">' + b.label + '</div><div class="v" style="background:' + s.bg + ";color:" + s.color + '">' + s.label + "</div></div>"; }).join("") + "</div>";
@@ -347,7 +347,7 @@
           ? (q.pre ? esc(q.pre) + " " : "") + "<b>" + esc(q.core) + "</b>" + (q.post ? " " + esc(q.post) : "")
           : esc(q.text || "");
         return '<div class="qt" style="' + (hl ? "border-left-color:#0f7a4d;background:#eefaf3" : "") + '"><span class="badge" style="background:#eef3fb;color:#264a7d;border-color:#d7e2f4;margin-right:6px">' + bizLabel(q.biz) + "</span>" + body +
-          '<div class="qmeta"><a href="https://record.assembly.go.kr/assembly/" target="_blank">' + (src || "출처 미상") + "</a></div></div>";
+          '<div class="qmeta"><a href="https://record.assembly.go.kr/assembly/" target="_blank">' + esc(src || "출처 미상") + "</a></div></div>";
       }).join("");
     } else { h += '<div style="font-size:13px;color:var(--muted)">등록된 발언이 없습니다.</div>'; }
     var disc = META.stancePending
@@ -427,11 +427,12 @@
     var s = stanceInfo(q.stance);
     var biz = (q.businesses || []).map(bizLabelC).join(", ");
     return '<div class="stmt"><div class="sh">' +
-      (q.speaker ? '<span class="sp">' + q.speaker + '</span><span class="rl">' + (q.role || "") + "</span>" : "") +
+      (q.speaker ? '<span class="sp">' + esc(q.speaker) + '</span><span class="rl">' + esc(q.role || "") + "</span>" : "") +
       '<span class="slv" style="background:' + s.color + '">' + s.label + "</span>" +
-      (biz ? '<span class="rl">[' + biz + "]</span>" : "") +
-      '<span class="mt">' + (q.meeting || "") + "</span></div>" +
-      '<div class="qt">“' + q.quote + '”</div>' + (q.note ? '<div class="nt">→ ' + q.note + "</div>" : "") + "</div>";
+      (biz ? '<span class="rl">[' + esc(biz) + "]</span>" : "") +
+      '<span class="mt">' + esc(q.meeting || "") + "</span></div>" +
+      // 회의록 원문에 '<2급비밀>' 같은 꺾쇠가 있어 그대로 넣으면 태그로 먹혀 사라진다 → esc. hwpx 찌꺼기 태그는 지운다.
+      '<div class="qt">“' + esc(String(q.quote || "").replace(/<hp:[^>]*>/g, " ")) + '”</div>' + (q.note ? '<div class="nt">→ ' + esc(q.note) + "</div>" : "") + "</div>";
   }
   function enrichCabinet() {
     if (!CAB) return;
@@ -456,7 +457,7 @@
     });
   }
   function openCabinetModal(sp) {
-    var h = '<div class="mhd"><div><div style="font-size:19px;font-weight:800">' + sp.name + '</div><div style="font-size:12.5px;color:var(--muted);margin-top:5px">' + (sp.role || "") + " · 회의록 발언 " + sp.count + '건</div></div><button class="x" aria-label="닫기">×</button></div><div class="mbd">';
+    var h = '<div class="mhd"><div><div style="font-size:19px;font-weight:800">' + esc(sp.name) + '</div><div style="font-size:12.5px;color:var(--muted);margin-top:5px">' + esc(sp.role || "") + " · 회의록 발언 " + sp.count + '건</div></div><button class="x" aria-label="닫기">×</button></div><div class="mbd">';
     h += '<div style="display:flex;gap:14px;margin-bottom:16px">' +
       '<div style="flex:0 0 140px;width:140px;height:160px;border-radius:12px;overflow:hidden;background:#f8fafd;border:1px solid var(--line);flex-shrink:0"><img src="images/bluehouse_photos/' + esc(sp.name) + '.jpg" style="width:100%;height:100%;object-fit:cover" onerror="this.parentElement.style.display=\'none\'"></div>' +
       '<div style="flex:1">' +
@@ -572,7 +573,7 @@
       // ⚠ "최근 기사 갱신" 표시는 이제 news.json 실측 시각 기준이라 이 버튼과 무관하게 항상 정확하다
       // (버튼 성공/실패와 무관하게 그대로 재계산될 뿐 이 요청으로 값이 바뀌지 않는다).
       var endpoint = state.view === "cabinet" ? "/api/update-cabinet" : "/api/update";
-      fetch(endpoint, { method: "POST" })
+      fetch(endpoint, { method: "POST", headers: { "X-Policy-Update": "1" } })  // serve.mjs 가 이 헤더 없는 요청은 거절
         .then(function (res) { return res.json(); })
         .then(function (data) {
           if (!data || data.success === false) {

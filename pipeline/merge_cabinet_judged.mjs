@@ -1,5 +1,8 @@
 // AI 판정 결과 → data/_cab_results.json 병합 (기존 발언 보존, 중복 차단)
 //
+// ⚠ 옛 수동 경로다. 지금 흐름은 cab_todo → wf_cabinet → **collect_cab.mjs**(pipeline/README.md).
+//   이 스크립트는 `judgedMeetings`(판정 대장)를 고치지 않아, 이걸로 합치면 발언 0건 회의가 다음에 또 AI 로 간다.
+//
 //   node pipeline/merge_cabinet_judged.mjs <judged.json> <raw.json> [--dry]
 //
 //   judged.json : [{ idx, relevant, quote, businesses, stance, note }]  (idx = raw.records 인덱스)

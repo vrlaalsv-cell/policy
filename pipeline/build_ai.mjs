@@ -8,7 +8,7 @@
 //   아래 루프가 data.js·cabinet.js 의 ai 필드를 전부 delete 한 뒤 그대로 덮어쓴다. 원본이 안 남는다.
 //   AUTOMATION_TODO.md "⚠️ 함정" #2 가 경고하던 것이라 대량 실패 가드를 넣었다
 //   (본보기: 5_collect_news.mjs — 2026-08-08 에 336명 중 9명만 성공해 기사가 통째로 0건이 된 사고 이후 도입).
-import { readFileSync, writeFileSync, existsSync } from "node:fs";
+import { readFileSync, writeFileSync } from "node:fs";
 import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
 

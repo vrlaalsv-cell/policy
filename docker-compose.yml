@@ -60,9 +60,13 @@ services:
       - app
 
   tunnel:
-    image: cloudflare/cloudflared:latest
+    # 판을 고정한다(latest 면 재배포 때 모르는 새 판이 들어온다). 2026-11-01 NAS 에서 돌던 판.
+    image: cloudflare/cloudflared:2026.10.7
     container_name: policy-tunnel
     restart: unless-stopped
-    command: tunnel --no-autoupdate run --token ${CLOUDFLARE_TUNNEL_TOKEN}
+    # 토큰은 환경변수로 — 명령 인자에 두면 `ps`·`docker inspect` 의 명령줄에 그대로 보인다.
+    command: tunnel --no-autoupdate run
+    environment:
+      - TUNNEL_TOKEN=${CLOUDFLARE_TUNNEL_TOKEN}
     depends_on:
       - app

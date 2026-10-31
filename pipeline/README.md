@@ -10,7 +10,7 @@
 |---|---|---|---|---|
 | 국회 상임위 회의록 발언 | 국회도서관 발언 빅데이터 | `https://dataset.nanet.go.kr/content?...&orgId=NAM&facetDaeNum=22`(목록, 서버렌더 HTML) → `/content/down/ajax`(POST, xlsx 생성) → `/content/down/file?fid=...`(GET, 다운로드) | **불필요** | `collect_assembly_speeches.mjs` — 정확한 쿼리 파라미터·함정은 `data/findings.json`(`id: nanet-speech-bigdata`) |
 | 국무회의·차관회의 회의록 PDF | 행정안전부(행안부) 국무회의록 게시판 | `https://www.mois.go.kr/frt/bbs/type001/commonSelectBoardList.do?bbsId=BBSMSTR_000000000430` | **불필요** | `update-cabinet.mjs` (`--pages=N`으로 더 과거까지, `--all`로 인덱스 무시 전량) |
-| 국회의원 명단·기본정보 | 열린국회정보 Open API | `https://open.assembly.go.kr` | **API 키 필요**(`ASSEMBLY_API_KEY`) | `1_collect_members.mjs` |
+| 국회의원 명단·기본정보 | 열린국회정보 Open API | `https://open.assembly.go.kr` | **API 키 필요**(`ASSEMBLY_API_KEY`) | `update-assembly.mjs`('업데이트' 단추 — 화면 명단은 안 바꾼다) |
 | 의원별 최근 기사 | Google 뉴스 RSS(기본) 또는 네이버 뉴스 검색(키 있으면 우선) | Google: `https://news.google.com/rss/search` / 네이버: `https://openapi.naver.com/v1/search/news.json` | Google=불필요, 네이버=`NAVER_CLIENT_ID/SECRET` | `5_collect_news.mjs` |
 
 ⚠ **행안부 다운로드는 최근분만 된다(실측 2026-08-09)** — 2026-01-23 이전(2025-07~2026-01-20) 회의록은
@@ -19,13 +19,8 @@
 
 | 스크립트 | 입력 | 출력 | 필요 키 |
 |---|---|---|---|
-| `1_collect_members.mjs` | 열린국회 API | `data/members.json` | `ASSEMBLY_API_KEY` |
-| `2_collect_utterances.mjs` | `data/raw/*.csv|json` | `data/utterances.json` | — |
-| `3_analyze_gemini.mjs` | members + utterances | `data/analysis.json` | `GEMINI_API_KEY` |
-| `4_analyze_cabinet.mjs` | `data/cabinet_minutes/*` | `data/cabinet.json` | `GEMINI_API_KEY` |
-| `5_collect_news.mjs` | members (`data/members.json` 또는 `web/data.js`) | `data/news.json` + `web/news.js` | `NAVER_*` (없으면 Google 뉴스 RSS로 자동 대체) |
+| `5_collect_news.mjs` | 명단(`web/data.js` — 화면 id 와 맞춘다) | `data/news.json` + `web/news.js` | `NAVER_*` (없으면 Google 뉴스 RSS로 자동 대체) |
 | `build_news_web.mjs` | `data/news.json` | `web/news.js` | — |
-| `build_web_data.mjs` | data/*.json | `web/data.js` | — |
 | `serve.mjs` | web/ | (HTTP 서버) | — |
 
 ### 🔎 원문 DB (corpus.db) — 파일 안 열고 바로 검색
@@ -142,7 +137,8 @@ node pipeline/build_board.mjs                         # ③ 빌드
 | `update-cabinet.mjs` | 행정안전부 게시판 | `data/cabinet_minutes/*.pdf` + `data/cabinet_minutes_index.json` |
 | `extract_minutes.py` | 위 PDF | `data/_cab_minutes_raw.json` (발언 원문) |
 | *(AI 판정)* | 위 원문 | 판정 JSON — 지금은 Claude Code 워크플로, [AUTOMATION_TODO.md](../AUTOMATION_TODO.md) 참고 |
-| `merge_cabinet_judged.mjs` | 판정 JSON + 원문 | `data/_cab_results.json` (기존 보존·중복 차단) |
+| `collect_cab.mjs` | wf_cabinet 워크플로 출력 | `data/_cab_results.json` (증분 병합 + `judgedMeetings` 대장 갱신) |
+| `merge_cabinet_judged.mjs` | (옛 수동 경로) 판정 JSON + extract_minutes 원문 | `data/_cab_results.json` — ⚠ 판정 대장을 안 고친다, 아래 참고 |
 | `build_cabinet2.mjs` | `_cab_results.json` | `data/cabinet.json` + `web/cabinet.js` |
 
 ```bash
@@ -150,7 +146,7 @@ node pipeline/update-cabinet.mjs                 # ① 아직 안 받은 회의�
 python pipeline/extract_minutes.py               # ② PDF → 발언 원문
 node pipeline/cab_todo.mjs                       # ②' ⭐ 아직 판정 안 한 회의만 추리기 (0건이면 ③ 건너뜀)
                                                  # ③ AI 판정 (Claude Code, wf_cabinet.js — ②'의 --json 을 args 로)
-node pipeline/merge_cabinet_judged.mjs <판정.json> data/_cab_minutes_raw.json --dry   # ④ 먼저 --dry 로 확인
+node pipeline/collect_cab.mjs <워크플로 출력 파일>    # ④ 증분 병합 + 판정 대장(judgedMeetings) 갱신
 node pipeline/build_cabinet2.mjs && node pipeline/build_ai.mjs                        # ⑤ 빌드
 ```
 
@@ -160,8 +156,9 @@ node pipeline/build_cabinet2.mjs && node pipeline/build_ai.mjs                  
   특히 **"에너지 발언 없음"으로 0건 판정된 회의**는 결과에 아무것도 안 남아 *안 한 것*처럼 보인다
   (2026-08-12 실측: 46건 중 22건이 이 경우라, 대장 없이는 매번 46건 전부 재판정).
   → `_cab_results.json` 의 `judgedMeetings` 대장이 그 기록이고, `cab_todo.mjs` 가 그걸 보고 거른다.
-- ④는 인용문이 원문에 실제로 있는지, 목차 찌꺼기가 섞이지 않았는지, 기존 발언과 겹치지 않는지를
-  검사해 걸러낸다. **`--dry` 로 먼저 확인**하고 실행할 것.
+- ④ `collect_cab.mjs` 가 판정한 회의를 `judgedMeetings` 에 올린다 — 발언 0건 회의도 '판정함'으로 남아 다음에 안 보낸다.
+  옛 `merge_cabinet_judged.mjs`(extract_minutes 원문 + 판정 JSON 을 손으로 합치던 경로)는 인용 대조·목차 찌꺼기·중복 검사는
+  하지만 **판정 대장을 안 고쳐서**, 그걸로 합치면 0건 회의가 다음에 또 AI 로 간다(2026-11-01 전수감사). 손으로 합칠 일이 있을 때만 `--dry` 로.
 - ⑤에서 `build_cabinet2` 는 `ai` 필드를 지우므로 **반드시 `build_ai.mjs` 를 이어서** 돌린다.
 
 > ⚠ `extract_minutes.py` 는 pdfplumber 가 필요하다(`pip install pdfplumber`). 회의록 PDF 의 함정
@@ -171,7 +168,7 @@ node pipeline/build_cabinet2.mjs && node pipeline/build_ai.mjs                  
 ## 최근 기사 수집 (모달 최하단 · 에너지원 라벨)
 
 ```bash
-npm run collect:news                                  # ① 기사 목록 (최근 90일 · 의원당 5건)
+npm run collect:news                                  # ① 기사 목록 (최근 365일 · 의원당 5건)
 npm run fetch:excerpts                                # ② 기사마다 원문 링크 + 발췌 1~2줄
 node pipeline/5_collect_news.mjs --days=180 --per=8    # 기간·건수 조정
 node pipeline/5_collect_news.mjs --only=김성환          # 한 명만 (테스트)
@@ -204,21 +201,6 @@ node pipeline/6_fetch_excerpts.mjs --limit=20   # 앞 20건만 (테스트)
 기사 목록 자체는 그대로 남는다(발췌가 비어 있으면 제목만 표시). 네이버 소스로 수집했다면
 `link` 가 이미 원문이라 이 단계를 건너뛴다.
 
-## 발언 데이터(2단계) 준비 방법
-1. 국회도서관 **발언 빅데이터**(dataset.nanet.go.kr)에서 발언 단위 EXCEL/CSV 다운로드
-2. `data/raw/` 에 저장 (열: 발언자 / 발언내용 / 회의일자)
-3. `npm run collect:utterances` — 에너지 키워드로 사전 필터하여 발언자별로 정리
-   - 보조: 공공데이터포털 `ProceedingInfoService` 회의록 전문 → `◯이름 직위` 정규식 분해(TODO 위치 표시됨)
-
-## 실시간/증분 갱신
-```bash
-node pipeline/2_collect_utterances.mjs --since=2026-01-01   # 신규 회의만
-node pipeline/3_analyze_gemini.mjs --only-new               # 신규 의원/변경분만 재분석
-node pipeline/build_web_data.mjs
-```
-스케줄러(GitHub Actions/cron)로 주기 실행하면 자동 갱신됩니다.
-
-## 비용 메모 (Gemini)
-- `3_analyze_gemini.mjs` 는 현재 **동기 generateContent** 호출입니다.
-- 300명 1차 전체 배치는 **Batch API(50% 할인)** 로 전환 권장 — `lib/gemini.mjs` 에 TODO 표시.
-- 절감: 발언 사전 필터(키워드), 의원당 상위 N개 발언 컷, JSON 스키마 강제 + `maxOutputTokens` 캡, thinking off.
+## 옛 Gemini 경로 (2026-11-01 삭제)
+`1_collect_members`·`2_collect_utterances`·`3_analyze_gemini`·`4_analyze_cabinet`·`build_web_data`·`lib/gemini` 는 지웠다 —
+유료 Gemini 를 부르고 `web/data.js` 를 옛 형식으로 백업 없이 덮어쓰는 경로였고, 지금 흐름(위 국회·청와대 절)이 대신한다. 필요하면 git 이력에 있다.

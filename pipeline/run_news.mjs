@@ -26,4 +26,5 @@ if (code1 !== 0) {
   process.exit(code1 || 1);
 }
 const code2 = await run("6_fetch_excerpts.mjs");
-process.exit(code2 || 0);
+// 신호로 죽으면 code 가 null 이다 — `code2 || 0` 이면 그걸 성공으로 쳤다(2026-11-01 전수감사)
+process.exit(code2 === 0 ? 0 : 1);

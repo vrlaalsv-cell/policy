@@ -9,10 +9,8 @@
 - 회의 날짜가 파일명이나 본문 첫 줄에 있으면 자동 인식에 도움이 됩니다.
 
 ## 처리 흐름
-1. `pipeline/4_analyze_cabinet.mjs` 가 이 폴더의 파일을 읽음
-2. 에너지 키워드 필터 → 발언 추출
-3. Gemini 로 국무위원별 사업(LNG/수소/재생E/도시가스/전력) 우호도 태깅
-4. 결과를 `data/cabinet.json` 으로 저장 → 대시보드 "청와대" 탭에서 표시
+옛 `4_analyze_cabinet.mjs`(Gemini) 경로는 2026-11-01 삭제했다. 지금 흐름은 `pipeline/README.md` '청와대(국무·차관회의) 갱신'
+(update-cabinet → extract → cab_todo → wf_cabinet → collect_cab → build_cabinet2).
 
 > 이 폴더의 실제 회의록 파일은 `.gitignore` 로 git 에서 제외됩니다(개인정보/저작권).
 > 경로는 `.env` 의 `CABINET_MINUTES_DIR` 로 바꿀 수 있습니다.

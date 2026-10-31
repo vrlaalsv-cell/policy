@@ -1,6 +1,7 @@
 // web/ 정적 파일 서버 (외부 패키지 없이). 사용: npm run serve
 import { createServer } from "node:http";
-import { readFile } from "node:fs/promises";
+import { stat } from "node:fs/promises";
+import { createReadStream } from "node:fs";
 import { extname, join, normalize } from "node:path";
 import { fileURLToPath } from "node:url";
 import { dirname } from "node:path";
@@ -66,8 +67,29 @@ function runScript(res, script, timeoutMs = 300000) {
   });
 }
 
-const runUpdate = (res) => runScript(res, "update-assembly.mjs");
-const runUpdateCabinet = (res) => runScript(res, "update-cabinet.mjs");
+// 한 번에 하나만 — 단추를 연타하거나 두 화면에서 누르면 같은 파일을 두 프로세스가 동시에 쓴다.
+let running = false;
+async function runExclusive(res, script) {
+  if (running) {
+    res.writeHead(409, { "Content-Type": "application/json; charset=utf-8" });
+    res.end(JSON.stringify({ success: false, error: "이미 업데이트 중입니다" }));
+    return;
+  }
+  running = true;
+  try { await runScript(res, script); } finally { running = false; }
+}
+const runUpdate = (res) => runExclusive(res, "update-assembly.mjs");
+const runUpdateCabinet = (res) => runExclusive(res, "update-cabinet.mjs");
+
+// 이 화면(app.js)이 보낸 요청인가 — 다른 사이트의 페이지가 테일넷 기기 브라우저를 빌려 몰래 POST 하는 걸 막는다.
+//   ① 커스텀 헤더는 다른 출처에서 붙이려면 사전 요청(CORS preflight)이 필요한데 이 서버는 그걸 허락하지 않는다.
+//   ② Origin 이 붙어 오면 이 서버 주소와 같아야 한다.
+const fromThisPage = (req) => {
+  if (req.headers["x-policy-update"] !== "1") return false;
+  const o = req.headers.origin;
+  if (!o) return true;
+  try { return new URL(o).host === req.headers.host; } catch { return false; }
+};
 
 // 수집 실행은 집 LAN·Tailscale(ys:8007)에서만 받는다. 공개 주소(Cloudflare 터널)로 온 요청에는
 // Cloudflare 가 cf-connecting-ip·cf-ray 를 붙이므로 그걸로 가려 거절한다(2026-10-28 사용자 결정).
@@ -82,12 +104,12 @@ createServer(async (req, res) => {
   try {
     // API 엔드포인트
     if (req.url === "/api/update" && req.method === "POST") {
-      if (viaTunnel(req)) { refuseUpdate(res); return; }
+      if (viaTunnel(req) || !fromThisPage(req)) { refuseUpdate(res); return; }
       await runUpdate(res);
       return;
     }
     if (req.url === "/api/update-cabinet" && req.method === "POST") {
-      if (viaTunnel(req)) { refuseUpdate(res); return; }
+      if (viaTunnel(req) || !fromThisPage(req)) { refuseUpdate(res); return; }
       await runUpdateCabinet(res);
       return;
     }
@@ -98,25 +120,26 @@ createServer(async (req, res) => {
     if (!file.startsWith(WEB)) { res.writeHead(403).end("forbidden"); return; }
     // 스케줄러가 새로 만든 기사 데이터(data/news.js)가 있으면 그것을 우선 서빙한다.
     // data/ 는 볼륨 마운트라 이미지 재빌드와 무관하게 최신 수집분이 유지된다.
+    let target = file;
     if (p === "/news.js") {
-      try {
-        const fresh = await readFile(join(DATA, "news.js"));
-        res.writeHead(200, { "Content-Type": TYPES[".js"], "Cache-Control": "no-store" });
-        res.end(fresh);
-        return;
-      } catch { /* 없으면 이미지에 포함된 web/news.js 사용 */ }
+      try { await stat(join(DATA, "news.js")); target = join(DATA, "news.js"); }
+      catch { /* 없으면 이미지에 포함된 web/news.js 사용 */ }
     }
-    const buf = await readFile(file);
-    // 이미지는 재배포해도 파일명이 안 바뀌니 짧게(1일)만 캐시 — 매 새로고침마다 로고·사진을
-    // 통째로 재다운로드하던 문제(no-store 전면 적용) 해소. JS/HTML은 그대로 no-store 유지
-    // — 안 그러면 "재배포됐는데 화면이 옛날 그대로"인 클라 캐시 혼동이 재발한다.
-    const ext = extname(file).toLowerCase();
+    const st = await stat(target);
+    if (!st.isFile()) throw new Error("not a file");
+    // 이미지는 재배포해도 파일명이 안 바뀌니 짧게(1일)만 캐시. JS/HTML 은 no-cache + ETag —
+    // 매번 서버에 묻되 안 바뀌었으면 304 로 끝난다. (예전 no-store 는 방문마다 data.js 등 4MB 를 통째로 다시 받았다.
+    //  no-cache 는 '묻지 않고 쓰기'가 아니라서 "재배포됐는데 화면이 옛날 그대로" 는 생기지 않는다.)
+    const ext = extname(target).toLowerCase();
     const isImage = [".png", ".jpg", ".jpeg", ".webp", ".gif", ".ico", ".svg"].includes(ext);
-    const cacheControl = isImage ? "public, max-age=86400" : "no-store";
-    res.writeHead(200, { "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": cacheControl });
-    res.end(buf);
+    const etag = `"${st.size.toString(16)}-${Math.floor(st.mtimeMs).toString(16)}"`;
+    const headers = { "Content-Type": TYPES[ext] || "application/octet-stream", "Cache-Control": isImage ? "public, max-age=86400" : "no-cache", ETag: etag };
+    if (req.headers["if-none-match"] === etag) { res.writeHead(304, headers).end(); return; }
+    // 통째로 메모리에 올리지 않고 흘려 보낸다
+    res.writeHead(200, { ...headers, "Content-Length": st.size });
+    createReadStream(target).on("error", () => res.destroy()).pipe(res);
   } catch {
-    res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("404 Not Found");
+    if (!res.headersSent) res.writeHead(404, { "Content-Type": "text/plain; charset=utf-8" }).end("404 Not Found");
   }
 }).listen(PORT, "0.0.0.0", () => {
   let ip = "localhost";
