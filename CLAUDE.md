@@ -26,7 +26,13 @@
   - compose 의 `env_file: .env` 를 웹·스케줄러가 통째로 받는다(지금 `.env` 엔 터널 토큰뿐). 키가 늘면 서비스별로 나눌 것.
   - `googleapis` 173 아래 `glob`·`minimatch` 중간(moderate) 취약점 5건 — 고치려면 googleapis 189 로 큰 판 올림. 드라이브 올리기는 `GOOGLE_*` 가 없어 NAS 에서 안 돈다.
   - 큰 파일 쪼개기 후보(시험 없음): `web/app.js` 600줄, `collect_assembly_speeches.mjs`. `merge_cabinet_judged.mjs`(옛 수동 판정 병합 — 판정 대장을 안 고침)는 문서에서 `collect_cab.mjs` 로 바꿔 두기만 했다.
-- **헤드방에 넘김**: home-watch `[[files]]` 에 `policy/runtime/cabinet_last_success.json` 낡음 감시(max_age_h 30) 등록 — 이 방은 home-watch 를 안 고쳤다(미등록). 그전까진 회의록 받기가 멈춰도 아무도 모른다.
+- ✅ **헤드방에 넘겼던 것 — 끝남**: home-watch `config.toml` `[[files]]` 에 `policy/runtime/cabinet_last_success.json` 낡음 감시(max_age_h 30)가 등록돼 있다(2026-11-08 감사 확인). 회의록 받기가 30시간 넘게 멈추면 home-watch 가 알린다.
+
+## 🔒 업데이트 중단 (2026-11-08 사용자 결정 — "정책사이트는 업데이트 중단.")
+
+- **코드는 더 고치지 않는다.** 위 '남은 것' 도 그대로 둔다(다시 열 때 참고용). 사이트·컨테이너·주소(`7.yes-i-can.kr`·`ys:8007`)는 **그대로 운영** — 종료 = 개발 중단일 뿐, 내리라는 뜻이 아니다.
+- 주간 코드 감사에서 뺐다: `C:\AI\_공통규칙\code_scan.py` `EXCLUDE` · `C:\AI\.claude\skills\rule-check\SKILL.md` 모델 표(취소선). 기준선 `last_full.json` 의 `policy: 13ad9f9` 는 남겨 둠 — 다시 열면 그 해시..HEAD 가 감사 범위.
+- 11-08 주간 감사 low 4건은 고치지 않고 닫음(CHANGELOG 2026-11-08). 보안·개인정보 위험은 없다고 판단.
 - **배포 뒤 확인할 것**: 다음 05:30 회의록 받기 뒤 `runtime/cabinet_last_success.json` 이 생기면 성공(받기 실패가 있으면 안 생기고 로그에 '실패 code=1'). 다음 07:00 기사 수집 뒤 `runtime/news.json` 에 'Google 뉴스가 전세계…' 발췌가 0건이면 성공(11-01 NAS 8건).
 
 ## 📜 당시 기록(참고) — 2026-08-14 토큰 절감 인수인계
