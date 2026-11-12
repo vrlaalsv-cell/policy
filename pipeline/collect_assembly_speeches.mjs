@@ -11,8 +11,8 @@
 // ⚠ 원본 xlsx 를 data/raw_speeches/ 에 남긴다. 지금 국회 발언 갱신이 막혔던 근본 원인이
 //   "원본을 안 남기고 가공본만 커밋" 이었다. 원본이 있으면 파서만 고쳐 재파싱된다.
 import { readFileSync, writeFileSync, mkdirSync, existsSync } from "node:fs";
-import { join } from "node:path";
-import { randomUUID } from "node:crypto";
+import { join, basename } from "node:path";
+import { randomUUID, createHash } from "node:crypto";
 import { paths } from "./lib/env.mjs";
 // xlsx 파서·날짜 정리는 build_corpus_db 와 같은 것을 쓴다(예전엔 같은 코드가 여기 복사돼 있었다)
 import { parseSpeechXlsx as parseXlsx, normSpeechDate as normDate } from "./lib/parse_speech_xlsx.mjs";
@@ -121,7 +121,8 @@ async function listCommittee(comm, word) {
 
 /** contentId 배치 → xlsx 원본 파일 경로 */
 async function downloadBatch(ids, name) {
-  const file = join(RAW, `${name}.xlsx`);
+  const hash = createHash("sha256").update(JSON.stringify(ids)).digest("hex");
+  const file = join(RAW, `${name}_${hash}.xlsx`);
   if (existsSync(file)) return file;                       // 이미 받은 건 건너뛴다(증분)
   const body = new URLSearchParams({
     viewType: "CONTENT_LIST", dataInfo: ids.join(","), downFileType: "xlsx",
@@ -182,15 +183,24 @@ const PROCEDURAL = /의석을 정돈|성원이 되었으므로|개회하겠습�
 
   // ── 원본 xlsx 내려받기 (1000건 배치) ──
   const BATCH = 1000;
-  const files = [];
-  for (let i = 0; i < uniq.length; i += BATCH) {
-    const chunk = uniq.slice(i, i + BATCH);
+  const cachePath = join(RAW, "content_ids.json");
+  const cache = existsSync(cachePath) ? JSON.parse(readFileSync(cachePath, "utf8")) : {};
+  const cached = (id) => typeof cache[id] === "string" && basename(cache[id]) === cache[id]
+    && existsSync(join(RAW, cache[id]));
+  const files = [...new Set(uniq.filter((m) => cached(m.contentId)).map((m) => join(RAW, cache[m.contentId])))];
+  const pending = uniq.filter((m) => !cached(m.contentId));
+  for (let i = 0; i < pending.length; i += BATCH) {
+    const chunk = pending.slice(i, i + BATCH);
     // ⚠ 파일명에 위원회를 넣어야 한다. 예전엔 `nanet_<since>_<n>` 이라 위원회를 나눠 돌리면
     //   파일명이 겹쳐 "이미 받음"으로 건너뛰고 **다른 위원회 파일을 다시 파싱**했다(신규 0건).
     const tag = COMMITTEES.map((c) => c.slice(0, 2)).join("");
     const name = `nanet_${tag}_${ymd(SINCE)}_${String(i / BATCH + 1).padStart(3, "0")}`;
     process.stdout.write(`\r  다운로드 ${i + chunk.length}/${uniq.length} (${name})   `);
-    files.push(await downloadBatch(chunk.map((x) => x.contentId), name));
+    const file = await downloadBatch(chunk.map((x) => x.contentId), name);
+    files.push(file);
+    // 파일 저장이 끝난 ID만 완료로 기록한다. 실패한 배치는 다음 실행 때 다시 받는다.
+    for (const item of chunk) cache[item.contentId] = basename(file);
+    writeFileSync(cachePath, JSON.stringify(cache), "utf8");
     await sleep(800);
   }
   process.stdout.write("\n");

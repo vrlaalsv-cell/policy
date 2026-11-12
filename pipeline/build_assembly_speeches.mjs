@@ -64,6 +64,26 @@ if (!hasKeys) {
 const byName = new Map(app.members.map((m) => [m.name, m]));
 const nrm = (t) => String(t || "").replace(/\s+/g, "");
 
+/** 인용을 원문에서 찾아 게시할 문장을 원문 구간으로 돌려준다. 못 찾으면 null.
+ *  공백만 무시하고 글자 그대로 대조한다. AI 가 '...'·'…' 로 줄인 인용(게시분의 약 5%)은
+ *  구간마다 원문에서 순서대로 찾는다 — 각 구간은 5자 이상이고 원문 그대로여야 한다. */
+function locateQuote(oneline, candidate) {
+  const flat = nrm(oneline);
+  const positions = [];
+  for (let i = 0; i < oneline.length; i++) if (!/\s/.test(oneline[i])) positions.push(i);
+  const segs = candidate.split(/\.{2,}|…/).map(nrm).filter(Boolean);
+  if (!segs.length) return null;
+  const spans = [];
+  let from = 0;
+  for (const g of segs) {
+    const at = g.length < 5 ? -1 : flat.indexOf(g, from);
+    if (at < 0) return null;
+    spans.push([positions[at], positions[at + g.length - 1] + 1]);
+    from = at + g.length;
+  }
+  return { core: spans.map(([a, b]) => oneline.slice(a, b)).join(" ... "), pos: spans[0][0], end: spans.at(-1)[1] };
+}
+
 /** 같은 의원에게 이미 비슷한 인용이 있는가 (20자 연속 일치) */
 function overlaps(list, q) {
   const a = nrm(q);
@@ -90,18 +110,16 @@ for (const t of tagged) {
   if (!t.relevant || t.biz === "NONE" || !BIZ.includes(t.biz)) { skip("근거 부적합"); continue; }
   const m = byName.get(s.name);
   if (!m) { skip("명단에 없는 이름"); continue; }
-  const core = unesc(t.core).trim();
-  if (core.length < 30) { skip("인용 짧음"); continue; }
-  if (!nrm(s.text).includes(nrm(core).slice(0, 30))) { skip("⚠ 인용이 원문에 없음"); continue; }
+  const candidate = unesc(t.core).trim();
+  if (candidate.length < 30) { skip("인용 짧음"); continue; }
+  const oneline = s.text.replace(/\s+/g, " ");
+  const found = locateQuote(oneline, candidate);
+  if (!found) { skip("⚠ 인용이 원문에 없음"); continue; }
+  const { core, pos, end } = found;
   const list = prior.get(s.name) || [];
   if (overlaps(list, core)) { skip("기존 발언과 중복"); continue; }
-
-  // 앞뒤 맥락: 원문에서 core 위치를 찾아 좌우를 덧댄다(화면이 pre/core/post 구조를 쓴다)
-  const flat = s.text;
-  const pos = flat.replace(/\s+/g, " ").indexOf(core.replace(/\s+/g, " ").slice(0, 30));
-  const oneline = flat.replace(/\s+/g, " ");
-  const pre = pos > 0 ? oneline.slice(Math.max(0, pos - 120), pos).trim() : "";
-  const post = pos >= 0 ? oneline.slice(pos + core.length, pos + core.length + 120).trim() : "";
+  const pre = oneline.slice(Math.max(0, pos - 120), pos).trim();
+  const post = oneline.slice(end, end + 120).trim();
 
   list.push(core);
   prior.set(s.name, list);

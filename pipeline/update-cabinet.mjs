@@ -166,7 +166,7 @@ for (const post of targets) {
     //   ② hwpx 가 텍스트 추출에 훨씬 유리하다: ZIP+XML 이라 문단 순서가 그대로고(PDF 는 2단 조판에서
     //      좌우가 뒤섞여 별도 방어가 필요했다), 크기도 10배 작고, Node 만으로 파싱된다(파이썬 불필요).
     //   hwpx 는 100~160KB 수준이라 둘 다 받아도 부담이 없다.
-    if (!files.length) { console.log(`    - 첨부 없음: ${post.title}`); continue; }
+    if (!files.length) throw new Error("회의록 첨부를 찾지 못했습니다 — 페이지 구조 변경 확인 필요");
     const wanted = files.filter((f) => /\.(pdf|hwpx?)$/i.test(f.name));
     const saved = [];
     for (const f of (wanted.length ? wanted : [files[0]])) {

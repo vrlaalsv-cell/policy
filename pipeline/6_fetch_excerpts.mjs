@@ -19,7 +19,7 @@ import { join } from "node:path";
 import { paths } from "./lib/env.mjs";
 import { labelsOf, matchedKeyword, NOISE_RE, isMilitaryPower } from "./lib/news_labels.mjs";
 import { isGoogleNewsUrl } from "./lib/news_merge.mjs";
-import { isPublicUrl } from "./lib/net.mjs";
+import { fetchPublic } from "./lib/net.mjs";
 import { buildNewsWeb } from "./build_news_web.mjs";
 
 const arg = (k, d) => {
@@ -61,7 +61,7 @@ const decode = (s) => String(s || "")
 async function resolveGoogle(link) {
   const id = link.split("/articles/")[1]?.split("?")[0];
   if (!id) return null;
-  const page = await fetch(link, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(TIMEOUT_MS) }).then((r) => r.text());
+  const page = await fetchPublic(link, { headers: { "User-Agent": UA }, signal: AbortSignal.timeout(TIMEOUT_MS) }).then((r) => r.text());
   const sig = page.match(/data-n-a-sg="([^"]+)"/)?.[1];
   const ts = page.match(/data-n-a-ts="([^"]+)"/)?.[1];
   if (!sig || !ts) return null;
@@ -69,7 +69,7 @@ async function resolveGoogle(link) {
     [["X", "X", ["X", "X"], null, null, 1, 1, "US:en", null, 1, null, null, null, null, null, 0, 1],
       "X", "X", 1, [1, 1, 1], 1, 1, null, 0, 0, null, 0],
     id, Number(ts), sig]);
-  const res = await fetch("https://news.google.com/_/DotsSplashUi/data/batchexecute", {
+  const res = await fetchPublic("https://news.google.com/_/DotsSplashUi/data/batchexecute", {
     method: "POST",
     headers: { "User-Agent": UA, "Content-Type": "application/x-www-form-urlencoded;charset=UTF-8" },
     body: "f.req=" + encodeURIComponent(JSON.stringify([[["Fbv4je", payload, null, "generic"]]])),
@@ -82,18 +82,9 @@ async function resolveGoogle(link) {
 }
 
 // ---------- 기사 HTML → 텍스트 ----------
-// 리다이렉트는 직접 따라가며 매 단계 공개 주소인지 본다(redirect:"follow" 면 사설 IP 로 넘어가도 모른다).
+// 리다이렉트마다 DNS를 검사하고 검증한 공개 IP로 연결한다(lib/net.mjs).
 async function fetchHtml(url) {
-  let res;
-  for (let hop = 0; ; hop++) {
-    if (!isPublicUrl(url)) throw new Error("공개 주소 아님");
-    res = await fetch(url, { headers: { "User-Agent": UA, "Accept-Language": "ko" }, redirect: "manual", signal: AbortSignal.timeout(TIMEOUT_MS) });
-    const loc = res.status >= 300 && res.status < 400 && res.headers.get("location");
-    if (!loc) break;
-    if (hop >= 5) throw new Error("리다이렉트 너무 많음");
-    res.body?.cancel();
-    url = new URL(loc, url).href;
-  }
+  const res = await fetchPublic(url, { headers: { "User-Agent": UA, "Accept-Language": "ko" }, signal: AbortSignal.timeout(TIMEOUT_MS) });
   if (!res.ok) throw new Error(`HTTP ${res.status}`);
   const buf = await readCapped(res);
   let html = buf.toString("utf8");
